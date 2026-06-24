@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="details">
+  <div class="section-head">
+    <h1>{{contact.first_name}} {{contact.last_name}}
+    {% if contact.middle_name %}
+    {{contact.middle_name}}</h1>
+    {% endif %}
+  
+    
+  {% comment %} {% include 'components/edit_btn.html' with list='contacts' id=contact.id %} {% endcomment %}
+  </div>
+  <p>моб. {{contact.phone}}</p>
+  
+  <hr />
+  {% comment %} {% include 'components/edit_btn.html' with list='contacts' id=contact.id %} {% endcomment %}
+  <div class="cards">
+    {% for el in comp_info %}
+      <div class="card">
+        <div class="card-head">
+          <p class="title">
+              <a href="/companies/{{el.comp_id}}/"> {{el.name}} </a>
+          </p>
+          <div>
+            {% include 'components/del_connection_btn.html' with connection_table='comp_cont' id_1=contact.id id_2=el.comp_id %}
+          </div>
+        </div>
+        <hr />
+        <p>Должность: {{el.role}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+{% endblock %}

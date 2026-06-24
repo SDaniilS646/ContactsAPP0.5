@@ -1,0 +1,110 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'components/company_modal_editors.html' with company_id=company.id %}
+
+
+
+<div class="details">
+  <div class="text">
+    <div class="section-head">
+      <h1>{{company.name}}</h1>
+      <div class="edits">
+        {% include 'components/edit_btn.html' with list='companies' id=company.id %}
+      </div>
+    </div>
+    <h4>{{rating}}</h4>
+
+    <hr />
+  </div>
+
+  <div class="text">
+
+    <div class="info">
+      <span>ИНН: {{company.inn}}</span><br />
+
+      <span>Сайт: {% if company.website %}<a href="https://{{company.website}}"  target="_blank">{{company.website}}</a>{% endif %}</span><br />
+
+      <span>Регион: {{company.region}}</span><br />
+      {% comment %} {% endif %} {% if company.inn or company.website or company.region %}
+      {% endif %} {% endcomment %}
+    </div>
+
+    <hr />
+    
+    <div class="main-contacts">
+      <b>Общие контакты:</b><br />
+      <span>Почта: {% if company.email %}
+        {{company.email}}
+        {% else %} Нет данных {% endif %}</span><br />
+      <span>Телефон: {% if company.phone %}{{company.phone}} {% else %} Нет данных {% endif %}</span>
+    </div>
+    <div class="comments">
+      {% if company.notes %}
+      <br />
+      <b>Примечания:</b><br />
+      <span>{{company.notes}}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr />
+  <div class="section-head">
+    <h3>Контакты</h3>
+    <div>
+      {% include 'components/edit_btn.html' with list='contacts' id=company.id %}
+    </div>
+  </div>
+    
+  <div class="cards">
+    
+    {% if contacts %}
+      {% csrf_token %}
+      {% for contact in contacts %}
+        <div class="card">
+          <div class="card-head">
+            <p class="title">
+              <a href="/contacts/{{contact.id}}/"> {{contact.first_name}} {{contact.last_name}}</a>
+            </p>
+            <div>
+              {% include 'components/del_connection_btn.html' with connection_table='comp_cont' id_1=contact.id id_2=company.id %}
+            </div>
+          </div>
+          <hr />
+          <p class="text">
+            {{contact.pos}}<br />
+            {{contact.phone}}<br />
+            <a href="mailto:{{contact.email}}" class="email">{{contact.email}}</a>
+          </p>
+        </div>
+      {% endfor %}
+    {% else %}
+        <p class="title">Контактов не найдено</p>
+    {% endif %}
+  </div>
+
+  <hr />
+
+  <div class="text">
+    <div class="section-head">
+      <h3>Материалы</h3>
+      <div>
+        {% include 'components/edit_btn.html' with list='materials' id=company.id %}
+      </div>
+    </div>
+    <ul>
+      {% for material in materials %}
+
+      <li><a href="/materials/{{material.id}}/">{{material.name}}</a></li>
+      {% if material.keywords %}
+      <span>(</span>
+        {% for keyword in material.keywords %}
+          {% if forloop.counter > 1 %}, {% endif %}
+          {{keyword}}
+        {% endfor %}
+        <span>)</span>
+      {% endif%}
+
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'materials/modal_frames.html' with modal_task='edit_mat' %}
+
+<div class="details">
+  <div class="section-head">
+
+    <h1>{{material.name}}</h1>
+    {% include 'components/edit_btn.html' with list='material' id=material.id %}
+
+  </div>
+
+
+
+
+
+  {% if keywords != '' %}
+  <p>Ключевые слова: {{keywords}}</p>
+  {% endif %}
+
+  {% if parents %}
+  <hr />
+  Выше по иерархии:
+  <div class="hierarchy parents">
+    {% for parent in parents %}
+      <a href="/materials/{{parent.id}}/">{{parent.name}} </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if children %}
+  <hr />
+  Ниже по иерархии:
+  <div class="hierarchy children">
+
+      {% for child in children %}
+        <a href="/materials/{{child.id}}/">{{child.name}}</a> 
+      {% endfor %}
+
+  </div>
+  {% endif %}
+
+  {% if companies %}
+    <hr />
+    <div class="cards">
+      {% for company in companies %}
+        <div class="card">
+          <div class="card-head">
+            
+            <p class="title">
+                <a href="/companies/{{company.id}}/"> {{company.name}} </a>
+            </p>
+            <div>
+              {% include 'components/del_connection_btn.html' with connection_table='comp_mat' id_1=material.id id_2=company.id %}
+            </div>
+          </div>
+        <hr />
+        <div class="info">
+          <span>ИНН: {{company.inn}}</span><br />
+
+          <span>Сайт: {{company.website}}</span><br />
+
+          <span>Регион: {{company.region}}</span><br />
+          {% comment %} {% endif %} {% if company.inn or company.website or company.region %}
+          {% endif %} {% endcomment %}
+        </div>
+      </div>
+      {% endfor %}
+    <div class="cards">
+  {% endif %}
+</div>
+
+{% endblock %}

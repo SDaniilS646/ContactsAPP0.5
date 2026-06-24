@@ -1,0 +1,16 @@
+{% comment %} {% if modal_task == 'new_comp' %}select_materials(event, this, {{material}})
+      {% elif modal_task == 'mat_list'%} 
+      {% else %}select_parent(event, this, {{material}})
+      {% endif %} {% endcomment %}
+
+<div 
+{% if modal_task == 'new_comp'%}
+  class="material-tree-from-company" id="material-tree-from-company"
+{% elif modal_task == 'new_mat' or modal_task == 'edit_mat' %}
+  class="material-tree" id="material-tree"
+{% endif %}
+>
+  {% for material in tree %}
+    {% include 'components/materials_tree.html' with material=material %}
+  {% endfor %} 
+</div>

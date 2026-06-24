@@ -1,0 +1,49 @@
+
+
+{% if material.children %}
+
+  <details class="{% if material.parent_id == 'none' %}top{% endif %}">
+    {% comment %} НАИМЕНОВАНИЕ ГРУППЫ {% endcomment %}
+    <summary id="_{{material.id}}" class="tree-item{% if modal_task == 'edit_mat' and parent_id == material.id or modal_task == 'new_comp' and material.id in materials_ids %} selected{% endif %}" 
+    data-id="{{material.id}}" data-parent-id="{{material.parent_id|default:'none'}}" 
+      onclick="
+        {% if modal_task == 'new_comp' %}select_materials(event, this, {{material}})
+        {% elif modal_task == 'mat_list'%} 
+        {% elif modal_task == 'edit_mat' and parent_id %}select_parent(event, this, {{material}}, {{parent_id}})
+        {% else %}select_parent(event, this, {{material}})
+        {% endif %}">
+
+
+      {% if modal_task == 'mat_list' %}
+        <a href="/materials/{{material.id}}/">{{material.name}}</a>
+      {% else %}
+        {{material.name}}
+      {% endif %}
+    </summary>
+    {% comment %} СОДЕРЖИМОЕ ГРУППЫ {% endcomment %}
+    <div class="tree-children" >
+      {% for child in material.children %}
+        {% include 'components/materials_tree.html' with material=child %}
+      {% endfor %}
+    </div>
+  </details>
+
+{% else %}
+  {% comment %} ПОСЛЕДНЯЯ ПОЗИЦИЯ В ГРУППЕ (БЕЗ ДЕТЕЙ) {% endcomment %}
+  <div id="_{{material.id}}" class="tree-item {% if modal_task == 'edit_mat' and parent_id == material.id or modal_task == 'new_comp' and material.id in materials_ids %}selected{% endif %} last-child" 
+  data-id="{{material.id}}" data-parent-id="{{material.parent_id|default:''}}"
+    onclick="
+      {% if modal_task == 'new_comp' %}select_materials(event, this, {{material}})
+      {% elif modal_task == 'mat_list'%} 
+      {% elif modal_task == 'edit_mat' and parent_id %}select_parent(event, this, {{material}}, {{parent_id}})
+      {% else %}select_parent(event, this, {{material}})
+      {% endif %}">
+
+    {% if modal_task == 'mat_list' %}
+      <a href="/materials/{{material.id}}/">{{material.name}}</a>
+    {% else %}
+      {{material.name}}
+    {% endif %}
+  </div>
+
+{% endif %}

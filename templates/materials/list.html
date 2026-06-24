@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'materials/modal_frames.html' with source='from_list' %}
+
+<div class="content-header">
+  <button class="add" type="button" onclick="openModal('add-material-modal')">Добавить материал</button>
+</div>
+<div>
+
+<hr />
+
+  <ul class="mat-tree-simple">
+
+    {% include 'components/mat_tree.html' with modal_task='mat_list'%}
+    
+  </ul>
+</div>
+{% endblock %}

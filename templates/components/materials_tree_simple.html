@@ -1,0 +1,14 @@
+
+
+<li>
+  <a href="/materials/{{material.id}}/">
+    {{material.name}}
+  </a>
+  {% if material.children %}
+  <ul>
+    {% for child in material.children %}
+      {% include 'components/materials_tree_simple.html' with material=child %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+</li>

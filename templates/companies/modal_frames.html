@@ -1,0 +1,53 @@
+{% include 'materials/modal_frames.html' with modal_task='new_mat' %}
+
+<div id="contact-modal" class="modal">
+  <div class="modal-content">
+    <div class="cross">
+      <button onclick="closeModal('contact-modal')">✕</button>
+    </div>
+    <div class="header">
+      <h3>Добавить Контакт</h3>
+    </div>
+    <div id="contact-modal-form">
+      {% csrf_token %}
+      {% comment %} <input  type="hidden" name="company_id" value="{{company.id}}"> {% endcomment %}
+      <p id="name-sign">Имя</p>
+      <input id="contact_first_name" type="text" name="contact_first_name">
+      <p>Фамилия</p>
+      <input id="contact_last_name" type="text" name="contact_last_name">
+      <p>Отчество</p>
+      <input id="contact_middle_name" type="text" name="contact_middle_name">
+      <p>Должность</p>
+      <input id="contact_position" type="text" name="contact_position">
+      <p>Телефон</p>
+      <input id="contact_phone" type="text" name="contact_phone" placeholder="+7(123)456-78-90">
+      <p>Почта</p>
+      <input id="contact_mail" type="text" name="contact_mail" placeholder="asd@dsa.ru"> <br \>
+
+      <button onclick="saveContact('contact-modal')" >SAVE</button>
+    </div>
+  </div>
+</div>
+
+<div id="material-modal" class="modal">
+  <div class="modal-content">
+    <div class="cross">
+      <button onclick="closeModal('material-modal')">✕</button>
+    </div>
+    <div class="header">
+      <h3>Выбор материалов</h3>
+    </div>
+    <div id="material-modal-form">
+      {% csrf_token %}
+      <div id="tree-head" class="tree-head">
+        {% include 'components/mat_tree.html' with modal_task='new_comp' %}
+      </div>
+      <div>
+        <button class="add" type="button" onclick="openModal('add-material-modal')">Добавить материал</button>
+      </div>
+      
+
+      <button onclick="saveMaterial('add_comp')" >Сохранить</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+{% load static %}
+
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="{% static 'js/js_help.js' %}"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  </head>
+  <body>
+      {% if show_menu %} {% include 'components/menu.html' %} {% endif %}
+    <div class="card-btns">
+      {% if show_del %} {% include 'components/del_btn.html' %} {% endif %}
+      {% if show_cross %} {% include 'components/cross_btn.html' %} {% endif %}
+    </div>
+
+    <div class="content">{% block content %} {% endblock %}</div>
+  </body>
+</html>

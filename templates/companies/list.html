@@ -1,0 +1,45 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="content-header">
+  <form methon="GET">
+    {% comment %} <select name="search_type" value="{{search_type}}">
+      <option title="Компании" value="comp" {% if search_type == "comp" %} selected {% endif %}>
+        С
+      </option>
+      <option title="Материалы" value="mat" {% if search_type == "mat" %} selected {% endif %}>
+        М
+      </option>
+      <option title="ИНН" value="inn" {% if search_type == "inn" %} selected {% endif %}>
+        И
+      </option>
+    </select> {% endcomment %}
+    <input id="companies-list" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+    {% comment %} <button type="submit">Найти</button> {% endcomment %}
+  </form>
+
+  <a href="/companies/add_comp/">
+    <button class="add">Добавить</button>
+  </a>
+</div>
+
+<hr />
+
+<div class="cards">
+  {% if companies %}
+    {% for company in companies %}
+    <div class="card {% if company.is_old %}old{% endif %}">
+      <p class="title">
+        <a href="/companies/{{company.id}}/"> {{company.name}} </a>
+      </p>
+      <p class="inn">ИНН:{% if company.inn %}{{company.inn}}{% endif %}</p>
+      <span style="display:none">{{company.mat}}</span>
+      <p {% if not company.notes %}style="display:none"{% endif %}>{{company.notes}}</p>
+      
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="title">Компаний не найдено</p>
+  {% endif %}
+</div>
+
+{% endblock %}
