@@ -1,11 +1,12 @@
 from django.urls import path
-from .views import materials_list, material_create, material_details, materials_tree, delete_material
+from .views import materials_page, material_create, materials_list, material_details_page, material_edit, delete
 
 urlpatterns = [
-  path('', materials_list),
+  path('', materials_page),
 
-  path('<int:id>/', material_details),
+  path('materials_list/', materials_list),
   path('add_mat/', material_create),
-  path('modal_frames/', materials_tree),
-  path('delete-materials/', delete_material)
+  path('edit_mat/', material_edit),
+  path('<int:material_id>/', material_details_page),
+  path('delete/', delete)
 ]

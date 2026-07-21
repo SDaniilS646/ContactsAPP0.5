@@ -1,0 +1,56 @@
+{% if style == 'cards' %}
+
+  {% for contact in contacts %}
+    <div class="card {% if contact.is_old %}old{% endif %}">
+      <span class="title contact" title="{{contact.name}}">
+        <a href="/contacts/{{contact.id}}/" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+      </span>
+
+      <span>
+        моб.: {% if contact.phone %}{{contact.phone}}{% else %}—{% endif %}
+      </span>
+      
+      <span>
+        л.почта: {% if contact.mail %}{{contact.mail}}{% else %}—{% endif %}
+      </span>
+
+      <span class="comment" title="{{company.comment}}">
+        {{contact.comment}}
+      </span>
+      <span hidden name="id">{{contact.id}}</span>
+      <span hidden name="date">{{contact.updated_at|date:"Y, m, d" }}</span>
+      <span hidden>{% if contact.is_old %}старый{% endif %}</span>
+    </div>
+  {% endfor %}
+
+{% elif style == 'comp_creation' %}
+
+  {% for contact in contacts %}
+    <div id="{{contact.id}}" class="contact-list-item {% if contact.selected %}selected{% endif %}" onclick="selectContacts(event, this, 'contacts-list', 'contacts-list-input-box')" style="order: {{contact.id}};">
+      <span name="name">
+      {{contact.first_name}} {{contact.last_name}} {{contact.patronymic}}
+      </span>
+      {% if contact.phone %}
+        <span>
+          моб.: {{contact.phone}}
+        </span>
+      {% endif %}
+
+      {% if contact.mail %}
+        <span>
+          л.почта: {{contact.mail}}
+        </span>
+      {% endif %}
+      <span hidden name="id">{{contact.id}}</span>
+      <span hidden name="date">{{contact.updated_at|date:"Y, m, d" }}</span>
+      {% if not meeting_create %}
+        <input onclick="event.stopPropagation()" name="corp-mail" placeholder="Корпоративная почта" {% if contact.corp_mail %}value="{{contact.corp_mail}}"{% endif %}>
+        <input onclick="event.stopPropagation()" name="corp-phone" placeholder="Рабочий телефон" {% if contact.corp_phone %}value="{{contact.corp_phone}}"{% endif %}>
+        <input onclick="event.stopPropagation()" name="position" placeholder="Должность" {% if contact.position %}value="{{contact.position}}"{% endif %}>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+
+
+{% endif %}

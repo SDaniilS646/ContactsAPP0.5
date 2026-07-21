@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="main-details">
+  <div class="menu-btns">
+    {% comment %} <button onclick="openModal('edit_material_modal_frame')">edit</button> {% endcomment %}
+       {% csrf_token %}
+    <button onclick="post_delItem('meetings', {{meeting.id}})">del</button>
+  </div>
+  <div class="group-header">
+    <h1>{{meeting.subject}}</h1>
+  </div>
+  <hr>
+  <div class="info">
+    <span>Дата: {{meeting.meeting_date |date:"d.m.Y"}}</span>
+    <span class="comment">{{meeting.comment}}
+  </div>
+  <hr>
+  <div class="group-header">
+      <h2>Участники встречи</h2>
+  </div>
+  <div id="meeting-participants">
+    {% if contacts %}
+      <div id="contact">
+        <div class="group-header">
+          <h3>Гости</h3>
+        </div>
+        {% for contact in contacts %}
+          <div class="card">
+            <div class="card-header">
+              <button class="del-conn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+              <span class="title">
+                <a href="/contacts/{{contact.id}}/">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+              </span> 
+            </div>
+            <span>{{contact.phone}}</span>
+            <span>{{contact.mail}}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div id="employee">
+      <div class="group-header">
+        <h3>Сотрудники</h3>
+      </div>
+      {% for employee in employees %}
+        <div class="card">
+          <div class="card-header">
+            <button class="del-conn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+            <span class="title">
+              <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
+            </span>
+          </div>
+          <span>{{employee.phone}}</span>
+          <span>{{employee.mail}}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

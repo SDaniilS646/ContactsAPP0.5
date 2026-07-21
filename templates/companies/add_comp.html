@@ -1,108 +1,50 @@
 {% extends 'base.html' %} {% block content %}
-{% include 'companies/modal_frames.html' %}
+{% include 'components/modal_create_contact.html' %}
+{% include 'components/modal_create_material.html' %}
+{% include 'components/modal_choose_contact.html' %}
+{% include 'components/modal_choose_material.html' %}
 
+<div id="company-creation">
+  <h1>Новая компания</h1>
+  {% csrf_token %}
+  <div class="form-item">
+    <label for="company_name" name="company_name_label">Название компании</label>
+    <input type="text" name="company_name">
+  </div>
+  <div class="form-item">
+    <label for="inn">ИНН</label>
+    <input type="text" name="inn">
+  </div>
+  <div class="form-item">
+    <label for="site">Сайт</label>
+    <input type="text" name="site" placeholder="capitalgroup.ru">
+  </div>
+  <div class="form-item">
+    <label for="rating">Рейтинг</label>
+    <input type="text" name="rating" placeholder="0-5">
+  </div>
+  <div class="form-item">
+    <label for="mail">Основная почта</label>
+    <input type="email" name="mail" placeholder="info@mail.ru">
+  </div>
+  <div class="form-item">
+    <label for="phone">Основной номер</label>
+    <input type="text" name="phone" placeholder="81234567890">
+  </div>
+  <div class="form-item">
+    <label for="comment">Примечание</label>
+    <textarea type="text" name="comment"></textarea>
+  </div>
+  <div>
+    <input id="contacts-list-input-box" name="contacts-list-input-box">
+    <input id="materials-list-input-box" name="materials-list-input-box">
+  </div>
 
+  <div class="open-modal-buttons">
+    <button onclick=openModal('choose_contact_modal_frame')>Добавить контакты</button>
+    <button onclick=openModal('choose_material_modal_frame')>Добавить материалы</button>
+  </div>
 
-
-<div class="forms text">
-  <h1>НОВАЯ КОМПАНИЯ</h1>
-  <form method="post">
-    {% csrf_token %}
-
-    <p>Название
-      {% if error_values.name %}
-        <span class="error">
-          • {{error_values.name}}
-        </span>
-      {% endif %}
-
-      <br \>
-      <input list="companies" type="text" name="name" placeholder="Компания / Company"
-      {% if input_values.name %}value="{{input_values.name}}"{% endif %}
-      >
-      <datalist id="companies">
-        {% for company in companies %}
-          <option value="{{company.name}}">
-        {% endfor %}
-    </p>
-    
-
-    <p>ИНН
-      {% if error_values.inn %}
-        <span class="error">
-          • {{error_values.inn}}
-        </span> 
-      {% endif %}
-
-      <br \>
-      <input type="text" name="inn" placeholder="1234567654"
-      {% if input_values.inn %}value="{{input_values.inn}}"{% endif %}
-      >
-    </p>
-
-    <p>Телефон
-      <br \>
-      <input type="text" name="phone" placeholder="+7(123)456-78-90"
-      {% if input_values.phone %}value="{{input_values.phone}}"{% endif %}
-      >
-    </p>
-
-    <p>Почта
-      <br \>
-      <input type="text" name="mail" placeholder="mail.name@mail.ru"
-      {% if input_values.mail %}value="{{input_values.mail}}"{% endif %}
-      >
-    </p>
-
-    <p>Сайт
-      <br \>
-      <input type="text" name="website" placeholder="sitename.ru"
-      {% if input_values.website %}value="{{input_values.website}}"{% endif %}
-      >
-    </p>
-
-    <p>Регион
-      <br \>
-      <input type="text" name="region" placeholder="Москва"
-      {% if input_values.region %}value="{{input_values.region}}"{% endif %}
-      >
-    </p>
-
-    <p>Рейтинг
-      {% if error_values.rating %}
-        <span class="error">
-          • {{error_values.rating}}
-        </span> 
-      {% endif %}
-
-
-      <br \>
-      <input type="text" name="rating" placeholder="0-5"
-      {% if input_values.rating %}value="{{input_values.rating}}"{% endif %}
-      >
-    </p>
-
-    <p>Примечания
-      <br \>
-      <textarea class="comment_input" type="text" name="comment" 
-      {% if input_values.comment %}value="{{input_values.comment}}"{% endif %}
-      ></textarea>
-    </p>
-    <br \>
-    <input  id="contacts_json" type="hidden" name="contacts_json">
-    <input id="materials_json" type="hidden" name="materials_json">
-
-    <div class="btns">
-
-      <div class="open-modal-btns">
-        <button type="button" onclick="openModal('contact-modal')">Добавить контакт</button>
-        <button type="button" onclick="openModal('material-modal')">Выбрать материал</button>
-      </div>
-      
-      <button class="save-btn" onclick="prepareSave()" type="submit" name="action" value="save_company">Сохранить</button>
-    </div>
-  </form>
-
+  <button onclick="post_create_company()">Сохранить</button>
 </div>
-
 {% endblock %}

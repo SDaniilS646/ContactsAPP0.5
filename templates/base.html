@@ -3,19 +3,25 @@
 <!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main_style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/white_color_style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/modal_frame_style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/tree_style.css' %}" />
+
+
     <script src="{% static 'js/js_help.js' %}"></script>
+    <script src="{% static 'js/js_poster.js' %}"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   </head>
   <body>
-      {% if show_menu %} {% include 'components/menu.html' %} {% endif %}
-    <div class="card-btns">
-      {% if show_del %} {% include 'components/del_btn.html' %} {% endif %}
-      {% if show_cross %} {% include 'components/cross_btn.html' %} {% endif %}
+    <div class="menu">
+      {% include 'components/menu.html' %}
+      <hr>
     </div>
-
-    <div class="content">{% block content %} {% endblock %}</div>
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
   </body>
 </html>

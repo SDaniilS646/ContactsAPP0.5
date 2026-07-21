@@ -1,0 +1,333 @@
+body {
+  display: flex;
+  flex-direction: column;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: normal;
+  padding: 10px;
+
+  margin: 0;
+    /* height: 100vh; Занимает всю высоту экрана */
+    overflow: hidden;
+}
+button {
+  background: none;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 1px;
+  transition: 0.3s;
+}
+button:hover {
+  cursor: pointer;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: sticky;
+}
+
+.menu .tabs-btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.menu .tabs-btns button {
+  border: none;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  background: none;
+  height: 40px;
+  transition: 0.3s;
+}
+
+.menu .tabs-btns button {
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.content .outer {
+  display: block;
+  width: 80%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  
+  height: 90vh;
+
+}
+
+.content .page-menu {
+  display: flex;
+  flex-direction: row;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+  height: 10%;
+  width: 100%;
+  justify-content: space-evenly;
+  
+}
+
+.content .page-menu button {
+  height: 30px;
+}
+.content .page-menu a {
+  height: 30px;
+}
+.content .page-menu input {
+  height: 20px;
+}
+
+.content .page-menu select {
+  height: 30px;
+}
+
+.cards-list {
+  padding: 10px;
+
+  display: flex;
+  flex-direction: row;
+
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  gap: 10px;
+  
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+
+  width: 200px;
+  aspect-ratio: 16 / 9;
+
+  flex: 0 0 auto;
+
+  font-size: 12px;
+
+  padding: 5px;  
+
+  z-index: 0;
+  transition: 0.5s;
+}
+
+.card .title {
+  font-size: 16px;
+
+  text-overflow: auto; 
+  text-wrap: auto;
+  text-decoration: underline;
+  font-weight: bold;
+  margin-bottom: 5px;
+
+  cursor: pointer;
+}
+
+.card .title.contact {
+  text-overflow: auto; 
+  text-wrap: auto;
+}
+
+.card .comment {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.card:hover {
+  transform: scale(1.1);
+  z-index:2;
+  overflow: visible;
+}
+
+.card:hover .title {
+  overflow: visible;
+}
+
+.tree.page_style span {
+  font-size: 16px;
+
+  text-overflow: auto; 
+  text-wrap: auto;
+  text-decoration: underline;
+  font-weight: bold;
+  margin-bottom: 5px;
+
+  cursor: pointer;
+}
+
+
+hr {
+  width: 50%;
+}
+
+.content hr {
+  width: 30%;
+}
+
+.content .card hr {
+  width: 70%;
+}
+
+#company-creation {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#company-creation .open-modal-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+#company-creation .open-modal-buttons button {
+  flex: 1 1 0px;
+
+  margin: 5px;
+}
+
+.group-header {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.main-details {
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  flex: 1 1 auto;
+
+  height: 90vh;
+
+  width: 80%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.main-details .info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.main-details .info .comment {
+  width: 60%;
+  text-wrap: wrap;
+}
+
+.main-details .group-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;  
+}
+
+.main-details .menu-btns {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+
+  justify-content: right;
+}
+
+
+.main-details .group-header h1 {
+  font-size: 36px;
+  margin-top: -5px;
+  margin-bottom: -5px;
+}
+
+.main-details .group-header h2 {
+  font-size: 24px;
+  margin-top: -5px;
+  margin-bottom: -5px;
+}
+
+.main-details .info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+}
+
+
+#meeting-participants {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 25px;
+  height: calc(100vh - 50%);
+  width: 100%;
+  overflow-y: auto;
+}
+
+#meeting-participants #contact, #employee {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-details .del-conn {
+  background: none;
+  border: none
+}
+
+.main-details .card .card-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.main-details .card .card-header .del-conn {
+  align-self: flex-end;
+}
+
+.new-companies-list {
+  display: flex;
+  flex-direction: column;
+
+  height: 600px;
+  overflow: auto;
+}
+
+.form_container {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+
+
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+#commands-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 90%;
+  padding: 5px;
+}
+
+#commands-block textarea {
+  height: 80%;
+}
+
+#commands-block div input {
+  width: 90%;
+}
+

@@ -1,83 +1,112 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import Contacts
-from apps.companies.models import Companies
-from apps.connection_models import CompaniesContacts
+from services.contact_service import ContactService
+from services.connection_service import ConnectionService
+
+from django.contrib.auth.decorators import login_required
+
+from django.utils import timezone
 
 import json
-import re
 
-def contacts_list(request):
-  contacts = Contacts.objects.all()
+@login_required
+def contacts_page(request):
+  contacts = ContactService.get_contacts()
+  contacts = contacts.order_by('last_name')
+  loaded_contacts = []
 
   for cont in contacts:
-      
-    temp_phone = cont.phone
-    if not temp_phone:
-      continue
-    
-
-    if temp_phone.startswith('+7'):
-      temp_phone = temp_phone.replace('+7', '8')
-    temp_phone = temp_phone.replace(' ', '')
-
-    temp_phone = re.sub(r'[()-]', '', temp_phone)
-
-    cont.phone = temp_phone
+    loaded_contacts.append({
+      'id': cont.id,
+      'first_name': cont.first_name,
+      'last_name': cont.last_name,
+      'patronymic': cont.patronymic,
+      'phone': cont.phone,
+      'mail': cont.mail,
+      'comment':cont.comment,
+      'is_old': True if (timezone.now().date() - cont.updated_at.date()).days > 365 else False,
+      'updated_at': cont.updated_at
+    })
 
   return render(
     request,
-    'contacts/list.html',
+    'contacts/contacts_page.html',
     {
-      'contacts':contacts,
-      'active_page':'contacts',
-      'show_menu': True,
+      'contacts':loaded_contacts
       }
     )
 
-def contact_details(request, id):
-  
-  contact = Contacts.objects.get(id=id)
-  companies = contact.companies.all()
-  companies.order_by('id')
-  comp_cont = CompaniesContacts.objects.filter(contact=id)
-  comp_cont.order_by('company')
+def contacts_list(request):
+  print('ГРУЗИМ СПИСОК')
 
-  comp_info = []
-
-  for idx, company in enumerate(companies):
-    print(company.name)
-    print(comp_cont[idx].role_in_company)
-    comp_info.append({
-      'name': company.name,
-      'role': comp_cont[idx].role_in_company,
-      'comp_id': company.id,
-      'cont_id': id
-    })
-  
+  contacts = ContactService.get_contacts().order_by('-added_at')
+  style = request.GET.get('style')
+  is_meeting = request.GET.get('is_meeting')
 
   return render(
-    request, 
-    'contacts/detail.html', 
+    request,
+    'lists/contacts_list.html',
     {
-      'contact': contact,
-      'companies': companies,
-      'roles': comp_cont,
-      'comp_info': comp_info,
-      'show_cross': True,
-      'cross_link': '/contacts/',
-      'show_del': True,
-      'del_base': 'cont',
-      'del_id': id
+      'contacts':contacts,
+      'style': style,
+      'meeting_create': is_meeting
     }
   )
 
-def delete_company(request):
-  data = json.loads(request.body)
-  print('deleting')
-  Contacts.objects.filter(id=data['id']).delete()
-  print(f'delted {data['id']}')
+def contact_create(request):
+  input_data = json.loads(request.body)
+
+  new_id = ContactService.set_contact(input_data)
+
   return JsonResponse({
     'success': True,
-    'redirect_url': '/contacts/'
+    'cont_id':new_id
+  })
+
+def contact_edit(request):
+  input_data = json.loads(request.body)
+
+  ContactService.edit_contact(input_data)
+
+  ContactService.item_update(input_data['id'])
+
+  return JsonResponse({
+    'success': True
+  })
+
+@login_required
+def contact_details_page(request, id):
+  contact = ContactService.get_contact(id)
+  comp_cont = ConnectionService.get_company_contact('contact', id)
+
+  companies = contact.companies.all()
+
+  comp_info = []
+
+  for company in companies:
+    temp_info = [item for item in comp_cont if item.company_id == company.id]
+    comp_info.append({
+      'company_id': company.id,
+      'company_name': company.name,
+      'position': temp_info[0].position,
+      'phone': temp_info[0].phone,
+      'mail':temp_info[0].mail
+    })
+
+  return render(
+    request,
+    'contacts/detail.html',
+    {
+      'contact':contact,
+      'comp_info':comp_info
+    }
+  )
+
+def delete(request):
+  input_data = json.loads(request.body)
+
+  ContactService.delete(input_data['id'])
+
+  return JsonResponse({
+    'success': True
   })

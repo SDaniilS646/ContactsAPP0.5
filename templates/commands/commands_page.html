@@ -1,0 +1,14 @@
+{% extends 'base.html' %} {% block content %}
+  <div class="outer">
+    {% csrf_token %}
+    <div id="commands-block">
+      
+      <textarea readonly></textarea>
+      Команда:
+      <div>
+        <input>
+        <button onclick="executeCMD()">Выполнить</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}

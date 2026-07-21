@@ -1,110 +1,65 @@
 {% extends 'base.html' %} {% block content %}
-{% include 'components/company_modal_editors.html' with company_id=company.id %}
+{% include 'components/modal_edit_company.html'%}
+{% include 'components/modal_create_contact.html' %}
+{% include 'components/modal_create_material.html' %}
+{% include 'components/modal_choose_contact.html' with is_edit=True %}
+{% include 'components/modal_choose_material.html' with is_edit=True %}
 
-
-
-<div class="details">
-  <div class="text">
-    <div class="section-head">
-      <h1>{{company.name}}</h1>
-      <div class="edits">
-        {% include 'components/edit_btn.html' with list='companies' id=company.id %}
-      </div>
-    </div>
-    <h4>{{rating}}</h4>
-
-    <hr />
+<div class="main-details">
+  <div class="menu-btns">
+    <button onclick="openModal('edit_company_modal_frame')">edit</button>
+    <button onclick="post_delItem('companies', {{company.id}})">del</button>
   </div>
-
-  <div class="text">
-
-    <div class="info">
-      <span>ИНН: {{company.inn}}</span><br />
-
-      <span>Сайт: {% if company.website %}<a href="https://{{company.website}}"  target="_blank">{{company.website}}</a>{% endif %}</span><br />
-
-      <span>Регион: {{company.region}}</span><br />
-      {% comment %} {% endif %} {% if company.inn or company.website or company.region %}
-      {% endif %} {% endcomment %}
-    </div>
-
-    <hr />
-    
-    <div class="main-contacts">
-      <b>Общие контакты:</b><br />
-      <span>Почта: {% if company.email %}
-        {{company.email}}
-        {% else %} Нет данных {% endif %}</span><br />
-      <span>Телефон: {% if company.phone %}{{company.phone}} {% else %} Нет данных {% endif %}</span>
-    </div>
-    <div class="comments">
-      {% if company.notes %}
-      <br />
-      <b>Примечания:</b><br />
-      <span>{{company.notes}}</span>
-      {% endif %}
-    </div>
+  <div class="group-header">
+    <h1>{{company.name}}</h1>
+    <span>{% if company.rating %}{{rating}}{% else %}—{% endif %}</span>
   </div>
+  <hr>
+  <div class="info">
 
-  <hr />
-  <div class="section-head">
-    <h3>Контакты</h3>
-    <div>
-      {% include 'components/edit_btn.html' with list='contacts' id=company.id %}
-    </div>
+    <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>
+    <span>Сайт: {% if company.site %}<a href="https://www.{{company.site}}">{{company.site}}</a>{% else %}—{% endif %}</span>
+    <span>Почта: {% if company.mail %}{{company.mail}}{% else %}—{% endif %}</span>
+    <span>Тел.: {% if company.phone %}{{company.phone}}{% else %}—{% endif %}</span>
+    <span>Примечание: {% if company.comment %}{{company.comment}}{% else %}—{% endif %}</span>
   </div>
-    
-  <div class="cards">
-    
-    {% if contacts %}
-      {% csrf_token %}
-      {% for contact in contacts %}
-        <div class="card">
-          <div class="card-head">
-            <p class="title">
-              <a href="/contacts/{{contact.id}}/"> {{contact.first_name}} {{contact.last_name}}</a>
-            </p>
-            <div>
-              {% include 'components/del_connection_btn.html' with connection_table='comp_cont' id_1=contact.id id_2=company.id %}
-            </div>
-          </div>
-          <hr />
-          <p class="text">
-            {{contact.pos}}<br />
-            {{contact.phone}}<br />
-            <a href="mailto:{{contact.email}}" class="email">{{contact.email}}</a>
-          </p>
-        </div>
-      {% endfor %}
-    {% else %}
-        <p class="title">Контактов не найдено</p>
-    {% endif %}
+  <hr>
+  <div class="menu-btns">
+    <button onclick=openModal('choose_material_modal_frame')>edit</button>
   </div>
-
-  <hr />
-
-  <div class="text">
-    <div class="section-head">
-      <h3>Материалы</h3>
+  <div class="group-header">
+    <h2>Материалы</h2>
+  </div>
+  <div class="comp-materials-list">
+    {% for info in materials %}
       <div>
-        {% include 'components/edit_btn.html' with list='materials' id=company.id %}
+        <button class="del-conn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}})">X</button>
+        <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
       </div>
-    </div>
-    <ul>
-      {% for material in materials %}
-
-      <li><a href="/materials/{{material.id}}/">{{material.name}}</a></li>
-      {% if material.keywords %}
-      <span>(</span>
-        {% for keyword in material.keywords %}
-          {% if forloop.counter > 1 %}, {% endif %}
-          {{keyword}}
-        {% endfor %}
-        <span>)</span>
-      {% endif%}
-
-      {% endfor %}
-    </ul>
+    {% endfor %}
   </div>
+  <hr>
+  <div class="menu-btns">
+    <button onclick="openModal('choose_contact_modal_frame')">edit</button>
+  </div>
+  <div class="group-header">
+    <h2>Контакты</h2>
+  </div>
+  <hr>
+  <div class="cards-list">
+    {% for info in cont_info %}
+      <div class="card">
+        <div class="card-header">
+          <button class="del-conn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}})">X</button>
+          <span class="title" title="{{info.cont_name}}">
+            <a href="/contacts/{{info.contact_id}}/">{{info.cont_name}}</a>
+        </div>
+        </span>
+        <span>{% if info.position %}{{info.position}}{% else %}—{% endif %}</span>
+        <span>раб.тел.: {% if info.phone %}{{info.phone}}{% else %}—{% endif %}</span>
+        <span>Почта: {% if info.mail %}{{info.mail}}{% else %}—{% endif %}</span>
+      </div>
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}

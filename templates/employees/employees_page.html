@@ -1,0 +1,14 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'components/modal_create_employee.html' %}
+
+  <div class="outer">
+    <div class="page-menu">
+      <input id="employees-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <button  onclick="openModal('create_employee_modal_frame')">Добавить сотрудника</button>
+    </div>
+    <div id="employees-list" class="cards-list cards">
+      {% include 'lists/employees_list.html' %}
+    </div>
+  </div>
+
+{% endblock %}

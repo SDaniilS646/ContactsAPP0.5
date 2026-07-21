@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block content %}
+
+
+<div id="company-parsing" class="outer">
+  <h1>Найти Компании</h1>
+  
+  {% csrf_token %}
+  <div class="form-item">
+    <label for="request_txt">Что искать?</label>
+    <input type="text" name="request_txt">
+  </div>
+  <button onclick="start_parsing()">Поиск</button>
+  <button onclick="post_create_parse_company()">Сохранить</button>
+
+
+  <div name="companies" class="new-companies-list">
+
+  </div>
+
+
+  
+</div>
+
+{% endblock %}

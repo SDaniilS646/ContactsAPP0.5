@@ -1,0 +1,41 @@
+<div id="create_contact_modal_frame" class="modal" style="z-index: 2">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='create_contact_modal_frame' %}
+      <h3>Создать контакт</h3>
+    </div>
+
+    <div class="main-frame">
+      <div id="contact-creation">
+        {% csrf_token %}
+        <div class="form-item">
+          <label for="last_name" name="last_name_label">Фамилия</label>
+          <input type="text" name="last_name">
+        </div>
+        <div class="form-item">
+          <label for="first_name" name="first_name_label">Имя</label>
+          <input type="text" name="first_name">
+        </div>
+        <div class="form-item">
+          <label for="patronymic">Отчество</label>
+          <input type="text" name="patronymic">
+        </div>
+        <div class="form-item">
+          <label for="phone">Моб.телефон</label>
+          <input type="text" name="phone" placeholder="89110876767">
+        </div>
+        <div class="form-item">
+          <label for="mail">Личная почта</label>
+          <input type="email" name="mail" placeholder="info@capitalgroup.ru">
+        </div>
+        <div class="form-item">
+          <label for="comment">Примечание</label>
+          <textarea type="text" name="comment"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button onclick="post_contact_create('{{meeting_create}}'); selectedContacts = []">Сохранить контакт</button>
+    </div>
+  </div>
+</div>

@@ -18,21 +18,20 @@ from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
-from core.views import home
-from apps.companies.views import companies_list
 
-from apps.connection_views import delete_connection
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('', home),
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page="login"), name='logout'),
 
     path('', lambda request: redirect('/companies/')),
 
     path('companies/', include('apps.companies.urls'), name='companies'),
     path('contacts/', include('apps.contacts.urls')),
     path('materials/', include('apps.materials.urls')),
-    path('connection_delete/', delete_connection)
+    path('meetings/', include('apps.meetings.urls')),
+    path('employees/', include('apps.employees.urls')),
+    path('commands/', include('apps.commands.urls'))
 ]

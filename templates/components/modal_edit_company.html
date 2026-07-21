@@ -1,0 +1,50 @@
+<div id="edit_company_modal_frame" class="modal create" style="z-index:2;">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='edit_company_modal_frame' %}
+      <h3>Редактировать компанию</h3>
+    </div>
+
+    <div class="main-frame">
+      <hr>
+      <div id="company-edit">
+        {% csrf_token %}
+        <input type="hidden" name="id" value={{company.id}}>
+        <div class="form-item">
+          <label for="company_name" name="company_name_label">Название компании</label>
+          <input type="text" name="company_name" {% if company.name %}value="{{company.name}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="inn">ИНН</label>
+          <input type="text" name="inn" {% if company.inn %}value="{{company.inn}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="site">Сайт</label>
+          <input type="text" name="site" placeholder="capitalgroup.ru" {% if company.site %}value="{{company.site}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="rating">Рейтинг</label>
+          <input type="text" name="rating" placeholder="0-5" {% if company.rating %}value="{{company.rating}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="mail">Основная почта</label>
+          <input type="email" name="mail" placeholder="info@mail.ru" {% if company.mail %}value="{{company.mail}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="phone">Основной номер</label>
+          <input type="text" name="phone" placeholder="81234567890" {% if company.phone %}value="{{company.phone}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="comment">Примечание</label>
+          <textarea type="text" name="comment" {% if company.comment %}value="{{company.comment}}"{% endif %}></textarea>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="footer">
+      <button onclick="post_company_edit()">Сохранить изменения</button>
+    </div>
+
+  </div>
+</div>

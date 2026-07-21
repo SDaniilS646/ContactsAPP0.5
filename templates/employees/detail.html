@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'components/modal_edit_employee.html'%}
+
+<div class="main-details">
+  <div class="menu-btns">
+    <button onclick="openModal('edit_employee_modal_frame')">edit</button>
+    <button onclick="post_delItem('employees', {{employee.id}})">del</button>
+  </div>
+  <div class="group-header">
+    <h1>{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</h1>
+  </div>
+  <hr>
+  <div class="info">
+    <span>Тел.: {% if employee.phone %}{{employee.phone}}{% else %}—{% endif %}</span>
+    <span>Почта: {% if employee.mail %}{{employee.mail}}{% else %}—{% endif %}</span>
+  </div>
+  <hr>
+  <div class="group-header">
+    <h2>Встречи</h2>
+  </div>
+  <hr>
+  <div class="cards-list">
+    {% for info in meet_info %}
+      <div class="card">
+        {% comment %} <span class="title" title="{{info.company_name}}">
+          <a href="/companies/{{info.company_id}}/">{{info.company_name}}</a>
+        </span>
+        <span>{% if info.position %}{{info.position}}{% else %}—{% endif %}</span>
+        <span>раб.тел.: {% if info.phone %}{{info.phone}}{% else %}—{% endif %}</span>
+        <span>Почта: {% if info.mail %}{{info.mail}}{% else %}—{% endif %}</span> {% endcomment %}
+      </div>
+    {% endfor %}
+  <div>
+</div>
+
+
+{% endblock %}

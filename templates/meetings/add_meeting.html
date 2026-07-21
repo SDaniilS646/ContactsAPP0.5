@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'components/modal_create_contact.html' %}
+{% include 'components/modal_create_employee.html' %}
+
+{% include 'components/modal_choose_contact.html' %}
+{% include 'components/modal_choose_employees.html' %}
+
+<div id="company-creation">
+  <h1>Новая встреча</h1>
+  {% csrf_token %}
+  <div class="form-item">
+    <label for="subject" name="subject-label">Тема встречи</label>
+    <input type="text" name="subject">
+  </div>
+  <div class="form-item">
+    <label for="comment">Примечание</label>
+    <textarea type="text" name="comment"></textarea>
+  </div>
+  <div class="form-item">
+    <label for="record-link">Ссылка на запись встречи</label>
+    <input type="text" name="record-link" placeholder="...">
+  </div>
+  <div class="form-item">
+    <label for="meeting-date">Дата встречи</label>
+    <input type="date" name="meeting-date">
+  </div>
+  
+  <div class="open-modal-buttons">
+    <button onclick=openModal('choose_contact_modal_frame')>Добавить контакты</button>
+    <button onclick=openModal('choose_employee_modal_frame')>Добавить сотрудников</button>
+  </div>
+
+  <button onclick="post_create_meeting()">Сохранить</button>
+</div>
+{% endblock %}

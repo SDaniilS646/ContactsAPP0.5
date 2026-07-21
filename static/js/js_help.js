@@ -1,525 +1,257 @@
-function openModal(modal_name) {
-  document
-  .getElementById(modal_name)
-  .style.display = 'flex'
+let selectedMaterials = []
+let selectedContacts = []
+let selectedEmployees = []
 
+function openModal(modal_frame_id) {
+  document.getElementById(modal_frame_id).style.display = 'flex'
 }
 
-function closeModal(modal_name, is_inputs=false) {
-  if (is_inputs == true) {
-    document
-    .querySelectorAll('#'+modal_name+' input').forEach(input => {
-    input.value = '';
-    });
-  }
-  
-
-  document
-  .getElementById(modal_name)
-  .style.display = 'none'
+function closeModal(modal_frame_id) {
+  document.getElementById(modal_frame_id).style.display = 'none'
 }
 
+function selectMaterials(event, element, container_id=null, input_box_id=null) {
 
-let contacts = []
-let materials = []
-let selected_contacts = []
-// let selected_materials = []
-let selectedItem_on_create_mat = null
+  const container = document.getElementById(container_id)
 
-function saveContact_fromEdit(modal_name) {
-  if (document.getElementById('contact_first_name').value == '') {
-    document.getElementById('name-sign').textContent += ' • УКАЖИТЕ ИМЯ!!!'
-    return
-  }
-
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  fetch('/companies/add_cont/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      first_name: document.getElementById('contact_first_name').value,
-
-      last_name: document.getElementById('contact_last_name').value == '' ? null : document.getElementById('contact_last_name').value,
-
-      middle_name: document.getElementById('contact_middle_name').value == '' ? null : document.getElementById('contact_middle_name').value,
-      
-      position: document.getElementById('contact_position').value == '' ? null : document.getElementById('contact_position').value,
-
-      phone: document.getElementById('contact_phone').value == '' ? null : document.getElementById('contact_phone').value,
-
-      mail: document.getElementById('contact_mail').value == '' ? null : document.getElementById('contact_mail').value,
-
-      comp_id: document.getElementById('comp_id').value
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-        window.location.reload()
-
-        // closeModal('contact-modal')
-      }
-    });
-
-}
-
-function editMaterialList() {
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  fetch('/companies/add_mat_comp_connection/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      materials: materials,
-      comp_id: document.getElementById('comp_id').value
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-        window.location.reload()
-      }
-    });
-
-  closeModal('material-modal')
-  return
-}
-
-function saveContact(modal_name) {
-
-  if (document.getElementById('contact_first_name').value == '') {
-    document.getElementById('name-sign').textContent += ' • УКАЖИТЕ ИМЯ!!!'
-    return
-  }
-
-  contacts.push(
-    {
-      first_name: document.getElementById('contact_first_name').value,
-
-      last_name: document.getElementById('contact_last_name').value == '' ? null : document.getElementById('contact_last_name').value,
-
-      middle_name: document.getElementById('contact_middle_name').value == '' ? null : document.getElementById('contact_middle_name').value,
-      
-      position: document.getElementById('contact_position').value == '' ? null : document.getElementById('contact_position').value,
-
-      phone: document.getElementById('contact_phone').value == '' ? null : document.getElementById('contact_phone').value,
-
-      mail: document.getElementById('contact_mail').value == '' ? null : document.getElementById('contact_mail').value
-    }
-  )
-  closeModal(modal_name, true)
-}
-
-function prepareSave() {
-  document.getElementById('contacts_json').value = JSON.stringify(contacts)
-}
-
-function saveMaterial(type, source=null, id=null, children=null, prev_id=null) {
-  console.log('------------------SAVING-------------------------')
-  
-  if (type == 'add_comp') {
-    document.getElementById('materials_json').value = materials
-    closeModal('material-modal')
-    return
-  }
-
-  if (check_new_material() == false) {
-    return
-  }
-
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  parent_id = document.getElementById('parent_id').value
-  
-  if (type == 'edit_mat') {
-    children_list = []
-    if (children != '') {
-      children.forEach(val => children_list.push(String(val['id'])))
-    }
-    
-
-    if (id == parent_id || children_list.includes(parent_id)) {
-      parent_id = prev_id
-    } 
-    
-    if (!selectedItem_on_create_mat && parent_id == '') {
-      parent_id = prev_id
-    }
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected')
   } else {
-    
+    element.classList.add('selected')
   }
+}
 
-  fetch('/materials/add_mat/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: document.getElementById('material_name').value,
-      parent_id: parent_id,
-      keywords: document.getElementById('keywords').value,
-      is_edit: type == 'edit_mat' ? true : false,
-      id: id
-    })
+function saveMaterialsList() {
+
+  const container = document.getElementById('list_material_tree')
+
+  let elements = container.querySelectorAll('span')
+  selectedMaterials = []
+
+  elements.forEach(val => {
+    if (val.classList.contains('selected')) {
+      let mat_id = val.getAttribute('id')
+      selectedMaterials.push(mat_id)
+    }
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.is_edit) {
-      window.location.reload()
-    } else {
-      refreshAllTrees()
-      if (type == 'new_mat' && source=='from_list') {
-        window.location.reload()
-      }
-    }
-    
-    closeModal('add-material-modal')
-  });
 
+  closeModal('choose_material_modal_frame')
 }
 
-async function refreshAllTrees() {
+function selectParent(event, element, container_id='create_material_modal_frame') {
 
-  data1 = await refreshMaterialTree('new_mat')
+  const container = document.getElementById(container_id)
+  checkOtherSelected(container)
 
-  data2 = await refreshMaterialTree('new_comp')
-  console.log({data1, data2})
+  const parent_id_input_element = container.querySelector('[name="parent_id"]')
 
-}
+  let id = element.getAttribute('id')
+  query_id = `[id="${id}"]`
+  prev_parent_id = parent_id_input_element.value == '' ? null : `[id="${parent_id_input_element.value}"]` 
 
-async function refreshMaterialTree(modal_task='') {
-  clear_chosen_mats()
-
-  if (modal_task != '') {
-    fetch_link = '/materials/modal_frames/'+'?modal_task=' +modal_task
-
-    if (modal_task == 'new_mat') {
-      tree_id = 'materials-tree'
-    } else if (modal_task == 'new_comp') {
-      tree_id = 'tree-head'
-    }
-    
+  if (parent_id_input_element.value == id) {
+    container.querySelector(query_id).classList.remove('selected')
+    parent_id_input_element.value = ''
   } else {
-    fetch_link = '/materials/modal_frames/'
-    tree_id = 'tree-head'
+    if (prev_parent_id) {
+      container.querySelector(prev_parent_id).classList.remove('selected')
+    }
+    
+    container.querySelector(query_id).classList.add('selected')
+    parent_id_input_element.value = id
   }
+}
 
-  const data = await fetch(fetch_link)
+function checkOtherSelected(container) {
+  let elements = container.querySelectorAll('span')
+  
+  elements.forEach(val => val.classList.remove('selected'))
+
+}
+
+function updateList(fetch_link, container, style=null, is_meeting=null) {
+  if (style) {
+    fetch_link = fetch_link + `/?style=${style}&`+ `is_meeting=${is_meeting}`
+  }
+  fetch(fetch_link)
   .then(response => response.text())
   .then(html => {
-    document.getElementById(
-      tree_id
-    ).innerHTML = html
+    container.innerHTML = html;
   })
-  return modal_task+' success'
 }
 
-function check_new_material() {
-  mat_name = document.getElementById('material_name').value
-  if (mat_name == '') {
-    document.getElementById('mat-name-error').textContent += ' УКАЖИТЕ НАИМЕНОВАНИЕ'
-    return false
+function selectContacts(event, element, container_id=null, input_box_id=null) {
+  const container = document.getElementById(container_id)
+
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected')
   } else {
-    document.getElementById('mat-name-error').textContent = 'Наименование'
-    return true
+    element.classList.add('selected')
   }
 }
 
-function select_parent(event, element, name = null, prev_id = null) {
-  
-  event.stopPropagation();
-  const container = document.getElementById(
-    'tree2'
-  )
+function selectEmployees(event, element, container_id=null, input_box_id=null) {
+  const container = document.getElementById(container_id)
 
-  if (prev_id) {
-    document.getElementById('_'+prev_id).classList.remove('selected')
-    document.getElementById('parent_id').value = prev_id
-
-  }
-
-  if (selectedItem_on_create_mat) {
-    selectedItem_on_create_mat.classList.remove('selected');
-  }
-
-  element.classList.add('selected')
-  selectedItem_on_create_mat = element 
-
-  if (name === null) {
-    document.getElementById('parent_id').value = ''
-    selectedItem_on_create_mat = document.getElementById('root-category')
-
-    selectedItem_on_create_mat.classList.add('selected')
-    return
-  }
-  else {
-    chosen_id = name.id
-    document.getElementById('root-category').classList.remove('selected')
-    document.getElementById('parent_id').value = chosen_id
-    return
-  }
-}
-
-
-
-
-function select_materials(event, element, name = null) {
-  console.log('tapping')
-  event.stopPropagation();
-  mat_id = name.id
-  mat_name = name.name
-  
-  console.log(mat_id + " - " + mat_name)
-
-  const container = document.getElementById(
-    'material-tree-from-company'
-  )
-  check_parents(container, element)
-  clear_children(container, name)
-  
-  if (materials.includes(mat_id)) {
-
-
-    materials.splice(materials.indexOf(mat_id), 1)
-    
-    container.querySelector('#_'+mat_id).classList.remove('selected')
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected')
   } else {
-    materials.push(mat_id)
-    container.querySelector('#_'+mat_id).classList.add('selected')
-  }
-  console.log(materials)
-}
-
-
-function select_contacts(event, element, id=null) {
-
-  const container = document.getElementById(
-    'contact-list'
-  )
-  
-  let cont_classes = Array.from(container.querySelector('#_'+id).classList)
-  
-
-  if (cont_classes.includes('selected')) {
-    container.querySelector('#_'+id).classList.remove('selected')
-    if (selected_contacts.indexOf(id) >= 0) {
-
-      selected_contacts.splice(selected_contacts.indexOf(id), 1)
-    }
-    
-  } else {
-    container.querySelector('#_'+id).classList.add('selected')
-    selected_contacts.push(id)
+    element.classList.add('selected')
   }
 }
 
-function save_selected_contacts(comp_id) {
-  console.log('saving')
-  const contact_container = document.getElementById(
-        'contact-list'
-      )
-  contacts_poses = []
-  selected_contacts.forEach(val => {
+function saveContactsList() {
 
-    let item = contact_container.querySelector('#_'+val)
-    contacts_poses.push(
-      {
-        'id': val,
-        'pos': item.querySelector('input').value
-      }
-    )
-  })
-  
-  // СОЗДАТЬ НОВУЮ СВЯЗЬ И ЗАКРЫТЬ МОДАЛКУ
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const container = document.getElementById('contacts-list')
 
-  fetch('/companies/upd_company_contacts/', {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': csrftoken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        company_id: comp_id,
-        contacts: contacts_poses
+  let elements = container.querySelectorAll('div')
+
+  selectedContacts = []
+
+  elements.forEach(val => {
+    if (val.classList.contains('selected')) {
+      let cont_id = val.getAttribute('id')
+      let inp_group = container.querySelector(`[id="${val['id']}"]`)
+      let corp_mail = inp_group.querySelector('[name=corp-mail]') ? inp_group.querySelector('[name=corp-mail]').value : null
+      let corp_phone = inp_group.querySelector('[name=corp-phone]') ? inp_group.querySelector('[name=corp-phone]').value : null
+      let position = inp_group.querySelector('[name=position]') ? inp_group.querySelector('[name=position]').value : null
+
+      selectedContacts.push({
+        'id': cont_id,
+        'corp-mail':corp_mail == '' ? null : corp_mail,
+        'corp-phone':corp_phone == '' ? null : corp_phone,
+        'position':position == '' ? null : position
       })
     }
-  )
+  }) 
+  closeModal('choose_contact_modal_frame')
+}
+
+function saveEmployeesList() {
+
+  const container = document.getElementById('employees-list')
+
+  let elements = container.querySelectorAll('div')
+
+  selectedEmployees = []
+
+  elements.forEach(val => {
+    if (val.classList.contains('selected')) {
+      let emp_id = val.getAttribute('id')
+      let inp_group = container.querySelector(`[id="${val['id']}"]`)
+
+      selectedEmployees.push({
+        'id': emp_id
+      })
+    }
+  }) 
+  closeModal('choose_employee_modal_frame')
+}
+
+function pgReload() {
+  window.location.reload();
+}
+
+function sortList(event, query_el='div.card') {
+
+  new_val = event.target.value
+
+  elems = document.querySelectorAll(query_el)
+  console.log(elems)
+  ordered_array = []
+
+  switch (new_val) {
+    case 'A-z':
+      elems.forEach(val => {
+        ordered_array.push(val.querySelector('[name="name"]').textContent)
+      })
+      console.log(ordered_array)
+      ordered_array.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      console.log(ordered_array)
+
+      elems.forEach(val => {
+        ind = ordered_array.indexOf(val.querySelector('[name="name"]').textContent)
+        val.style.setProperty('order', ind.toString())
+      })
+      break;
+    case 'Z-a':
+      elems.forEach(val => {
+        ordered_array.push(val.querySelector('[name="name"]').textContent)
+      })
+
+      ordered_array.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      ordered_array.reverse()
+
+      elems.forEach(val => {
+        ind = ordered_array.indexOf(val.querySelector('[name="name"]').textContent)
+        val.style.setProperty('order', ind.toString())
+      })
+      break;
+    case 'date':
+      elems.forEach(val => {
+        ordered_array.push(val.querySelector('[name="date"]').textContent)
+      })
+      ordered_array.sort((a, b) => new Date(a) - new Date(b))
+      ordered_array.reverse()
+      elems.forEach(val => {
+        ind = ordered_array.indexOf(val.querySelector('[name="date"]').textContent)
+        val.style.setProperty('order', ind.toString())
+      })
+      break;
+    case '-date':
+      elems.forEach(val => {
+        ordered_array.push(val.querySelector('[name="date"]').textContent)
+      })
+      ordered_array.sort((a, b) => new Date(a) - new Date(b))
+      
+      elems.forEach(val => {
+        ind = ordered_array.indexOf(val.querySelector('[name="date"]').textContent)
+        val.style.setProperty('order', ind.toString())
+      })
+      break;
+    case '':
+      elems.forEach(val => {
+        ordered_array.push(Number(val.querySelector('[name="id"]').textContent))
+      })
+      ordered_array.sort()
+      elems.forEach(val => {
+        ind = ordered_array.indexOf(Number(val.querySelector('[name="id"]').textContent))
+        val.style.setProperty('order', ind.toString())
+      })
+      break;
+  }
+}
+
+function executeCMD() {
+  
+
+  main_cont = document.getElementById("commands-block")
+
+  cmd = main_cont.querySelector('input').value
+  if (cmd == '') {return}
+  if (cmd == 'clear') {main_cont.querySelector('textarea').value = ''; main_cont.querySelector('input').value = ''; return}
+
+  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  
+  fetch('/commands/executeCMD/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      command: cmd
+    })
+  })
   .then(response => response.json())
   .then(data => {
-    if (data.success) {
-      window.location.reload()
-    }
+    output = main_cont.querySelector('textarea')
+    output_val = output.value
+    output.value = output_val == '' ? data.res : output_val + '\n\n' + data.res
+    main_cont.querySelector('input').value = ''
   })
-
 }
 
-function check_parents(container, element) {
-  if (element.dataset.parentId == 'none') {
-    return
-  }
-
-  let parent_id = element.dataset.parentId;
-  let counter =0
-
-  while (parent_id) {
-    parent = container.querySelector(
-      '[data-id="'+parent_id+'"]'
-    )
-
-    if (!parent) {
-      break;
-    }
-    
-
-    parent.classList.remove('selected')
-    materials = materials.filter(val => val != parent_id)
-
-
-    parent_id = parent.dataset.parentId;
-
-    counter += 1
-    if (counter >= 1000) {return}
-  }
-}
-
-function get_all_child(node, result = []) {
-  for (const child of node.children) {
-    result.push(child.id);
-
-    get_all_child(
-      child, 
-      result
-    )
-  }
-  return result
-}
-
-function clear_children(container, name) {
-  child_ids = get_all_child(name)
-
-  child_ids.forEach( val => {
-
-    container.querySelector('#_'+val).classList.remove('selected')
-
-    materials = materials.filter(mat_val => mat_val != val)
-    }
-  )
-
-}
-
-function clear_chosen_mats() {
-  materials = []
-  try {
-    document.getElementById('materials_json').value = materials
-  } catch (error) {
-    console.log('no materials_json')
-  }
-  
-}
-
-function delete_card(base, id) {
-  if (!confirm('Удалить запись?')) {
-    return;
-  }
-
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  function fetch_del(table_name) {
-    fetch('/'+table_name+'/delete-' + table_name +'/', {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrftoken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          table: table_name,
-          id: id
-        })
-      }
-    )
-    .then(response => response.json())
-    .then(data => {window.location.href = data.redirect_url})
-  }
-
-  switch (base) {
-    case 'comp':
-      fetch_del('companies')
-    break;
-    case 'mat':
-      fetch_del('materials')
-      break;
-    case 'cont':
-      fetch_del('contacts')
-      break;
-  }
-}
-
-function delete_connection(table, id_1, id_2) {
-
-  if (!confirm('Удалить запись?')) {
-    return;
-  }
-
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-  function fetch_del(table_name, id_1, id_2) {
-    fetch('/connection_delete/', {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': csrftoken,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          table: table_name,
-          id_1: id_1,
-          id_2: id_2
-        })
-      }
-    )
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        window.location.reload()
-      }
-    })
-  }
-
-  switch (table) {
-    case 'comp_cont':
-    fetch_del('company_contacts', id_1, id_2)
-    break;
-    case 'comp_mat':
-    fetch_del('company_materials', id_1, id_2)
-    break;
-  }
-}
-
-function edit_list(table_name, company_id) {
-
-  switch (table_name) {
-    case 'contacts':
-      openModal('contact-modal')
-      break
-    case 'materials':
-      openModal('material-modal')
-      break
-    case 'material':
-      openModal('add-material-modal')
-      break
-    case 'companies':
-      openModal('company-info-modal')
-      break
-  }
-}
 
 document.addEventListener(
   'input',
@@ -531,10 +263,17 @@ document.addEventListener(
       case 'companies-list':
         filter_pg_list(event, '.card')
         break;
+      case 'employees-list-search':
+        filter_pg_list(event, '.card')
+        break;
+      case 'employees-list-on-create':
+        console.log('nigga')
+        filter_pg_list(event, '.employee-list-item')
+        break;
       case 'contacts-list-on-comp-edit':
-        filter_pg_list(event, '.contact-pos')
+        filter_pg_list(event, '.contact-list-item')
         break
-      case 'contacts-list':
+      case 'contacts-list-search':
         filter_pg_list(event, '.card')
         break;
     }
@@ -554,40 +293,10 @@ document.addEventListener(
   }
 )
 
-  window.onload = function() {
-    path = window.location.pathname
-    
-    if (path.includes('/add_')) {
-      selectedItem_on_create_mat = document.getElementById('root-category')
+window.onload = function() {
+  cur_url_path = new URL(window.location.href).pathname
 
-      selectedItem_on_create_mat.classList.add('selected')
-      console.log('adding smthing')
-    }
-    
-    if (/^\/companies\/\d+\/$/.test(path)) {
-      const contact_container = document.getElementById(
-        'contact-list'
-      )
-      selected_contacts = Array.from(contact_container.querySelectorAll('.contact-pos.selected')).map(el => Number(el.id.slice(1))
-      //   ({
-      //   'id': Number(el.id.slice(1)),
-      //   'pos': el.querySelector('input').value
-      // })
-    )
+  menu_cont = document.getElementById('menu-btns')
 
-
-      const material_container = document.getElementById('material-tree-from-company')
-      let tree_selected_materials = material_container.querySelectorAll('.tree-item.selected')
-      materials = Array.from(tree_selected_materials).map(el => Number(el.id.slice(1)))
-      tree_selected_materials.forEach(el =>{
-        let parent = el.closest('details');
-
-        while (parent) {
-          parent.open = true;
-
-          parent = parent.parentElement?.closest('details');
-        }
-      })
-    }
-  
+  menu_cont.querySelectorAll('a').forEach(val => {if (val.getAttribute('href') == cur_url_path) {val.querySelector('button').classList.add('active')}})
 }

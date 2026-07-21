@@ -1,0 +1,45 @@
+<div id="edit_contact_modal_frame" class="modal create" style="z-index:2;">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='edit_contact_modal_frame' %}
+      <h3>Редактировать контакт</h3>
+    </div>
+
+    <div class="main-frame">
+      <hr>
+      <div id="contact-edit">
+        {% csrf_token %}
+        <input type="hidden" name="id" value={{contact.id}}>
+        <div class="form-item">
+          <label for="first_name">Имя</label>
+          <input type="text" name="first_name" {% if contact.first_name %}value="{{contact.first_name}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="last_name">Фамилия</label>
+          <input type="text" name="last_name" {% if contact.last_name %}value="{{contact.last_name}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="patronymic">Отчество</label>
+          <input type="text" name="patronymic" {% if contact.patronymic %}value="{{contact.patronymic}}"{% endif %}>
+        </div>
+        <div class="form-item">
+          <label for="phone">Моб.телефон</label>
+          <input type="text" name="phone" {% if contact.phone %}value="{{contact.phone}}"{% endif %} placeholder="89198327878">
+        </div>
+        <div class="form-item">
+          <label for="mail">Личная почта</label>
+          <input type="email" name="mail" {% if contact.mail %}value="{{contact.mail}}"{% endif %} placeholder="info@capitalgroup.ru">
+        </div>
+        <div class="form-item">
+          <label for="comment">Примечание</label>
+          <textarea type="text" name="comment" {% if contact.comment %}value="{{contact.comment}}"{% endif %}></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button onclick="post_contact_edit()">Сохранить изменения</button>
+    </div>
+
+ </div>
+</div>

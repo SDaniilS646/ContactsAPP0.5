@@ -1,0 +1,40 @@
+{% if style == 'cards' %}
+
+  {% for employee in employees %}
+    <div class="card">
+      <span class="title employee" title="{{employee.name}}">
+        <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
+      </span>
+
+      <span>
+        Доб.Тел.: {% if employee.phone %}{{employee.phone}}{% else %}—{% endif %}
+      </span>
+      
+      <span>
+        Почта: {% if employee.mail %}{{employee.mail}}{% else %}—{% endif %}
+      </span>
+    </div>
+  {% endfor %}
+
+{% elif style == 'comp_creation' %}
+
+  {% for employee in employees %}
+    <div id="{{employee.id}}" class="employee-list-item {% if employee.selected %}selected{% endif %}" onclick="selectEmployees(event, this, 'employees-list', 'employees-list-input-box')">
+      <span>
+      {{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}
+      </span>
+      {% if employee.phone %}
+        <span>
+          Доб.Тел.: {{employee.phone}}
+        </span>
+      {% endif %}
+
+      {% if employee.mail %}
+        <span>
+          Почта: {{employee.mail}}
+        </span>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+{% endif %}

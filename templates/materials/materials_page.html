@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {% block content %}
+{% include 'components/modal_create_material.html' %}
+  <div class="outer">
+    <div class="page-menu">
+      <button onclick="openModal('create_material_modal_frame')">Добавить материал</button>
+    </div>
+    <div id="list_material_tree" class="tree page_style">
+      {% include 'lists/materials_list.html' with style='page_style' %}
+    </div>
+  </div>
+{% endblock %}

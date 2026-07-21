@@ -1,35 +1,37 @@
 {% extends 'base.html' %} {% block content %}
+{% include 'components/modal_edit_contact.html'%}
 
-<div class="details">
-  <div class="section-head">
-    <h1>{{contact.first_name}} {{contact.last_name}}
-    {% if contact.middle_name %}
-    {{contact.middle_name}}</h1>
-    {% endif %}
-  
-    
-  {% comment %} {% include 'components/edit_btn.html' with list='contacts' id=contact.id %} {% endcomment %}
+<div class="main-details">
+  <div class="menu-btns">
+    <button onclick="openModal('edit_contact_modal_frame')">edit</button>
+    <button onclick="post_delItem('contacts', {{contact.id}})">del</button>
   </div>
-  <p>моб. {{contact.phone}}</p>
-  
-  <hr />
-  {% comment %} {% include 'components/edit_btn.html' with list='contacts' id=contact.id %} {% endcomment %}
-  <div class="cards">
-    {% for el in comp_info %}
+  <div class="group-header">
+    <h1>{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</h1>
+  </div>
+  <hr>
+  <div class="info">
+    <span>моб.: {% if contact.phone %}{{contact.phone}}{% else %}—{% endif %}</span>
+    <span>Личная почта: {% if contact.mail %}{{contact.mail}}{% else %}—{% endif %}</span>
+    <span>Примечание: {% if contact.comment %}{{contact.comment}}{% else %}—{% endif %}</span>
+  </div>
+  <hr>
+  <div class="group-header">
+    <h2>Компании</h2>
+  </div>
+  <hr>
+  <div class="cards-list">
+    {% for info in comp_info %}
       <div class="card">
-        <div class="card-head">
-          <p class="title">
-              <a href="/companies/{{el.comp_id}}/"> {{el.name}} </a>
-          </p>
-          <div>
-            {% include 'components/del_connection_btn.html' with connection_table='comp_cont' id_1=contact.id id_2=el.comp_id %}
-          </div>
-        </div>
-        <hr />
-        <p>Должность: {{el.role}}</p>
-    </div>
+        <span class="title" title="{{info.company_name}}">
+          <a href="/companies/{{info.company_id}}/">{{info.company_name}}</a>
+        </span>
+        <span>{% if info.position %}{{info.position}}{% else %}—{% endif %}</span>
+        <span>раб.тел.: {% if info.phone %}{{info.phone}}{% else %}—{% endif %}</span>
+        <span>Почта: {% if info.mail %}{{info.mail}}{% else %}—{% endif %}</span>
+      </div>
     {% endfor %}
-  </div>
+  <div>
 </div>
 
 

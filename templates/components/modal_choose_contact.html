@@ -1,0 +1,33 @@
+<div id="choose_contact_modal_frame" class="modal" style="z-index: 1">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='choose_contact_modal_frame' %}
+      <h3>Контакты</h3>
+    </div>
+    
+    <div class="main-frame">
+      <select name="sortList" id="sort-select" onchange="sortList(event, 'div.contact-list-item')">
+        <option value="">--Сортировать--</option>
+        <option value="-date">Старое-новое</option>
+        <option value="date">Новое-старое</option>
+        <option value="A-z">А-я</option>
+        <option value="Z-a">Я-а</option>
+        <option value="">По умолчанию</option>
+      </select>
+      <input id="contacts-list-on-comp-edit" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <hr>
+      <div id="contacts-list" class="contact-list comp_creation">
+        {% include 'lists/contacts_list.html' with style='comp_creation' %}
+      </div>
+    </div>
+    <hr>
+    <div class="footer">
+      {% if is_edit %}
+        <button onclick="saveContactsList(); post_ContactsList({{company.id}})">Сохранить изменения</button>
+      {% else %}
+        <button onclick="saveContactsList()">Сохранить</button>
+      {% endif %}
+      <button onclick="openModal('create_contact_modal_frame')">Создать новый</button>
+    </div>
+  </div>
+</div>

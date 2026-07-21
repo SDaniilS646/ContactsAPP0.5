@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+  <div class="outer">
+    <div class="page-menu">
+      <select name="sortList" id="sort-select" onchange="sortList(event)">
+        <option value="">--Сортировать--</option>
+        <option value="-date">Старое-новое</option>
+        <option value="date">Новое-старое</option>
+        <option value="A-z">А-я</option>
+        <option value="Z-a">Я-а</option>
+        <option value="">По умолчанию</option>
+      </select>
+      <input id="companies-list" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <a class="btn-link" href='/companies/add_comp_view/'>
+        <button>Добавить компанию</button>
+      </a>
+      <a class="btn-link" href='/companies/parse_company_page/'>
+        <button>Найти новую компанию</button>
+      </a>
+      
+    </div>
+    <div class="cards-list">
+      {% include 'lists/companies_list.html' %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,16 +1,18 @@
 from django.urls import path
-from .views import companies_list, company_details, company_create, delete_company, add_new_contact, add_company_materials, upd_company_contacts
+from .views import companies_page, company_create, add_company_view, company_details_page, delete_connection, company_edit, edit_contact_list, delete, edit_material_list, parse_comp, parse_comp_page
 
 urlpatterns = [
-  path('', companies_list),
+  path('', companies_page),
 
-  path('<int:id>/', company_details),
+  path('add_comp_view/', add_company_view),
   path('add_comp/', company_create),
-  path('delete-companies/', delete_company),
-  path('add_cont/', add_new_contact),
-  path('add_mat_comp_connection/', add_company_materials),
-  path('upd_company_contacts/', upd_company_contacts)
-  # path('edit_company_info', editCompanyInfo)
-  
+  path('<int:id>/', company_details_page),
+  path('edit_cont/', company_edit),
+  path('delete_connection/', delete_connection),
+  path('edit_contact_list/', edit_contact_list),
+  path('edit_material_list/', edit_material_list),
+  path('delete/', delete),
+  path('parse_company_page/', parse_comp_page),
+  path('parse_company/', parse_comp)
 ]
 

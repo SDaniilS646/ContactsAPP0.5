@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'apps.companies',
     'apps.contacts',
     'apps.materials',
+    'apps.meetings',
+    'apps.employees',
+    'apps.commands',
     'apps',
     'django.contrib.postgres',
     'users'
@@ -82,6 +85,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+
 
 DATABASES = {
     'default': {

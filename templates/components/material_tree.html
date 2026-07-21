@@ -1,0 +1,96 @@
+{% if style == 'page_style' %}
+  {% if material.children %}
+    <details open>
+      <summary>
+        <span id="{{material.material_id}}" 
+        class="">
+        <a href="/materials/{{material.material_id}}/">{{material.material_name}}</a>
+        </span>
+      </summary>
+
+      <div class="tree-item">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    </details>
+  {% else %}
+    <div class="last-child">
+      <span id="{{material.material_id}}"
+      class=""><span class="tree-icon">⇀</span> <a href="/materials/{{material.material_id}}/">{{material.material_name}}</a></span>
+    </div>
+  {% endif %}
+
+{% elif style == 'material_creation' %}
+
+  {% if material.children %}
+    <details open>
+      <summary>
+        <span id="{{material.material_id}}" 
+          onclick="selectParent(event, this)"
+        class="">{{material.material_name}}</span>
+      </summary>
+
+      <div class="tree-item">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    </details>
+  {% else %}
+    <div class="last-child">
+      <span id="{{material.material_id}}"
+        onclick="selectParent(event, this)"
+      class=""><span class="tree-icon">⇀</span> {{material.material_name}}</span>
+    </div>
+  {% endif %}
+
+{% elif style == 'material_editor' %}
+  {% if material.children %}
+    <details open>
+      <summary>
+        <span id="{{material.material_id}}" 
+          onclick="selectParent(event, this, 'edit_material_modal_frame')"
+        class="{% if this_material.parent_id == material.material_id%}selected{% endif %}">{{material.material_name}}</span>
+      </summary>
+
+      <div class="tree-item">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    </details>
+  {% else %}
+    <div class="last-child">
+      <span id="{{material.material_id}}"
+        onclick="selectParent(event, this, 'edit_material_modal_frame')"
+      class=""><span class="tree-icon">⇀</span> {{material.material_name}}</span>
+    </div>
+  {% endif %}
+
+{% elif style == 'company_creation' %}
+
+  {% if material.children %}
+    <details open>
+      <summary>
+        <span id="{{material.material_id}}" 
+          onclick="selectMaterials(event, this, 'list_material_tree', 'materials-list-input-box')"
+
+        class="{% if material.selected %}selected{% endif %}">{{material.material_name}}</span>
+      </summary>
+
+      <div class="tree-item">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    </details>
+  {% else %}
+    <div class="last-child">
+      <span id="{{material.material_id}}"
+      onclick="selectMaterials(event, this, 'list_material_tree', 'materials-list-input-box')"
+      class="{% if material.selected %}selected{% endif %}"><span class="tree-icon">⇀</span> {{material.material_name}}</span>
+    </div>
+  {% endif %}
+
+{% endif %}

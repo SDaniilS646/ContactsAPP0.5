@@ -1,0 +1,16 @@
+{% for company in companies %}
+  <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
+    <span class="title" title="{{company.name}}">
+      <a href="/companies/{{company.id}}/" name="name">{{company.name}}</a>
+    </span>
+    <hr>
+    <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>
+    <span>тел.: {% if company.phone %}{{company.phone}}{% else %}—{% endif %}</span>
+    <span>почта: {% if company.mail %}{{company.mail}}{% else %}—{% endif %}</span>
+    <span class="comment" title="{{company.comment}}">{{company.comment}}</span>
+    <span hidden name="id">{{company.id}}</span>
+    <span hidden name="date">{{company.updated_at|date:"Y, m, d" }}</span>
+    <span hidden>{{company.materials}}</span>
+    <span hidden>{% if company.is_old %}старый{% endif %}</span>
+  </div>
+{% endfor %}

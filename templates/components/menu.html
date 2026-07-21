@@ -1,20 +1,28 @@
-<div class="menu">
-  <a
-    href="/companies/"
-    class="{% if active_page == 'companies' %}active{% endif %}"
-  >
-    <button class="menu-btns">Компании</button>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Выйти</button>
+</form>
+<div id="menu-btns" class="tabs-btns">
+  <a href="/companies/">
+    <button>Компании</button>
   </a>
-  <a
-    href="/contacts/"
-    class="{% if active_page == 'contacts' %}active{% endif %}"
-  >
-    <button class="menu-btns">Контакты</button>
+  <a href="/contacts/">
+    <button>Контакты</button>
   </a>
-  <a
-    href="/materials/"
-    class="{% if active_page == 'materials' %}active{% endif %}"
-  >
-    <button class="menu-btns">Материалы</button>
+  <a href="/materials/">
+    <button>Материалы</button>
   </a>
+  <a href="/meetings/">
+    <button>Встречи</button>
+  </a>
+  <a href="/employees/">
+    <button>Сотрудники</button>
+  </a>
+  {% if user.is_superuser %}
+    <a href="/commands/">
+      <button>cmd</button>
+    </a>
+  {% endif %}
+  {% comment %}  {% endcomment %}
 </div>
