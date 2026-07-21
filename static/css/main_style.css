@@ -7,8 +7,7 @@ body {
   padding: 10px;
 
   margin: 0;
-    /* height: 100vh; Занимает всю высоту экрана */
-    overflow: hidden;
+  overflow: hidden;
 }
 button {
   background: none;
@@ -17,9 +16,10 @@ button {
   border-width: 1px;
   transition: 0.3s;
 }
-button:hover {
+button:hover, a:hover {
   cursor: pointer;
 }
+
 
 .menu {
   display: flex;
@@ -42,9 +42,6 @@ button:hover {
   transition: 0.3s;
 }
 
-.menu .tabs-btns button {
-  cursor: pointer;
-}
 
 .content {
   display: flex;
@@ -74,19 +71,17 @@ button:hover {
   
 }
 
-.content .page-menu button {
+.content .page-menu button, 
+.content .page-menu a, 
+.content .page-menu select {
   height: 30px;
 }
-.content .page-menu a {
-  height: 30px;
-}
+
 .content .page-menu input {
   height: 20px;
 }
 
-.content .page-menu select {
-  height: 30px;
-}
+
 
 .cards-list {
   padding: 10px;
@@ -123,11 +118,8 @@ button:hover {
 
   text-overflow: auto; 
   text-wrap: auto;
-  text-decoration: underline;
   font-weight: bold;
   margin-bottom: 5px;
-
-  cursor: pointer;
 }
 
 .card .title.contact {
@@ -151,17 +143,7 @@ button:hover {
   overflow: visible;
 }
 
-.tree.page_style span {
-  font-size: 16px;
 
-  text-overflow: auto; 
-  text-wrap: auto;
-  text-decoration: underline;
-  font-weight: bold;
-  margin-bottom: 5px;
-
-  cursor: pointer;
-}
 
 
 hr {
@@ -331,3 +313,52 @@ hr {
   width: 90%;
 }
 
+.tree-node {
+  position: relative;
+}
+
+.tree-title {
+  position: relative;
+  padding: 4px 0 4px 28px;
+
+  /* line-height: 22px; */
+}
+
+.tree-children {
+  margin-left: 18px;
+}
+
+.tree-title::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 12px;
+  border-top: 1px dashed #999;
+}
+
+.tree-title::after {
+  content: "";
+
+  position: absolute;
+
+  left: 8px;
+
+  top: 0;
+  bottom: 0;
+
+  border-left: 1px dashed #999;
+}
+
+.tree-node:last-child > .tree-title::after {
+  bottom: 50%;
+}
+.tree.page_style span {
+  font-size: 16px;
+
+  text-overflow: auto; 
+  text-wrap: auto;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 5px;
+}

@@ -1,5 +1,23 @@
 {% if style == 'page_style' %}
-  {% if material.children %}
+
+  <div class="tree-node">
+    <div class="tree-title">
+      <span id="{{material.material_id}}">
+        <a href="/materials/{{material.material_id}}/">
+          {{material.material_name}}
+        </a>
+      </span>
+    </div>
+
+    {% if material.children %}
+      <div class="tree-children">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {% comment %} {% if material.children %}
     <details open>
       <summary>
         <span id="{{material.material_id}}" 
@@ -19,11 +37,28 @@
       <span id="{{material.material_id}}"
       class=""><span class="tree-icon">⇀</span> <a href="/materials/{{material.material_id}}/">{{material.material_name}}</a></span>
     </div>
-  {% endif %}
+  {% endif %} {% endcomment %}
 
 {% elif style == 'material_creation' %}
 
-  {% if material.children %}
+  <div class="tree-node">
+
+    <div class="tree-title">
+      <span id="{{material.material_id}}" onclick="selectParent(event, this)">
+        {{material.material_name}}
+      </span>
+    </div>
+
+    {% if material.children %}
+      <div class="tree-children">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% comment %} {% if material.children %}
     <details open>
       <summary>
         <span id="{{material.material_id}}" 
@@ -43,10 +78,25 @@
         onclick="selectParent(event, this)"
       class=""><span class="tree-icon">⇀</span> {{material.material_name}}</span>
     </div>
-  {% endif %}
+  {% endif %} {% endcomment %}
 
 {% elif style == 'material_editor' %}
-  {% if material.children %}
+
+  <div class="tree-node">
+    <div class="tree-title">
+      <span id="{{material.material_id}}" onclick="selectParent(event, this)">
+        {{material.material_name}}
+      </span>
+    </div>
+    {% if material.children %}
+      <div class="tree-children">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {% comment %} {% if material.children %}
     <details open>
       <summary>
         <span id="{{material.material_id}}" 
@@ -66,11 +116,26 @@
         onclick="selectParent(event, this, 'edit_material_modal_frame')"
       class=""><span class="tree-icon">⇀</span> {{material.material_name}}</span>
     </div>
-  {% endif %}
+  {% endif %} {% endcomment %}
 
 {% elif style == 'company_creation' %}
 
-  {% if material.children %}
+  <div class="tree-node">
+    <div class="tree-title">
+      <span id="{{material.material_id}}" onclick="selectMaterials(event, this, 'list_material_tree', 'materials-list-input-box')" class="{% if material.selected %}selected{% endif %}">
+        {{material.material_name}}
+      </span>
+    </div>
+    {% if material.children %}
+      <div class="tree-children">
+        {% for child in material.children %}
+          {% include 'components/material_tree.html' with material=child %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% comment %} {% if material.children %}
     <details open>
       <summary>
         <span id="{{material.material_id}}" 
@@ -91,6 +156,6 @@
       onclick="selectMaterials(event, this, 'list_material_tree', 'materials-list-input-box')"
       class="{% if material.selected %}selected{% endif %}"><span class="tree-icon">⇀</span> {{material.material_name}}</span>
     </div>
-  {% endif %}
+  {% endif %} {% endcomment %}
 
 {% endif %}
