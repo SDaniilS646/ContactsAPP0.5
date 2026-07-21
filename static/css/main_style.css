@@ -300,6 +300,8 @@ hr {
 #commands-block {
   display: flex;
   flex-direction: column;
+
+  justify-content: space-evenly;
   gap: 10px;
   height: 90%;
   padding: 5px;
@@ -307,11 +309,15 @@ hr {
 
 #commands-block textarea {
   height: 80%;
+  
+  
 }
 
 #commands-block div input {
   width: 90%;
 }
+
+
 
 .tree-node {
   position: relative;
