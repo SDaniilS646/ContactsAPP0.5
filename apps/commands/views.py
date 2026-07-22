@@ -12,12 +12,14 @@ COMMANDS = {
   'create_user': Commands.createUser,
   'reset_password': Commands.resetPassword,
   'delete_user': Commands.deleteUser,
-  'load_csv': Commands.getalldata
+  'load_csv': Commands.getalldata,
+  'check_con': Commands.checkConnections,
+  'models': Commands.getModels,
+  'sql': Commands.sqlQuery
 }
 
 
 @login_required
-
 def commands_page(request):
   if not request.user.is_superuser:
     return redirect('/companies/')

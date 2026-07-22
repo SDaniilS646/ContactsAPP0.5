@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.apps import apps
 from django.http import FileResponse
+from django.db import connection
 
 from apps.companies.models import Companies
 from apps.contacts.models import Contacts
@@ -78,6 +79,52 @@ class Commands:
       filename=archive_name
     )
 
+  @staticmethod
+  def getModels(args):
+    res = ''
+    for name, model in MODELS.items():
+      temp_res = f'Model: {model.__name__} ({model._meta.db_table})\nFields: '
+      temp_res = temp_res + '\n\t'.join([f'{field.name} ({model._meta.get_field(field.name).name})' for field in model._meta.fields]) 
+      res = res + f'{temp_res}\n\n'
+    return res
+
+  @staticmethod
+  def sqlQuery(args):
+    if args[0].lower() != 'select':
+      return 'only SELECT!!!'
+    
+    query = ' '.join(args)
+    result = ''
+
+    try:
+      with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        temp_row = [' - '.join(map(str, row)) for row in rows]
+        result = '\n'.join(temp_row) 
+    except Exception as e:
+      result = f'Error - {e}'  
+
+
+    return query + '\n\n' +  result
+
+  @staticmethod
+  def checkConnections(args):
+    model_name = args[0]
+    fields = args[1:]
+    mistakes = []
+    for name, model in MODELS.items():
+      if model.__name__ != model_name:
+        continue
+      data = model.objects.all()
+      for item in data:
+        try:
+          [getattr(item, field) for field in fields]
+        except Exception as e:
+          mistakes.append(f'id: {getattr(item, 'id')} - {e}')
+    if len(mistakes) > 0:
+      return f'Errors in Model: {model_name}\n' + '\n\t'.join(mistakes)
+    return 'no mistakes'
 
   @staticmethod
   def HelpCommand(args):
@@ -85,9 +132,14 @@ class Commands:
       'all_users - show all users',
       'create_user <username> <password> [admin] - create new user',
       'reset_password <username> <password> - set new password',
-      'delete_user <username> - delete user'
+      'delete_user <username> - delete user',
+      'load_csv - download archive with db data',
+      'models - get models structure',
+      'check_con - check error connections',
+      'sql <select ...> - raw sql query (only select)',
+      'clear - clear output area'
     ]
-    return '\n'.join(cmds_list)
+    return 'Commands List\n' + '\n'.join(cmds_list)
   
   @staticmethod
   def createUser(args):
