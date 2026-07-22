@@ -9,10 +9,13 @@
     <label for="request_txt">Что искать?</label>
     <input type="text" name="request_txt">
   </div>
-  <button onclick="start_parsing()">Поиск</button>
+  {% comment %} <select name="search-eng" id="search-eng">
+    <option value="DDGS">DDGS</option>
+    <option value="Yandex">YaSearch</option>
+  </select> {% endcomment %}
+  <button name="start-parsing-btn" onclick="start_parsing()">Поиск</button>
   <button onclick="post_create_parse_company()">Сохранить</button>
-
-
+  
   <div name="companies" class="new-companies-list">
 
   </div>

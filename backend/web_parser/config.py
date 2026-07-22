@@ -13,6 +13,7 @@ load_dotenv()
 YANDEX_API_KEY = os.getenv("YANDEX_API_KEY")
 YANDEXFOLDER_ID = os.getenv("FOLDER_ID")
 
+
 SEARCH_PROVIDER = DuckDuckGoProvider() 
 # SEARCH_PROVIDER = YandexSearchProvider(YANDEX_API_KEY, YANDEXFOLDER_ID) 
 

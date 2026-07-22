@@ -14,6 +14,5 @@ class RequestsLoader(PageLoader):
       )
       return response.text
     except:
-      print('Ошибка')
       return None
     

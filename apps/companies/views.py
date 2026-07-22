@@ -73,13 +73,23 @@ def add_company_view(request):
 def company_create(request):
   input_data = json.loads(request.body)
 
+  old_companies = CompanyService.get_companies()
+  comp_name = input_data['company_name']
+  comp_mail = input_data['mail']
+
+  old_companies_names = [item.name for item in old_companies]
+  old_companies_mails = [item.mail for item in old_companies]
+
+  if comp_name in old_companies_names or comp_mail in old_companies_mails:
+    return JsonResponse({
+      'Success': False,
+      'result': 'Exists'
+    })
+  
   new_comp_id = CompanyService.set_company(input_data)
 
   company_contacts = input_data['company_contacts']
   company_materials = input_data['company_materials']
-  
-    
-
 
   if company_contacts:
     for contact in company_contacts:
@@ -312,6 +322,7 @@ def web_parser(input):
 
     return result
 
+@login_required
 def parse_comp_page(request):
   return render(
     request,
@@ -325,8 +336,15 @@ def parse_comp_page(request):
 def parse_comp(request):
   parse_input = json.loads(request.body)['request_txt']
   results = []
-  results = web_parser(parse_input) #[f'url: {item['url']} - mail: {item['mail']}' for item in web_parser(parse_input)]
-
+  err = None
+  try:
+    results = web_parser(parse_input) #[f'url: {item['url']} - mail: {item['mail']}' for item in web_parser(parse_input)]
+  except Exception as e:
+    err = f"Ошибка: {e}"
+    return JsonResponse({
+      'success': False,
+      'err_txt':err
+    })
 
   return JsonResponse({
     'success': True,

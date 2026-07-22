@@ -36,6 +36,10 @@ function post_create_meeting() {
 function start_parsing() {
   const container = document.getElementById('company-parsing')
 
+  const parse_btn = container.querySelector('[name="start-parsing-btn"]')
+  parse_btn.inert = true;
+  parse_btn.style.backgroundColor = "grey"
+
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
   fetch('/companies/parse_company/', {
@@ -50,8 +54,11 @@ function start_parsing() {
   })
   .then(response => response.json())
   .then(data => {
+    parse_btn.inert = false;
+    parse_btn.style.backgroundColor = "white"
     if (data.success) {
       div = document.querySelector('[name=companies]')
+      div.innerHTML = ''
       
       data.results.forEach((url_val, url_idx) => {
         url_container = document.createElement('div')
@@ -91,20 +98,38 @@ function start_parsing() {
         div.appendChild(url_container)
       })
     }
+    else {
+      div = document.querySelector('[name=companies]')
+
+      span = document.createElement('span');
+      span.textContent = 'Ничего не найдено (возможно лимит)';
+      div.appendChild(span);
+
+      div.appendChild(document.createElement('hr'))
+
+      if (data.err_txt) {
+        span = document.createElement('span');
+        span.textContent = data.err_txt;
+        div.appendChild(span);
+      }
+    }
   })
 }
 
 function post_create_parse_company() {
-  console.log('SAVING')
 
   const container = document.getElementById('company-parsing')
+  added_comps = 0
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-
+  checkboxes = null
   checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
 
+  if (checkboxes.length == 0) {
+    return
+  }
   checkboxes.forEach(checkbox => {
-  
+    console.log(checkbox.parentElement.parentElement.querySelector('span').textContent)
     fetch('/companies/add_comp/', {
       method: 'POST',
       headers: {
@@ -124,7 +149,27 @@ function post_create_parse_company() {
       })
     })
       .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          added_comps++
+        } else {
+          if (data.result == 'Exists') {
+            console.log('exists')
+            console.log(data)
+          }
+        }
+    })
   })
+  
+  div = container.querySelector('[name=companies]')
+  div.innerHTML = ''
+  span = document.createElement('span');
+  if (added_comps > 0) {
+    span.textContent = `Добавлено ${added_comps} компаний`;
+  } else {
+    span.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
+  }
+  div.appendChild(span);
 }
 
 function post_create_company() {

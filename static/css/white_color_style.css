@@ -14,7 +14,13 @@ body {
 } */
 
 button:hover {
-  background: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.1) 70%);
+  background: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.2) 70%);
+
+  transition: 0.3s;
+}
+
+button:active {
+  background: linear-gradient(to bottom, rgb(49, 49, 49, 0.2) 0%, rgb(49, 49, 49, 0.2) 70%);
 
   transition: 0.3s;
 }
