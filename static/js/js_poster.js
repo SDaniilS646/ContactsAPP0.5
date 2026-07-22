@@ -39,6 +39,8 @@ function start_parsing() {
   const parse_btn = container.querySelector('[name="start-parsing-btn"]')
   parse_btn.inert = true;
   parse_btn.style.backgroundColor = "grey"
+  div = document.querySelector('[name=companies]')
+  div.innerHTML = ''
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
@@ -57,8 +59,6 @@ function start_parsing() {
     parse_btn.inert = false;
     parse_btn.style.backgroundColor = "white"
     if (data.success) {
-      div = document.querySelector('[name=companies]')
-      div.innerHTML = ''
       
       data.results.forEach((url_val, url_idx) => {
         url_container = document.createElement('div')
@@ -116,10 +116,11 @@ function start_parsing() {
   })
 }
 
-function post_create_parse_company() {
+async function post_create_parse_company() {
 
   const container = document.getElementById('company-parsing')
   added_comps = 0
+  new_comps = []
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   checkboxes = null
@@ -128,9 +129,9 @@ function post_create_parse_company() {
   if (checkboxes.length == 0) {
     return
   }
-  checkboxes.forEach(checkbox => {
+  for (const checkbox of checkboxes) {
     console.log(checkbox.parentElement.parentElement.querySelector('span').textContent)
-    fetch('/companies/add_comp/', {
+    const response = await fetch('/companies/add_comp/', {
       method: 'POST',
       headers: {
         'X-CSRFToken': csrftoken,
@@ -148,28 +149,35 @@ function post_create_parse_company() {
           company_materials: []
       })
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          added_comps++
-        } else {
-          if (data.result == 'Exists') {
-            console.log('exists')
-            console.log(data)
-          }
-        }
-    })
-  })
+
+    const data = await response.json()
+
+    if (data.success) {
+      added_comps++
+      new_comps.push({
+        'comp_name':data.comp_name,
+        'comp_id':data.comp_id
+      })
+    }
+  }
   
   div = container.querySelector('[name=companies]')
   div.innerHTML = ''
   span = document.createElement('span');
   if (added_comps > 0) {
     span.textContent = `Добавлено ${added_comps} компаний`;
+    div.appendChild(span);
+    for (const new_comp of new_comps) {
+      a = document.createElement('a');
+      a.textContent = new_comp['comp_name'];
+      a.setAttribute('href', `/companies/${new_comp['comp_id']}/`);
+      div.appendChild(a);
+    }
   } else {
     span.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
+    div.appendChild(span);
   }
-  div.appendChild(span);
+  cachePage('parse_page', div.innerHTML)
 }
 
 function post_create_company() {
@@ -211,6 +219,10 @@ function post_create_company() {
     if (data.success) {
       alert('✅ Компания добавлена!')
       pgReload()
+    } else {
+      if (data.result == 'Exists') {
+        container.querySelector('[name="company_name_label"]').textContent = "Компания с таким названием или почтой уже существует"
+      }
     }
   })
 }

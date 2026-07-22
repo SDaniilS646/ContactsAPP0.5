@@ -17,3 +17,17 @@ async function openContacts() {
 
   drawContacts(data)
 }
+
+function cachePage(key, container) {
+  sessionStorage.setItem(key, container)
+}
+
+window.addEventListener('load', () => {
+  if (window.location.pathname.split('/').includes('parse_company_page')) {
+    const html = sessionStorage.getItem('parse_page')
+
+    if (html) {
+      document.getElementById('company-parsing').querySelector('[name=companies]').innerHTML = html;
+    }
+  }
+})
