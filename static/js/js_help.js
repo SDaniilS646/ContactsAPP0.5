@@ -230,8 +230,43 @@ function executeCMD() {
   cmd = main_cont.querySelector('input').value
   if (cmd == '') {return}
   if (cmd == 'clear') {main_cont.querySelector('textarea').value = ''; main_cont.querySelector('input').value = ''; return}
+  
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  if (cmd == 'load_csv') {
+    const form = document.createElement('form')
+
+    form.method = 'POST'
+    form.action = '/commands/executeCMD/'
+
+    const csrf = document.createElement('input')
+    csrf.type = 'hidden'
+    csrf.name = 'csrfmiddlewaretoken'
+    csrf.value = csrftoken
+
+    const command = document.createElement('input')
+    command.type = 'hidden'
+    command.name = 'command'
+    command.value = cmd
+
+    form.appendChild(csrf)
+    form.appendChild(command)
+
+    document.body.appendChild(form)
+
+    form.submit()
+
+    document.body.removeChild(form)
+
+    result = 'loaded archive'
+    output = main_cont.querySelector('textarea')
+    output_val = output.value
+    output.value = output_val == '' ? result : output_val + '\n\n' + result
+    main_cont.querySelector('input').value = ''
+    return
+  }
+
+  
   
   fetch('/commands/executeCMD/', {
     method: 'POST',
@@ -245,10 +280,11 @@ function executeCMD() {
   })
   .then(response => response.json())
   .then(data => {
-    output = main_cont.querySelector('textarea')
-    output_val = output.value
-    output.value = output_val == '' ? data.res : output_val + '\n\n' + data.res
-    main_cont.querySelector('input').value = ''
+      result = data.res
+      output = main_cont.querySelector('textarea')
+      output_val = output.value
+      output.value = output_val == '' ? result : output_val + '\n\n' + result
+      main_cont.querySelector('input').value = ''
   })
 }
 

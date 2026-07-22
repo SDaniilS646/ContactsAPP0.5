@@ -1,9 +1,32 @@
 from django.contrib.auth.models import User
 from django.apps import apps
+from django.http import FileResponse
+
+from apps.companies.models import Companies
+from apps.contacts.models import Contacts
+from apps.materials.models import Materials
+from apps.meetings.models import Meetings
+from apps.employees.models import Employees
+from apps.connection_models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
 from pathlib import Path
 
 import csv
+import io
+import zipfile
+from datetime import datetime
+
+MODELS = {
+  'companies': Companies,
+  'contacts': Contacts,
+  'meetings': Meetings,
+  'materials': Materials,
+  'employees': Employees,
+  'company_contacts': CompanyContact,
+  'company_materials': CompanyMaterial,
+  'meeting_contacts': MeetingContact,
+  'meeting_employee': MeetingEmployee
+}
 
 class Commands:
 
@@ -13,25 +36,48 @@ class Commands:
   
   @staticmethod
   def getalldata(args):
-    models = apps.get_models()
-    return 'nice'
 
-    for model in models:
-      print(model.__name__)
-      if model._meta.app_label != 'ContactsApp':
-        continue
-      filepath = Path('') / f'{model.__name__}.csv'
-      fields = [field.name for field in model._meta.fields]
-      with open(filepath, 'w', newline='', encoding='utf-8-sig') as file:
-        writer = csv.writer(file)
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(
+      zip_buffer,
+      'w',
+      zipfile.ZIP_DEFLATED
+    ) as archive:
+
+      for filename, model in MODELS.items():
+        csv_buffer = io.StringIO()
+        writer = csv.writer(csv_buffer)
+
+        fields = [field.name for field in model._meta.fields]
+
         writer.writerow(fields)
-
         for obj in model.objects.all():
-          row = [getattr(obj, field) for field in fields]
+          try:
+            row = [getattr(obj, field) for field in fields]
+            writer.writerow(row)
+          except:
+            print(f'Пропущена запись {model.__name__} id - {obj.pk}')
 
-          writer.writerow(row)
+        archive.writestr(
+          f'{filename}.csv',
+          csv_buffer.getvalue().encode('utf-8-sig')
+        )
+        csv_buffer.close()
+      
+    zip_buffer.seek(0)
 
-    return 'nice'
+    archive_name = (
+      f'ContactsApp_Export_'
+      f'{datetime.now():%Y%m%d_%H%M%S}.zip'
+    )
+
+    return FileResponse(
+      zip_buffer,
+      as_attachment=True,
+      filename=archive_name
+    )
+
 
   @staticmethod
   def HelpCommand(args):

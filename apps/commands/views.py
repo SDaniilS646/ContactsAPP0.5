@@ -15,6 +15,7 @@ COMMANDS = {
   'load_csv': Commands.getalldata
 }
 
+
 @login_required
 
 def commands_page(request):
@@ -32,15 +33,30 @@ def executeCMD(request):
       'success': True,
       'res': 'Нет доступа'
     })
-  full_cmd = json.loads(request.body)['command']
+  
+  if request.content_type == 'application/json':
+    full_cmd = json.loads(request.body)['command']
+  else:
+    full_cmd = request.POST['command']
+  
   full_cmd = shlex.split(full_cmd)
   cmd = full_cmd[0]
   args = full_cmd[1:]
+
   if COMMANDS.get(cmd):
     res = COMMANDS.get(cmd)(args)
   else:
     res = 'unknown'
 
+  if cmd == 'load_csv':
+    return res
+
+  if cmd == 'load_csv':
+    return JsonResponse({
+      'success': True,
+      'res': 'loaded'
+    })
+  
   return JsonResponse({
     'success': True,
     'res': res
