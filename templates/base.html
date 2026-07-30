@@ -17,12 +17,14 @@
 
   </head>
   <body>
+    {% csrf_token %}
     <div class="menu">
       {% include 'components/menu.html' %}
-      <hr>
     </div>
-    <div class="content">
-      {% block content %}{% endblock %}
+    <div id="content" class="content">
+      {% comment %} {% include 'companies/companies_page.html' %} {% endcomment %}
+       
+      {% comment %} {% block content %}{% endblock %} {% endcomment %}
     </div>
   </body>
 </html>

@@ -140,6 +140,6 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/companies/'
+LOGIN_REDIRECT_URL = '/'
 
 ALLOWED_HOSTS = ['*']

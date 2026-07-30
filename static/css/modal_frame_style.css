@@ -15,7 +15,7 @@
   top: 0%;
   left: 0%;
 
-  background-color: rgba(100, 100, 100, 0.5);
+  background-color: var(--modal-background-darken);
 
   flex-direction: column;
   gap: 10px;
@@ -34,6 +34,9 @@
 
   min-width: 50%;
   overflow: hidden;
+
+  background-color: var(--background-color);
+  border: 1px solid var(--thin-border-color);
 }
 
 .form-item {
@@ -58,16 +61,7 @@
 }
 
 .modal-content .header .close-modal-btn {
-  width: min-content;
-  max-width: min-content;
-  aspect-ratio: 1;
-
-  border-radius: 10px;
-  border: none;
-
   align-self: flex-end;
-
-  background-color: rgb(151, 151, 151);
 }
 
 .modal-content .header h3 {
@@ -94,9 +88,7 @@
 }
 
 .modal-content #contacts-list {
-
   overflow-y: auto;
-
 }
 
 .modal-content #list_material_tree {
@@ -150,22 +142,8 @@
   flex: 1 1 0px;
 }
 
-.modal-content #contacts-list .contact-list-item {
 
-  display: flex;
-  flex-direction: column;
-
-  padding: 5px;
-  margin-top: 5px;
-
-  border-bottom-style:solid;
-  border-radius: 5px;
-
-  border-width: 1px;
-
-  transition: 0.2s;
-}
-
+.modal-content #contacts-list .contact-list-item,
 .modal-content #employees-list .employee-list-item {
 
   display: flex;

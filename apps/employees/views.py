@@ -14,6 +14,8 @@ def employees_page(request):
   employees = employees.order_by('last_name')
   loaded_contacts = []
 
+  return
+
   return render(
     request,
     'employees/employees_page.html',

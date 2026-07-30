@@ -13,6 +13,8 @@ def materials_page(request):
 
   material_tree = MaterialService.get_material_tree()
 
+  return
+
   return render(
     request,
     'materials/materials_page.html',

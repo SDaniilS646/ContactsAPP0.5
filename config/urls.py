@@ -19,6 +19,8 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
 
+from apps.views import setPage, clearPage
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,12 +28,14 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page="login"), name='logout'),
 
-    path('', lambda request: redirect('/companies/')),
+    path('', clearPage),
 
     path('companies/', include('apps.companies.urls'), name='companies'),
     path('contacts/', include('apps.contacts.urls')),
     path('materials/', include('apps.materials.urls')),
     path('meetings/', include('apps.meetings.urls')),
     path('employees/', include('apps.employees.urls')),
-    path('commands/', include('apps.commands.urls'))
+    path('commands/', include('apps.commands.urls')),
+
+    path('open_page/', setPage)
 ]

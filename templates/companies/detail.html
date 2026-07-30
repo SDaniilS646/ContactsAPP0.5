@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
 {% include 'components/modal_edit_company.html'%}
 {% include 'components/modal_create_contact.html' %}
 {% include 'components/modal_create_material.html' %}
@@ -7,8 +7,8 @@
 
 <div class="main-details">
   <div class="menu-btns">
-    <button onclick="openModal('edit_company_modal_frame')">edit</button>
-    <button onclick="post_delItem('companies', {{company.id}})">del</button>
+    <button onclick="openModal('edit_company_modal_frame')" class="spec-btn">edit</button>
+    <button onclick="post_delItem('companies', {{company.id}})" class="spec-btn">del</button>
   </div>
   <div class="group-header">
     <h1>{{company.name}}</h1>
@@ -25,7 +25,7 @@
   </div>
   <hr>
   <div class="menu-btns">
-    <button onclick=openModal('choose_material_modal_frame')>edit</button>
+    <button onclick=openModal('choose_material_modal_frame') class="spec-btn">edit</button>
   </div>
   <div class="group-header">
     <h2>Материалы</h2>
@@ -33,14 +33,14 @@
   <div class="comp-materials-list">
     {% for info in materials %}
       <div>
-        <button class="del-conn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}})">X</button>
+        <button class="del-conn spec-btn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}})" >X</button>
         <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
       </div>
     {% endfor %}
   </div>
   <hr>
   <div class="menu-btns">
-    <button onclick="openModal('choose_contact_modal_frame')">edit</button>
+    <button onclick="openModal('choose_contact_modal_frame')" class="spec-btn">edit</button>
   </div>
   <div class="group-header">
     <h2>Контакты</h2>
@@ -50,7 +50,7 @@
     {% for info in cont_info %}
       <div class="card">
         <div class="card-header">
-          <button class="del-conn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}})">X</button>
+          <button class="del-conn spec-btn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}})">X</button>
           <span class="title" title="{{info.cont_name}}">
             <a href="/contacts/{{info.contact_id}}/">{{info.cont_name}}</a>
         </div>
@@ -62,4 +62,4 @@
     {% endfor %}
     </div>
 </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

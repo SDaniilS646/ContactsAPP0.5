@@ -29,6 +29,14 @@ def contacts_page(request):
     })
 
   return render(
+        request,
+        'base.html',
+        {
+          'contacts':loaded_contacts
+        }
+    )
+
+  return render(
     request,
     'contacts/contacts_page.html',
     {

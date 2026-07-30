@@ -3,7 +3,7 @@
   {% for employee in employees %}
     <div class="card">
       <span class="title employee" title="{{employee.name}}">
-        <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
+        <a onclick="setPage('details', 'employees', {{employee.id}})">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
       </span>
 
       <span>

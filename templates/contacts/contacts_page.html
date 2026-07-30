@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
 {% include 'components/modal_create_contact.html' %}
   <div class="outer">
     <div class="page-menu">
@@ -11,10 +11,10 @@
         <option value="">По умолчанию</option>
       </select>
       <input id="contacts-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
-      <button  onclick="openModal('create_contact_modal_frame')">Добавить контакт</button>
+      {% comment %} <button  onclick="openModal('create_contact_modal_frame')">Добавить контакт</button> {% endcomment %}
     </div>
     <div id="contacts-list" class="cards-list cards">
       {% include 'lists/contacts_list.html' with style='cards' %}
     </div>
   </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

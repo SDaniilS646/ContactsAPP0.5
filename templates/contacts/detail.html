@@ -1,10 +1,10 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
 {% include 'components/modal_edit_contact.html'%}
 
 <div class="main-details">
   <div class="menu-btns">
-    <button onclick="openModal('edit_contact_modal_frame')">edit</button>
-    <button onclick="post_delItem('contacts', {{contact.id}})">del</button>
+    <button onclick="openModal('edit_contact_modal_frame')" class="spec-btn">edit</button>
+    <button onclick="post_delItem('contacts', {{contact.id}})" class="spec-btn">del</button>
   </div>
   <div class="group-header">
     <h1>{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</h1>
@@ -35,4 +35,4 @@
 </div>
 
 
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

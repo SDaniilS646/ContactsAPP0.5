@@ -288,6 +288,48 @@ function executeCMD() {
   })
 }
 
+function setPage(type, table, id=null) {
+  const output = {
+    'type': type,
+    'table': table,
+    'id': id
+  }
+
+  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+  fetch('/open_page/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      type: type,
+      table: table,
+      id: id
+    })
+  })
+  .then(response => response.json())
+  .then(data => 
+    {
+      if (type == 'page') {
+        menu_cont = document.getElementById('menu-btns')
+        menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
+          if (val.getAttribute('name') == `${table}-menu-btns`) {
+            val.classList.remove('hidden')
+          } else {
+            if (!val.classList.contains('hidden')) {
+              val.classList.add('hidden')
+            }
+          }
+        })
+      }
+
+      document.getElementById('content').innerHTML = data.html
+    }
+  )
+}
+
 
 document.addEventListener(
   'input',
@@ -334,5 +376,18 @@ window.onload = function() {
 
   menu_cont = document.getElementById('menu-btns')
 
-  menu_cont.querySelectorAll('a').forEach(val => {if (val.getAttribute('href') == cur_url_path) {val.querySelector('button').classList.add('active')}})
+  menu_cont.querySelectorAll('a').forEach(val => 
+    { 
+    if (val.getAttribute('href') == cur_url_path) {
+
+      val.querySelector('button').classList.add('active')
+
+      // val.querySelector('button').setAttribute('disabled', '')
+    }
+  })
+
+  sub_menu_btns = menu_cont.querySelector(`[name="${cur_url_path.slice(1, -1)}-menu-btns"]`)
+  if (sub_menu_btns) {
+    sub_menu_btns.classList.remove('hidden')
+  }
 }

@@ -1,7 +1,8 @@
 {% for company in companies %}
   <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
     <span class="title" title="{{company.name}}">
-      <a href="/companies/{{company.id}}/" name="name">{{company.name}}</a>
+      {% comment %} <a href="/companies/{{company.id}}/" name="name">{{company.name}}</a> {% endcomment %}
+       <a onclick="setPage('details', 'companies', {{company.id}})" name="name">{{company.name}}</a>
     </span>
     <hr>
     <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>

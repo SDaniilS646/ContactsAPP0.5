@@ -3,7 +3,7 @@
   <div class="tree-node">
     <div class="tree-title">
       <span id="{{material.material_id}}">
-        <a href="/materials/{{material.material_id}}/">
+        <a onclick="setPage('details', 'materials', {{material.material_id}})">
           {{material.material_name}}
         </a>
       </span>

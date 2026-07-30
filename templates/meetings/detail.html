@@ -1,10 +1,10 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
 
 <div class="main-details">
   <div class="menu-btns">
     {% comment %} <button onclick="openModal('edit_material_modal_frame')">edit</button> {% endcomment %}
        {% csrf_token %}
-    <button onclick="post_delItem('meetings', {{meeting.id}})">del</button>
+    <button onclick="post_delItem('meetings', {{meeting.id}})" class="spec-btn">del</button>
   </div>
   <div class="group-header">
     <h1>{{meeting.subject}}</h1>
@@ -58,4 +58,4 @@
   </div>
 </div>
 
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

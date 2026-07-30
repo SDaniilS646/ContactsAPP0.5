@@ -1,7 +1,7 @@
 {% for meeting in meetings %}
   <div class="card {% if company.is_old %}old{% endif %}">
     <span class="title" title="{{meeting.subject}}">
-      <a href="/meetings/{{meeting.id}}/">{{meeting.subject}}</a>
+      <a onclick="setPage('details', 'meetings', {{meeting.id}})">{{meeting.subject}}</a>
     </span>
     <hr>
     <span>CG: — </span>

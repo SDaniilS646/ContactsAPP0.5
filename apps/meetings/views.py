@@ -20,6 +20,8 @@ import json
 def meetings_page(request):
   meetings = MeetingService.get_meetings()
 
+  return
+
   return render(
     request,
     'meetings/meetings_page.html',

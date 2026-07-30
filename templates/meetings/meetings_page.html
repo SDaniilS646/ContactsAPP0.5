@@ -1,13 +1,10 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
   <div class="outer">
     <div class="page-menu">
       <input id="meetings-list" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
-      <a class="btn-link" href='/meetings/add_meet_view/'>
-        <button>Добавить встречу</button>
-      </a>
     </div>
     <div id="meetings-list" class="cards-list cards">
       {% include 'lists/meetings_list.html' %}
     </div>
   </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

@@ -1,10 +1,10 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
 {% include 'components/modal_edit_material.html'%}
 
 <div class="main-details">
   <div class="menu-btns">
-    <button onclick="openModal('edit_material_modal_frame')">edit</button>
-    <button onclick="post_delItem('materials', {{this_material.id}})">del</button>
+    <button onclick="openModal('edit_material_modal_frame')" class="spec-btn">edit</button>
+    <button onclick="post_delItem('materials', {{this_material.id}})" class="spec-btn">del</button>
   </div>
   <div class="group-header">
     {% if parent %}<a href="/materials/{{parent.id}}/">{{parent.name}}</a>{% else %}—{% endif %}
@@ -42,4 +42,4 @@
   <div>
 </div>
 
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

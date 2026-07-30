@@ -3,7 +3,7 @@
   {% for contact in contacts %}
     <div class="card {% if contact.is_old %}old{% endif %}">
       <span class="title contact" title="{{contact.name}}">
-        <a href="/contacts/{{contact.id}}/" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+        <a onclick="setPage('details', 'contacts', {{contact.id}})" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
       </span>
 
       <span>

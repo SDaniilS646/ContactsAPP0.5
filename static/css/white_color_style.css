@@ -1,100 +1,34 @@
-body {
-  background: white;
+:root {
+
+  /* BACKS */
+  --background-color: white;
+  --page-menu-back-color: linear-gradient(to bottom, rgb(255,255,255) 50%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.05) 100%);
+  --active-page-btn-back: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.2) 70%);
+  --content-outer-back: linear-gradient(to bottom, white 15%, rgb(240, 240, 240));
+  --tree-item-selected: rgba(255, 212, 131, 0.5);
+  --sub-menu-btn-back-color: rgba(185, 218, 255, 0.4);
+
+  /* FONTS */
+  --a-href-color: rgb(90,90,90);
+  --active-page-btn-font-color: black;
+
+  /* BORDERS */
+  --thin-border-color: rgb(50,50,50,0.1);
+  --standard-border-color: rgba(50, 50, 50, 0.5);
+
+  /* HOVERS */
+  --button-hover-back: rgba(90, 90, 90, 0.2);
+
+  /* ACTIVES */
+  --button-active-back: rgba(90, 90, 90, 0.5);
+
+  /* CARDS */
+  --card-background: white;
+  --card-old-background: rgb(255, 234, 234);
+  --card-hover-blur: 3px 3px 5px black, -1px -1px 5px 1px white;
+
+  /* MODALS */
+  --modal-background-darken: rgba(100, 100, 100, 0.5);
 }
-
-/* .menu {
-  background: linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(49, 49, 49) 50%); 
-} */
-
-/* .menu .tabs-btns {
-  background-color: 
-} */
-/* .menu .tabs-btns button {
-  background-color: rgb(49, 49, 49, 0.5);
-} */
-
-button:hover {
-  background: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.2) 70%);
-
-  transition: 0.3s;
-}
-
-button:active {
-  background: linear-gradient(to bottom, rgb(49, 49, 49, 0.2) 0%, rgb(49, 49, 49, 0.2) 70%);
-
-  transition: 0.3s;
-}
-
-.menu .tabs-btns button.active {
-
-  background: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.2) 70%);
-
-    transition: 0.3s;
-}
-
-.tabs-btns button {
-  border-bottom-width: 1px;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-}
-
-.tabs-btns button:hover {
-  background-color: rgba(90, 90, 90, 0.2);
-
-  transition: 0.3s;
-}
-
-
-
-.modal-content {
-  background-color: white;
-  border: none;
-}
-
-.content .page-menu {
-  background: linear-gradient(rgb(255,255,255)50%, rgba(255, 255, 255, 0.267));
-}
-
-.content .outer {
-  border-style: solid;
-  border-width: 1px;
-  border: none;
-  
-  border-radius: 5px;  
-
-  background: linear-gradient(to bottom, white 15%, rgb(240, 240, 240));
-}
-
-a {
-  color: rgb(90,90,90);
-  border-radius: 5px;
-  transition:0.3s;
-}
-
-a:hover {
-  background-color: rgba(49, 49, 49, 0.1);
-  transition: 0.3s;
-}
-
-a:active {
-  color: rgba(90, 90, 90, 0.5);
-}
-
-.card {
-  border-style: solid;
-  border-width: 1px;
-  background-color: white;
-}
-
-.card.old {
-  background-color: rgb(255, 234, 234);
-}
-
-.card:hover {
-  backdrop-filter: blur(2px);
-  box-shadow: 3px 3px 5px black, -1px -1px 5px 1px white;
-  transition: 0.5s;
-}
-
 
 

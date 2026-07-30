@@ -49,6 +49,13 @@ def companies_page(request):
     })
     # print(datetime.strptime(comp.updated_at, "%Y-%m-%d").date())
   return render(
+      request,
+      'base.html',
+      {
+        'companies':loaded_companies
+      }
+  )
+  return render(
     request,
     'companies/companies_page.html',
     {
