@@ -1,7 +1,7 @@
 {% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-{% include 'components/modal_create_employee.html' %}
+{% comment %} {% include 'components/modal_create_employee.html' %} {% endcomment %}
 
-  <div class="outer">
+  <div id="outer" class="outer">
     <div class="page-menu">
       <input id="employees-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
       {% comment %} <button  onclick="openModal('create_employee_modal_frame')">Добавить сотрудника</button> {% endcomment %}

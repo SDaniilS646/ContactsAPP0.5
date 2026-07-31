@@ -220,3 +220,38 @@ class DetailService:
           'contacts': contacts,
           'employees': employees
         }
+
+
+class AddService:
+
+  @staticmethod
+  def addCompanyPage():
+    material_tree = MaterialService.get_material_tree()
+    contacts = ContactService.get_contacts()
+
+    return 'companies/add_comp.html', {'material_tree': material_tree,'contacts': contacts}
+
+class ModalService:
+  @staticmethod
+  def createMaterial():
+    material_tree = MaterialService.get_material_tree()
+
+    return 'components/modal_create_material.html', {'material_tree': material_tree}
+
+  @staticmethod
+  def createContact():
+    return 'components/modal_create_contact.html', {}
+
+  @staticmethod
+  def createEmployee():
+    return 'components/modal_create_employee.html', {}
+
+  @staticmethod
+  def chooseMaterial():
+    material_tree = MaterialService.get_material_tree()
+    return 'components/modal_choose_material.html', {'material_tree': material_tree}
+
+  @staticmethod
+  def chooseContact():
+    contacts = ContactService.get_contacts()
+    return 'components/modal_choose_contact.html', {'contacts': contacts}

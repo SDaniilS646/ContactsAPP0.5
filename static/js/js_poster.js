@@ -196,6 +196,9 @@ function post_create_company() {
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
+  console.log(selectedMaterials)
+  return
+
   fetch('/companies/add_comp/', {
     method: 'POST',
     headers: {
@@ -268,7 +271,7 @@ function post_company_edit() {
   })
 }
 
-function post_contact_create(is_meeting=null) {
+async function post_contact_create(is_meeting=null) {
   const container = document.getElementById('create_contact_modal_frame') 
   cont_first_name = container.querySelector('[name="first_name"]')
   cont_last_name = container.querySelector('[name="last_name"]')
@@ -281,11 +284,11 @@ function post_contact_create(is_meeting=null) {
     }
     return
   }
-  style = document.getElementById('contacts-list').classList[1]
+  // style = document.getElementById('contacts-list').classList[1]
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  fetch('/contacts/add_cont/', {
+  await fetch('/contacts/add_cont/', {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrftoken,
@@ -303,10 +306,12 @@ function post_contact_create(is_meeting=null) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      updateList('/contacts/contacts_list', document.getElementById('contacts-list'), style, is_meeting)
-      closeModal('create_contact_modal_frame')
+      // updateList('/contacts/contacts_list', document.getElementById('contacts-list'), style, is_meeting)
+      removeModal('create_contact_modal_frame')
+      reloadModal('choose_contact_modal_frame', 'chooseContact')
     }
   })
+  
 }
 
 function post_contact_edit() {
@@ -429,7 +434,7 @@ function post_employee_edit() {
   })
 }
 
-function post_material_create() {
+async function post_material_create() {
   const container = document.getElementById('create_material_modal_frame')
   mat_name = container.querySelector('[name="material_name"]')
   if (mat_name.value == '') {
@@ -441,7 +446,7 @@ function post_material_create() {
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  fetch('/materials/add_mat/', {
+  await fetch('/materials/add_mat/', {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrftoken,
@@ -457,8 +462,9 @@ function post_material_create() {
   .then(data => {
     if (data.success) {
       
-      updateList('/materials/materials_list', document.getElementById('list_material_tree'), style)
-      closeModal('create_material_modal_frame')
+      // updateList('/materials/materials_list', document.getElementById('list_material_tree'), style)
+      removeModal('create_material_modal_frame')
+      reloadModal('choose_material_modal_frame', 'chooseMaterial')
     }
   })
 }
@@ -599,7 +605,7 @@ function post_MaterialsList(comp_id) {
     },
     body: JSON.stringify({
       id: comp_id,
-      company_contacts: selectedMaterials
+      company_materials: selectedMaterials
     })
   })
   .then(response => response.json())

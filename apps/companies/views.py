@@ -65,15 +65,15 @@ def companies_page(request):
 
 @login_required
 def add_company_view(request):
-  material_tree = MaterialService.get_material_tree()
-  contacts = ContactService.get_contacts()
+  # material_tree = MaterialService.get_material_tree()
+  # contacts = ContactService.get_contacts()
 
   return render(
     request,
     'companies/add_comp.html',
     {
-      'material_tree': material_tree,
-      'contacts': contacts
+      # 'material_tree': material_tree,
+      # 'contacts': contacts
     }
   )
 
@@ -98,6 +98,8 @@ def company_create(request):
 
   company_contacts = input_data['company_contacts']
   company_materials = input_data['company_materials']
+
+  print(company_materials)
 
   if company_contacts:
     for contact in company_contacts:

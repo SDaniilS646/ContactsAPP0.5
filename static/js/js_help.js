@@ -2,13 +2,56 @@ let selectedMaterials = []
 let selectedContacts = []
 let selectedEmployees = []
 
-function openModal(modal_frame_id) {
-  document.getElementById(modal_frame_id).style.display = 'flex'
+function openModal(modal_frame_id, modal_name=null) {
+
+  const modal_cont = document.getElementById('modals-content')
+  // modal_cont.innerHTML = ''
+
+  let modal_frame = document.getElementById(modal_frame_id)
+  if (modal_frame) {
+    modal_frame.style.display = 'flex'
+    return
+  }
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+
+  fetch('/modal/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      'modal_name': modal_name
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    
+    modal_cont.innerHTML += data.html
+    // modal_cont.firstChild.style.display = 'flex'
+    modal_frame = document.getElementById(modal_frame_id)
+    if (modal_frame) {modal_frame.style.display = 'flex'}
+  })
+  
 }
 
 function closeModal(modal_frame_id) {
-  document.getElementById(modal_frame_id).style.display = 'none'
+  const modal_frame = document.getElementById(modal_frame_id)
+  if (modal_frame) {modal_frame.style.display = 'none'}
 }
+
+function removeModal(modal_frame_id) {
+  const modal_frame = document.getElementById(modal_frame_id)
+  if (modal_frame) {modal_frame.remove()}
+}
+
+function reloadModal(modal_frame_id, modal_name) {
+  if(document.getElementById(modal_frame_id) == null) {return}
+  removeModal(modal_frame_id)
+  openModal(modal_frame_id, modal_name)
+}
+
 
 function selectMaterials(event, element, container_id=null, input_box_id=null) {
 
@@ -25,17 +68,23 @@ function saveMaterialsList() {
 
   const container = document.getElementById('list_material_tree')
 
+  console.log(container)
+
   let elements = container.querySelectorAll('span')
-  selectedMaterials = []
+  let selectedMaterials = []
+
+  console.log(elements)
 
   elements.forEach(val => {
     if (val.classList.contains('selected')) {
+      console.log(val)
       let mat_id = val.getAttribute('id')
       selectedMaterials.push(mat_id)
     }
   })
 
   closeModal('choose_material_modal_frame')
+  console.log(selectedMaterials)
 }
 
 function selectParent(event, element, container_id='create_material_modal_frame') {
@@ -46,8 +95,8 @@ function selectParent(event, element, container_id='create_material_modal_frame'
   const parent_id_input_element = container.querySelector('[name="parent_id"]')
 
   let id = element.getAttribute('id')
-  query_id = `[id="${id}"]`
-  prev_parent_id = parent_id_input_element.value == '' ? null : `[id="${parent_id_input_element.value}"]` 
+  let query_id = `[id="${id}"]`
+  let prev_parent_id = parent_id_input_element.value == '' ? null : `[id="${parent_id_input_element.value}"]` 
 
   if (parent_id_input_element.value == id) {
     container.querySelector(query_id).classList.remove('selected')
@@ -289,11 +338,6 @@ function executeCMD() {
 }
 
 function setPage(type, table, id=null) {
-  const output = {
-    'type': type,
-    'table': table,
-    'id': id
-  }
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
@@ -312,20 +356,39 @@ function setPage(type, table, id=null) {
   .then(response => response.json())
   .then(data => 
     {
+      const menu_cont = document.getElementById('menu-btns')
       if (type == 'page') {
-        menu_cont = document.getElementById('menu-btns')
+
+        menu_cont.querySelectorAll('button').forEach(val => {
+          if (val.getAttribute('name') == `${table}-btn`) {
+            val.classList.add('active')
+            val.setAttribute('disabled', '')
+          } else {
+            val.removeAttribute('disabled')
+            val.classList.remove('active')
+          }
+        })
+
         menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
           if (val.getAttribute('name') == `${table}-menu-btns`) {
+            val.removeAttribute('disabled')
             val.classList.remove('hidden')
           } else {
             if (!val.classList.contains('hidden')) {
+              val.setAttribute('disabled', '')
               val.classList.add('hidden')
             }
           }
         })
-      }
+      } 
 
       document.getElementById('content').innerHTML = data.html
+      const outer = document.getElementById("outer")
+      
+      setTimeout(() => {
+        if (outer) {outer.classList.add('show')}
+      }, 10);
+      
     }
   )
 }
@@ -371,23 +434,23 @@ document.addEventListener(
   }
 )
 
-window.onload = function() {
-  cur_url_path = new URL(window.location.href).pathname
+// window.onload = function() {
+//   cur_url_path = new URL(window.location.href).pathname
 
-  menu_cont = document.getElementById('menu-btns')
+//   menu_cont = document.getElementById('menu-btns')
 
-  menu_cont.querySelectorAll('a').forEach(val => 
-    { 
-    if (val.getAttribute('href') == cur_url_path) {
+//   menu_cont.querySelectorAll('a').forEach(val => 
+//     { 
+//     if (val.getAttribute('href') == cur_url_path) {
 
-      val.querySelector('button').classList.add('active')
+//       // val.querySelector('button').classList.add('active')
 
-      // val.querySelector('button').setAttribute('disabled', '')
-    }
-  })
+//       // val.querySelector('button').setAttribute('disabled', '')
+//     }
+//   })
 
-  sub_menu_btns = menu_cont.querySelector(`[name="${cur_url_path.slice(1, -1)}-menu-btns"]`)
-  if (sub_menu_btns) {
-    sub_menu_btns.classList.remove('hidden')
-  }
-}
+//   sub_menu_btns = menu_cont.querySelector(`[name="${cur_url_path.slice(1, -1)}-menu-btns"]`)
+//   if (sub_menu_btns) {
+//     sub_menu_btns.classList.remove('hidden')
+//   }
+// }

@@ -1,8 +1,8 @@
-{% extends 'base.html' %} {% block content %}
-{% include 'components/modal_create_contact.html' %}
-{% include 'components/modal_create_material.html' %}
-{% include 'components/modal_choose_contact.html' %}
-{% include 'components/modal_choose_material.html' %}
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
+{% comment %} {% include 'components/modal_create_contact.html' %}
+{% include 'components/modal_create_material.html' %} {% endcomment %}
+{% comment %} {% include 'components/modal_choose_contact.html' %}
+{% include 'components/modal_choose_material.html' %} {% endcomment %}
 
 <div id="company-creation">
   <h1>Новая компания</h1>
@@ -41,10 +41,11 @@
   </div>
 
   <div class="open-modal-buttons">
-    <button onclick=openModal('choose_contact_modal_frame')>Добавить контакты</button>
-    <button onclick=openModal('choose_material_modal_frame')>Добавить материалы</button>
+    <button onclick="openModal('choose_contact_modal_frame', 'chooseContact')">Добавить контакты</button>
+    <button onclick="openModal('choose_material_modal_frame', 'chooseMaterial')">Добавить материалы</button>
   </div>
 
   <button onclick="post_create_company()">Сохранить</button>
 </div>
-{% endblock %}
+
+{% comment %} {% endblock %} {% endcomment %}

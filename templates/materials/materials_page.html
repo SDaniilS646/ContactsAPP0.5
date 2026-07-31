@@ -1,6 +1,5 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-{% include 'components/modal_create_material.html' %}
-  <div class="outer">
+{% comment %} {% include 'components/modal_create_material.html' %} {% endcomment %}
+  <div id="outer" class="outer">
     <div class="page-menu">
       {% comment %} <button onclick="openModal('create_material_modal_frame')">Добавить материал</button> {% endcomment %}
     </div>
@@ -8,4 +7,3 @@
       {% include 'lists/materials_list.html' with style='page_style' %}
     </div>
   </div>
-{% comment %} {% endblock %} {% endcomment %}

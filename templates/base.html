@@ -13,13 +13,15 @@
     <script src="{% static 'js/js_poster.js' %}"></script>
     <script src="{% static 'js/js_cache.js' %}"></script>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {% comment %} <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> {% endcomment %}
 
   </head>
   <body>
     {% csrf_token %}
     <div class="menu">
       {% include 'components/menu.html' %}
+    </div>
+    <div id="modals-content">
     </div>
     <div id="content" class="content">
       {% comment %} {% include 'companies/companies_page.html' %} {% endcomment %}

@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
 
-from apps.views import setPage, clearPage
+from apps.views import setPage, clearPage, loadModal
 
 
 urlpatterns = [
@@ -37,5 +37,6 @@ urlpatterns = [
     path('employees/', include('apps.employees.urls')),
     path('commands/', include('apps.commands.urls')),
 
-    path('open_page/', setPage)
+    path('open_page/', setPage),
+    path('modal/', loadModal)
 ]

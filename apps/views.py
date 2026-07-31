@@ -4,8 +4,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
 import json
+import time
 
-from services.page_service import PageService, DetailService
+from services.page_service import PageService, DetailService, AddService, ModalService
 
 PAGES = {
   'companies': PageService.companies_page,
@@ -23,7 +24,17 @@ DETAILS = {
   'employees': DetailService.employeesDetail
 }
 
-ADD = {}
+ADD = {
+  'companies': AddService.addCompanyPage
+}
+
+MODALS = {
+  'createMaterial': ModalService.createMaterial,
+  'createContact': ModalService.createContact,
+  'createEmployee': ModalService.createEmployee,
+  'chooseMaterial': ModalService.chooseMaterial,
+  'chooseContact': ModalService.chooseContact
+}
 
 @login_required
 def clearPage(request):
@@ -36,8 +47,8 @@ def setPage(request):
     html, vars = PAGES[page_data['table']]()
   elif page_data['type'] == 'details':
     html, vars = DETAILS[page_data['table']](page_data['id'])
-  elif page_data['type'] == 'ADD':
-    ADD[page_data['table']]()
+  elif page_data['type'] == 'add':
+    html, vars = ADD[page_data['table']]()
   else:
     print('missing type')
 
@@ -46,5 +57,15 @@ def setPage(request):
     'Success': False,
     'result': 'Exists',
     'html': render_to_string(
-      html, vars)
+      html, vars, request=request)
   })
+
+def loadModal(request):
+  page_data = json.loads(request.body)
+  
+  html, vars = MODALS[page_data['modal_name']]()
+
+  return JsonResponse({
+    'html': render_to_string(html, vars, request=request)
+  })
+

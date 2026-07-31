@@ -6,45 +6,33 @@
   </form>
 </div>
 <div id="menu-btns" class="tabs-btns">
-  {% comment %} <a href="/companies/" class="btn"> {% endcomment %}
-    <button onclick="setPage('page', 'companies')">Компании</button>
-  {% comment %} </a> {% endcomment %}
+
+  <button name="companies-btn" onclick="setPage('page', 'companies')">Компании</button>
   <div name="companies-menu-btns" class="sub-menu-btns hidden">
-      <a class="btn-link" href='/companies/add_comp_view/'>
-        <button>Добавить компанию</button>
-      </a>
-      <a class="btn-link" href='/companies/parse_company_page/'>
-        <button>Найти новую компанию</button>
-      </a>
-  </div>
-  {% comment %} <a href="/contacts/" class="btn"> {% endcomment %}
-    <button onclick="setPage('page', 'contacts')">Контакты</button>
-  {% comment %} </a> {% endcomment %}
-  <div name="contacts-menu-btns" class="sub-menu-btns hidden">
-      <button  onclick="openModal('create_contact_modal_frame')">Добавить контакт</button>
-  </div>
-  {% comment %} <a href="/materials/" class="btn"> {% endcomment %}
-    <button onclick="setPage('page', 'materials')">Материалы</button>
-  {% comment %} </a> {% endcomment %}
-  <div name="materials-menu-btns" class="sub-menu-btns hidden">
-      <button onclick="openModal('create_material_modal_frame')">Добавить материал</button>
-  </div>
-  {% comment %} <a href="/meetings/" class="btn"> {% endcomment %}
-    <button onclick="setPage('page', 'meetings')">Встречи</button>
-  {% comment %} </a> {% endcomment %}
-  <div name="meetings-menu-btns" class="sub-menu-btns hidden">
-      <a class="btn-link" href='/meetings/add_meet_view/'>
-        <button>Добавить встречу</button>
-      </a>
-  </div>
-  {% comment %} <a href="/employees/" class="btn"> {% endcomment %}
-    <button onclick="setPage('page', 'employees')">Сотрудники</button>
-  {% comment %} </a> {% endcomment %}
-  <div name="employees-menu-btns" class="sub-menu-btns hidden">
-      <button onclick="openModal('create_employee_modal_frame')">Добавить сотрудника</button>
+      <button onclick="setPage('add', 'companies')">Добавить компанию</button>
+      <button>Найти новую компанию</button>
   </div>
 
-  {% comment %}  {% endcomment %}
+  <button name="contacts-btn" onclick="setPage('page', 'contacts')">Контакты</button>
+  <div name="contacts-menu-btns" class="sub-menu-btns hidden">
+      <button  onclick="openModal('create_contact_modal_frame', 'createContact')">Добавить контакт</button>
+  </div>
+
+  <button name="materials-btn" onclick="setPage('page', 'materials')">Материалы</button>
+  <div name="materials-menu-btns" class="sub-menu-btns hidden">
+    <button onclick="openModal('create_material_modal_frame', 'createMaterial')">Добавить материал</button>
+  </div>
+
+  <button name="meetings-btn" onclick="setPage('page', 'meetings')">Встречи</button>
+  <div name="meetings-menu-btns" class="sub-menu-btns hidden">
+    <button>Добавить встречу</button>
+  </div>
+
+  <button name="employees-btn" onclick="setPage('page', 'employees')">Сотрудники</button>
+  <div name="employees-menu-btns" class="sub-menu-btns hidden">
+      <button onclick="openModal('create_employee_modal_frame', 'createEmployee')">Добавить сотрудника</button>
+  </div>
+
 </div>
 <div id="cmd-btn">
   {% if user.is_superuser %}
