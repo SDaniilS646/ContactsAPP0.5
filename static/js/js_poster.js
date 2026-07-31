@@ -196,8 +196,6 @@ function post_create_company() {
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  console.log(selectedMaterials)
-  return
 
   fetch('/companies/add_comp/', {
     method: 'POST',
@@ -220,8 +218,7 @@ function post_create_company() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert('✅ Компания добавлена!')
-      pgReload()
+      setPage('page', 'companies')
     } else {
       if (data.result == 'Exists') {
         container.querySelector('[name="company_name_label"]').textContent = "Компания с таким названием или почтой уже существует"

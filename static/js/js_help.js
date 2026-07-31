@@ -68,12 +68,8 @@ function saveMaterialsList() {
 
   const container = document.getElementById('list_material_tree')
 
-  console.log(container)
-
   let elements = container.querySelectorAll('span')
-  let selectedMaterials = []
-
-  console.log(elements)
+  selectedMaterials = []
 
   elements.forEach(val => {
     if (val.classList.contains('selected')) {
@@ -84,7 +80,6 @@ function saveMaterialsList() {
   })
 
   closeModal('choose_material_modal_frame')
-  console.log(selectedMaterials)
 }
 
 function selectParent(event, element, container_id='create_material_modal_frame') {
@@ -206,7 +201,6 @@ function sortList(event, query_el='div.card') {
   new_val = event.target.value
 
   elems = document.querySelectorAll(query_el)
-  console.log(elems)
   ordered_array = []
 
   switch (new_val) {
@@ -214,9 +208,8 @@ function sortList(event, query_el='div.card') {
       elems.forEach(val => {
         ordered_array.push(val.querySelector('[name="name"]').textContent)
       })
-      console.log(ordered_array)
       ordered_array.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-      console.log(ordered_array)
+
 
       elems.forEach(val => {
         ind = ordered_array.indexOf(val.querySelector('[name="name"]').textContent)
@@ -354,20 +347,21 @@ function setPage(type, table, id=null) {
     })
   })
   .then(response => response.json())
-  .then(data => 
-    {
+  .then(data => { 
+      if (!data.success) {return}
+      AppState.currentPage = `${type}-${table}`
       const menu_cont = document.getElementById('menu-btns')
-      if (type == 'page') {
+      menu_cont.querySelectorAll('button').forEach(val => {
+        if (val.getAttribute('id') == AppState.currentPage) {
+          val.classList.add('active')
+          val.setAttribute('disabled', '')
+        } else {
+          val.removeAttribute('disabled')
+          val.classList.remove('active')
+        }
+      })
 
-        menu_cont.querySelectorAll('button').forEach(val => {
-          if (val.getAttribute('name') == `${table}-btn`) {
-            val.classList.add('active')
-            val.setAttribute('disabled', '')
-          } else {
-            val.removeAttribute('disabled')
-            val.classList.remove('active')
-          }
-        })
+      if (type == 'page') {
 
         menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
           if (val.getAttribute('name') == `${table}-menu-btns`) {

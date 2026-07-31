@@ -50,11 +50,11 @@ def setPage(request):
   elif page_data['type'] == 'add':
     html, vars = ADD[page_data['table']]()
   else:
-    print('missing type')
+    return JsonResponse({'success': False})
 
 
   return JsonResponse({
-    'Success': False,
+    'success': True,
     'result': 'Exists',
     'html': render_to_string(
       html, vars, request=request)

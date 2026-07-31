@@ -27,6 +27,7 @@ button {
   text-align: center;
 
   border: 1px solid var(--thin-border-color);
+  border-top: none;
   border-radius: 5px;
 
   transition: 0.3s;
@@ -40,13 +41,12 @@ a {
 }
 
 
-button:not(.active):hover,
-a:not(.btn):hover {
+button:not(.active):hover:not(:active),
+a:not(.btn):hover:not(:active) {
   cursor: pointer;
 
   background: var(--button-hover-back);
 
-  transition: 0.3s;
 }
 
 button:active,
@@ -89,6 +89,10 @@ MENU
   border-right: 1px solid var(--thin-border-color);
 }
 
+.menu button {
+  max-width: 100px;
+}
+
 .menu #auth-btns {
   /* margin-top: 10px; */
   flex: 0 0 auto;
@@ -109,13 +113,7 @@ MENU
   gap: 10px;
 }
 
-.menu .tabs-btns button {
-  transition: 1s;
-  border-top: 1px solid var(--thin-border-color);
-}
-
 .menu #cmd-btn {
-  /* margin-bottom: 20px;  */
   flex: 0 0 auto;
 }
 
@@ -125,9 +123,6 @@ MENU
   transition: 1s;
 
   pointer-events: none;
-}
-.menu .sub-menu-btns.hidden button {
-  cursor: none;
 }
 
 .menu .sub-menu-btns {
@@ -142,23 +137,20 @@ MENU
   transition: 1s;
 }
 
-.menu button {
-  max-width: 100px;
-}
+
 
 .menu .sub-menu-btns button {
   background: var(--sub-menu-btn-back-color);
+  transition: 1s;
 }
 
 .menu .tabs-btns button.active {
-
   background: var(--active-page-btn-back);
   color: var(--active-page-btn-font-color);
 
-  border-top: none;
-
   transition: 1s;
 }
+
 
 /* 
 =====================================

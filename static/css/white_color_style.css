@@ -8,6 +8,7 @@
   --tree-item-selected: rgba(255, 212, 131, 0.5);
   --sub-menu-btn-back-color: rgba(185, 218, 255, 0.4);
 
+
   /* FONTS */
   --a-href-color: rgb(90,90,90);
   --active-page-btn-font-color: black;
@@ -20,7 +21,7 @@
   --button-hover-back: rgba(90, 90, 90, 0.2);
 
   /* ACTIVES */
-  --button-active-back: rgba(90, 90, 90, 0.5);
+  --button-active-back: rgba(90, 90, 90, 0.8);
 
   /* CARDS */
   --card-background: white;

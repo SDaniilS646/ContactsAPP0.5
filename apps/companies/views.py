@@ -99,8 +99,6 @@ def company_create(request):
   company_contacts = input_data['company_contacts']
   company_materials = input_data['company_materials']
 
-  print(company_materials)
-
   if company_contacts:
     for contact in company_contacts:
       ConnectionService.set_company_contact(

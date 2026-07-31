@@ -7,28 +7,28 @@
 </div>
 <div id="menu-btns" class="tabs-btns">
 
-  <button name="companies-btn" onclick="setPage('page', 'companies')">Компании</button>
+  <button id="page-companies" name="companies-btn" onclick="setPage('page', 'companies')">Компании</button>
   <div name="companies-menu-btns" class="sub-menu-btns hidden">
-      <button onclick="setPage('add', 'companies')">Добавить компанию</button>
+      <button id="add-companies" onclick="setPage('add', 'companies')">Добавить компанию</button>
       <button>Найти новую компанию</button>
   </div>
 
-  <button name="contacts-btn" onclick="setPage('page', 'contacts')">Контакты</button>
+  <button id="page-contacts" name="contacts-btn" onclick="setPage('page', 'contacts')">Контакты</button>
   <div name="contacts-menu-btns" class="sub-menu-btns hidden">
       <button  onclick="openModal('create_contact_modal_frame', 'createContact')">Добавить контакт</button>
   </div>
 
-  <button name="materials-btn" onclick="setPage('page', 'materials')">Материалы</button>
+  <button id="page-materials" name="materials-btn" onclick="setPage('page', 'materials')">Материалы</button>
   <div name="materials-menu-btns" class="sub-menu-btns hidden">
     <button onclick="openModal('create_material_modal_frame', 'createMaterial')">Добавить материал</button>
   </div>
 
-  <button name="meetings-btn" onclick="setPage('page', 'meetings')">Встречи</button>
+  <button id="page-meetings" name="meetings-btn" onclick="setPage('page', 'meetings')">Встречи</button>
   <div name="meetings-menu-btns" class="sub-menu-btns hidden">
     <button>Добавить встречу</button>
   </div>
 
-  <button name="employees-btn" onclick="setPage('page', 'employees')">Сотрудники</button>
+  <button id="page-employees" name="employees-btn" onclick="setPage('page', 'employees')">Сотрудники</button>
   <div name="employees-menu-btns" class="sub-menu-btns hidden">
       <button onclick="openModal('create_employee_modal_frame', 'createEmployee')">Добавить сотрудника</button>
   </div>

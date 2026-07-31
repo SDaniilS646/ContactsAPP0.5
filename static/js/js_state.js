@@ -1,0 +1,3 @@
+const AppState = {
+  currentPage: null,
+}
