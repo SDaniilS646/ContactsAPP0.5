@@ -18,6 +18,10 @@ body {
   background: var(--background-color);
 }
 
+:focus {
+  outline: none;
+} 
+
 button {
   background: var(--background-color);
   
@@ -27,6 +31,7 @@ button {
   text-align: center;
 
   border: 1px solid var(--thin-border-color);
+  border-bottom-width: 2px;
   border-top: none;
   border-radius: 5px;
 
@@ -46,6 +51,8 @@ a:not(.btn):hover:not(:active) {
   cursor: pointer;
 
   background: var(--button-hover-back);
+
+  
 
 }
 

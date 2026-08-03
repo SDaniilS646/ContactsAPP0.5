@@ -2,27 +2,36 @@ let selectedMaterials = []
 let selectedContacts = []
 let selectedEmployees = []
 
-function openModal(modal_frame_id, modal_name=null) {
+let currentZIndex = 1000;
+
+function removeAllModals() {
+  const modal_cont = document.getElementById('modals-content')
+  if (modal_cont) {modal_cont.innerHTML = ''}
+}
+
+async function openModal(modal_frame_id, modal_name=null, id=null) {
 
   const modal_cont = document.getElementById('modals-content')
   // modal_cont.innerHTML = ''
 
   let modal_frame = document.getElementById(modal_frame_id)
   if (modal_frame) {
+    modal_frame.style.zIndex = ++currentZIndex
     modal_frame.style.display = 'flex'
     return
   }
 
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  fetch('/modal/', {
+  await fetch('/modal/', {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrftoken,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      'modal_name': modal_name
+      'modal_name': modal_name, 
+      'id': id
     })
   })
   .then(response => response.json())
@@ -31,7 +40,10 @@ function openModal(modal_frame_id, modal_name=null) {
     modal_cont.innerHTML += data.html
     // modal_cont.firstChild.style.display = 'flex'
     modal_frame = document.getElementById(modal_frame_id)
-    if (modal_frame) {modal_frame.style.display = 'flex'}
+    if (modal_frame) {
+      modal_frame.style.zIndex = ++currentZIndex
+      modal_frame.style.display = 'flex'
+    }
   })
   
 }
@@ -46,10 +58,10 @@ function removeModal(modal_frame_id) {
   if (modal_frame) {modal_frame.remove()}
 }
 
-function reloadModal(modal_frame_id, modal_name) {
+function reloadModal(modal_frame_id, modal_name, id=null) {
   if(document.getElementById(modal_frame_id) == null) {return}
   removeModal(modal_frame_id)
-  openModal(modal_frame_id, modal_name)
+  openModal(modal_frame_id, modal_name, id)
 }
 
 
@@ -362,7 +374,7 @@ function setPage(type, table, id=null) {
       })
 
       if (type == 'page') {
-
+        removeAllModals()
         menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
           if (val.getAttribute('name') == `${table}-menu-btns`) {
             val.removeAttribute('disabled')

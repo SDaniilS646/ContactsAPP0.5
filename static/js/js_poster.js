@@ -243,6 +243,8 @@ function post_company_edit() {
   rating = rating >= 5 ? 5 : rating
   rating = rating < 0 ? 0 : rating
 
+  const comp_id = container.querySelector('[name="id"]').value
+
   fetch('/companies/edit_cont/', {
     method: 'POST',
     headers: {
@@ -250,7 +252,7 @@ function post_company_edit() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        id: container.querySelector('[name="id"]').value,
+        id: comp_id,
         company_name: comp_name.value,
         inn: container.querySelector('[name="inn"]').value,
         site: container.querySelector('[name="site"]').value,
@@ -263,12 +265,13 @@ function post_company_edit() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      pgReload()
+      setPage('details', 'companies', comp_id)
+      removeModal('edit_company_modal_frame')
     }
   })
 }
 
-async function post_contact_create(is_meeting=null) {
+async function post_contact_create(comp_id=null) {
   const container = document.getElementById('create_contact_modal_frame') 
   cont_first_name = container.querySelector('[name="first_name"]')
   cont_last_name = container.querySelector('[name="last_name"]')
@@ -303,9 +306,8 @@ async function post_contact_create(is_meeting=null) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      // updateList('/contacts/contacts_list', document.getElementById('contacts-list'), style, is_meeting)
       removeModal('create_contact_modal_frame')
-      reloadModal('choose_contact_modal_frame', 'chooseContact')
+      reloadModal('choose_contact_modal_frame', 'chooseContact', comp_id)
     }
   })
   
@@ -431,7 +433,7 @@ function post_employee_edit() {
   })
 }
 
-async function post_material_create() {
+async function post_material_create(comp_id) {
   const container = document.getElementById('create_material_modal_frame')
   mat_name = container.querySelector('[name="material_name"]')
   if (mat_name.value == '') {
@@ -458,10 +460,8 @@ async function post_material_create() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      
-      // updateList('/materials/materials_list', document.getElementById('list_material_tree'), style)
       removeModal('create_material_modal_frame')
-      reloadModal('choose_material_modal_frame', 'chooseMaterial')
+      reloadModal('choose_material_modal_frame', 'chooseMaterial', comp_id)
     }
   })
 }
@@ -539,7 +539,7 @@ function post_delItem(table, id) {
   })
 }
 
-function post_delConnection(table, id_1, id_2) {
+function post_delConnection(table, id_1, id_2, page=null) {
 
   if (!confirm('Удалить?')) {
     return
@@ -562,13 +562,15 @@ function post_delConnection(table, id_1, id_2) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert('success')
-      pgReload()
+      // pgReload()
+      if (page) {
+        setPage(page['type'], page['table'], page['id'])
+      }
     }
   })
 }
 
-function post_ContactsList(comp_id) {
+function post_ContactsList(table, comp_id) {
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
   fetch('/companies/edit_contact_list/', {
@@ -585,7 +587,8 @@ function post_ContactsList(comp_id) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      pgReload()
+      setPage('details', table, comp_id)
+      removeAllModals()
     }
   })
 }
@@ -608,7 +611,8 @@ function post_MaterialsList(comp_id) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      pgReload()
+      setPage('details', 'companies', comp_id)
+      removeAllModals()
     }
   })
 }

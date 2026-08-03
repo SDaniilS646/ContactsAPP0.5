@@ -1,9 +1,9 @@
-{% extends 'base.html' %} {% block content %}
+{% comment %} {% extends 'base.html' %} {% block content %}
 {% include 'components/modal_create_contact.html' %}
 {% include 'components/modal_create_employee.html' %}
 
 {% include 'components/modal_choose_contact.html' %}
-{% include 'components/modal_choose_employees.html' %}
+{% include 'components/modal_choose_employees.html' %} {% endcomment %}
 
 <div id="company-creation">
   <h1>Новая встреча</h1>
@@ -26,10 +26,10 @@
   </div>
   
   <div class="open-modal-buttons">
-    <button onclick=openModal('choose_contact_modal_frame')>Добавить контакты</button>
-    <button onclick=openModal('choose_employee_modal_frame')>Добавить сотрудников</button>
+    <button onclick="openModal('choose_contact_modal_frame', 'chooseContact')">Добавить контакты</button>
+    <button onclick="openModal('choose_employee_modal_frame', 'chooseEmployee')">Добавить сотрудников</button>
   </div>
 
   <button onclick="post_create_meeting()">Сохранить</button>
 </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

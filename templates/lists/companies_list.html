@@ -2,7 +2,7 @@
   <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
     <span class="title" title="{{company.name}}">
       {% comment %} <a href="/companies/{{company.id}}/" name="name">{{company.name}}</a> {% endcomment %}
-       <a onclick="setPage('details', 'companies', {{company.id}})" name="name">{{company.name}}</a>
+       <a onclick="openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})" name="name">{{company.name}}</a>
     </span>
     <hr>
     <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>

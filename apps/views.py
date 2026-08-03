@@ -13,7 +13,8 @@ PAGES = {
   'materials': PageService.materials_page,
   'contacts': PageService.contacts_page,
   'meetings': PageService.meetings_page,
-  'employees': PageService.employees_page
+  'employees': PageService.employees_page,
+  'cmd': PageService.cmd_page
 }
 
 DETAILS = {
@@ -25,7 +26,8 @@ DETAILS = {
 }
 
 ADD = {
-  'companies': AddService.addCompanyPage
+  'companies': AddService.addCompanyPage,
+  'meetings': AddService.addMeetingPage
 }
 
 MODALS = {
@@ -33,7 +35,10 @@ MODALS = {
   'createContact': ModalService.createContact,
   'createEmployee': ModalService.createEmployee,
   'chooseMaterial': ModalService.chooseMaterial,
-  'chooseContact': ModalService.chooseContact
+  'chooseContact': ModalService.chooseContact,
+  'chooseEmployee': ModalService.chooseEmployee,
+  'editCompany': ModalService.editCompany,
+  'detailsCompany': DetailService.companiesDetail
 }
 
 @login_required
@@ -63,7 +68,7 @@ def setPage(request):
 def loadModal(request):
   page_data = json.loads(request.body)
   
-  html, vars = MODALS[page_data['modal_name']]()
+  html, vars = MODALS[page_data['modal_name']](page_data['id'])
 
   return JsonResponse({
     'html': render_to_string(html, vars, request=request)

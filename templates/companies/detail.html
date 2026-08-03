@@ -1,65 +1,95 @@
 {% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-{% include 'components/modal_edit_company.html'%}
-{% include 'components/modal_create_contact.html' %}
-{% include 'components/modal_create_material.html' %}
-{% include 'components/modal_choose_contact.html' with is_edit=True %}
-{% include 'components/modal_choose_material.html' with is_edit=True %}
+{% comment %} {% include 'components/modal_edit_company.html'%} {% endcomment %}
+{% comment %} {% include 'components/modal_create_contact.html' %} {% endcomment %}
+{% comment %} {% include 'components/modal_create_material.html' %} {% endcomment %}
+{% comment %} {% include 'components/modal_choose_contact.html' with is_edit=True %} {% endcomment %}
+{% comment %} {% include 'components/modal_choose_material.html' with is_edit=True %} {% endcomment %}
 
-<div class="main-details">
-  <div class="menu-btns">
-    <button onclick="openModal('edit_company_modal_frame')" class="spec-btn">edit</button>
-    <button onclick="post_delItem('companies', {{company.id}})" class="spec-btn">del</button>
-  </div>
-  <div class="group-header">
-    <h1>{{company.name}}</h1>
-    <span>{% if company.rating %}{{rating}}{% else %}—{% endif %}</span>
-  </div>
-  <hr>
-  <div class="info">
+{% comment %} openModal('edit_company_modal_frame', 'editCompany') {% endcomment %}
 
-    <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>
-    <span>Сайт: {% if company.site %}<a href="https://www.{{company.site}}">{{company.site}}</a>{% else %}—{% endif %}</span>
-    <span>Почта: {% if company.mail %}{{company.mail}}{% else %}—{% endif %}</span>
-    <span>Тел.: {% if company.phone %}{{company.phone}}{% else %}—{% endif %}</span>
-    <span>Примечание: {% if company.comment %}{{company.comment}}{% else %}—{% endif %}</span>
-  </div>
-  <hr>
-  <div class="menu-btns">
-    <button onclick=openModal('choose_material_modal_frame') class="spec-btn">edit</button>
-  </div>
-  <div class="group-header">
-    <h2>Материалы</h2>
-  </div>
-  <div class="comp-materials-list">
-    {% for info in materials %}
-      <div>
-        <button class="del-conn spec-btn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}})" >X</button>
-        <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
-      </div>
-    {% endfor %}
-  </div>
-  <hr>
-  <div class="menu-btns">
-    <button onclick="openModal('choose_contact_modal_frame')" class="spec-btn">edit</button>
-  </div>
-  <div class="group-header">
-    <h2>Контакты</h2>
-  </div>
-  <hr>
-  <div class="cards-list">
-    {% for info in cont_info %}
-      <div class="card">
-        <div class="card-header">
-          <button class="del-conn spec-btn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}})">X</button>
-          <span class="title" title="{{info.cont_name}}">
-            <a href="/contacts/{{info.contact_id}}/">{{info.cont_name}}</a>
-        </div>
-        </span>
-        <span>{% if info.position %}{{info.position}}{% else %}—{% endif %}</span>
-        <span>раб.тел.: {% if info.phone %}{{info.phone}}{% else %}—{% endif %}</span>
-        <span>Почта: {% if info.mail %}{{info.mail}}{% else %}—{% endif %}</span>
-      </div>
-    {% endfor %}
+<div id="companies-details-modal-frame" class="modal">
+  <div class="modal-content details">
+    <div class="menu-btns">
+      <button onclick="openModal('edit_company_modal_frame', 'editCompany', {{company.id}})" class="spec-btn">edit</button>
+      <button onclick="post_delItem('companies', {{company.id}})" class="spec-btn">del</button>
+      {% include 'components/modal_remove_btn.html' with frame_id='companies-details-modal-frame' %}
     </div>
+    <div class="modal-header">
+      <h1>{{company.name}}</h1>
+      <span>{{rating | default:'—'}}</span>
+    </div>
+    <div class="modal-main">
+      <div class="details-info">
+        <span>ИНН:</span><span>{{company.inn | default:'—'}}</span>
+        <span>Сайт:</span><span>{% if company.site %}<a href="https://www.{{company.site}}">{{company.site}}</a>{% else %}—{% endif %}</span>
+        <span>Почта:</span><span>{{company.mail | default:'—'}}</span>
+        <span>Тел.:</span><span>{{company.phone | default:'—'}}</span>
+        <span>Примечание:</span><span>{{company.comment | default:'—'}}</span>
+      </div>
+      <div class="menu-btns">
+        <button onclick="openModal('choose_material_modal_frame', 'chooseMaterial', {{company.id}})" class="spec-btn">edit</button>
+      </div>
+      <div class="list-header">
+        <h2>Материалы</h2>
+      </div>
+      <div class="materials-list">
+        {% for info in materials %}
+          <div>
+            <button class="del-conn spec-btn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}}, {'type': 'details', 'table': 'companies', 'id': {{company.id}}})">X</button>
+            <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div>
+        contacts
+      </div>
+    </div>
+    {% comment %} <div class="modal-footer">
+      main
+    </div> {% endcomment %}
+
+
+      {% comment %} <div class="header">
+        <div class="menu-btns">
+          <button onclick="openModal('choose_material_modal_frame', 'chooseMaterial', {{company.id}})" class="spec-btn">edit</button>
+        </div>
+        <div class="group-header">
+          <h2>Материалы</h2>
+        </div>
+      </div> {% endcomment %}
+      {% comment %} <div class="comp-materials-list">
+        {% for info in materials %}
+          <div>
+            <button class="del-conn spec-btn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}}, {'type': 'details', 'table': 'companies', 'id': {{company.id}}})">X</button>
+            <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
+          </div>
+        {% endfor %}
+      </div> {% endcomment %}
+      {% comment %} <div class="header">
+        <div class="menu-btns">
+          <button onclick="openModal('choose_contact_modal_frame', 'chooseContact', {{company.id}})" class="spec-btn">edit</button>
+        </div>
+        <div class="group-header">
+          <h2>Контакты</h2>
+        </div>
+      </div> {% endcomment %}
+      {% comment %} <div class="cards-list">
+        {% for info in cont_info %}
+          <div class="card">
+            <div class="card-header">
+              <button class="del-conn spec-btn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}}, {'type': 'details', 'table': 'companies', 'id': {{company.id}}})">X</button>
+              <span class="title" title="{{info.cont_name}}">
+                <a href="/contacts/{{info.contact_id}}/">{{info.cont_name}}</a>
+              </span>
+            </div>
+            <span>{{info.position | default:'—'}}</span>
+            <span>раб.тел.: {{info.phone | default:'—'}}</span>
+            <span>Почта: {{info.mail | default:'—'}}</span>
+          </div>
+        {% endfor %}
+      </div> {% endcomment %}
+    </div>
+  </div>
 </div>
 {% comment %} {% endblock %} {% endcomment %}

@@ -26,9 +26,9 @@
 {% elif style == 'comp_creation' %}
 
   {% for contact in contacts %}
-    <div id="{{contact.id}}" class="contact-list-item {% if contact.selected %}selected{% endif %}" onclick="selectContacts(event, this, 'contacts-list', 'contacts-list-input-box')" style="order: {{contact.id}};">
+    <div id="{{contact.id}}" class="contact-list-item {% if contact.selected %}selected{% endif %}" onclick="selectContacts(event, this, 'contacts-list', 'contacts-list-input-box')" style="order: none;">
       <span name="name">
-      {{contact.first_name}} {{contact.last_name}} {{contact.patronymic}}
+      {{contact.cont_name}}
       </span>
       {% if contact.phone %}
         <span>

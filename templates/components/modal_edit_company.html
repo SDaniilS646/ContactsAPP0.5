@@ -36,7 +36,8 @@
         </div>
         <div class="form-item">
           <label for="comment">Примечание</label>
-          <textarea type="text" name="comment" {% if company.comment %}value="{{company.comment}}"{% endif %}></textarea>
+          {{company.comment}}
+          <textarea type="text" name="comment">{% if company.comment %}{{company.comment}}{% endif %}</textarea>
         </div>
       </div>
     </div>

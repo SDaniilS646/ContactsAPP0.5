@@ -251,7 +251,7 @@ def edit_contact_list(request):
 def edit_material_list(request):
   input_data = json.loads(request.body)
 
-  company_materials = input_data['company_contacts']
+  company_materials = input_data['company_materials']
 
   ConnectionService.delete_all_material_connections(input_data['id'])
 
@@ -260,7 +260,7 @@ def edit_material_list(request):
       ConnectionService.edit_company_material(
         {
           'comp_id': input_data['id'],
-          'mat_id': material['id']
+          'mat_id': material
         }
       )
 

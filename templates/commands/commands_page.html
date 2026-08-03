@@ -1,5 +1,5 @@
-{% extends 'base.html' %} {% block content %}
-  <div class="outer">
+{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
+  <div id="outer" class="outer">
     {% csrf_token %}
     <div id="commands-block">
       
@@ -12,4 +12,4 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}

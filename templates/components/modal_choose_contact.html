@@ -6,14 +6,14 @@
     </div>
     
     <div class="main-frame">
-      <select name="sortList" id="sort-select" onchange="sortList(event, 'div.contact-list-item')">
+      {% comment %} <select name="sortList" id="sort-select" onchange="sortList(event, 'div.contact-list-item')">
         <option value="">--Сортировать--</option>
         <option value="-date">Старое-новое</option>
         <option value="date">Новое-старое</option>
         <option value="A-z">А-я</option>
         <option value="Z-a">Я-а</option>
         <option value="">По умолчанию</option>
-      </select>
+      </select> {% endcomment %}
       <input id="contacts-list-on-comp-edit" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
       <hr>
       <div id="contacts-list" class="contact-list comp_creation">
@@ -22,8 +22,8 @@
     </div>
     <hr>
     <div class="footer">
-      {% if is_edit %}
-        <button onclick="saveContactsList(); post_ContactsList({{company.id}})">Сохранить изменения</button>
+      {% if company_id %}
+        <button onclick="saveContactsList(); post_ContactsList('companies', {{company_id}})">Сохранить изменения</button>
       {% else %}
         <button onclick="saveContactsList()">Сохранить</button>
       {% endif %}

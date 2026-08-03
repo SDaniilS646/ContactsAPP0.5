@@ -9,7 +9,7 @@
 
   <button id="page-companies" name="companies-btn" onclick="setPage('page', 'companies')">Компании</button>
   <div name="companies-menu-btns" class="sub-menu-btns hidden">
-      <button id="add-companies" onclick="setPage('add', 'companies')">Добавить компанию</button>
+      <button id="add-companies" onclick="removeAllModals(); setPage('add', 'companies')">Добавить компанию</button>
       <button>Найти новую компанию</button>
   </div>
 
@@ -25,7 +25,7 @@
 
   <button id="page-meetings" name="meetings-btn" onclick="setPage('page', 'meetings')">Встречи</button>
   <div name="meetings-menu-btns" class="sub-menu-btns hidden">
-    <button>Добавить встречу</button>
+    <button id="add-meetings" onclick="setPage('add', 'meetings')">Добавить встречу</button>
   </div>
 
   <button id="page-employees" name="employees-btn" onclick="setPage('page', 'employees')">Сотрудники</button>
@@ -36,8 +36,6 @@
 </div>
 <div id="cmd-btn">
   {% if user.is_superuser %}
-    <a href="/commands/" class="btn">
-      <button>cmd</button>
-    </a>
+    <button id="page-cmd" name="cmd-btn" onclick="setPage('page', 'cmd')">cmd</button>
   {% endif %}
 </div>
