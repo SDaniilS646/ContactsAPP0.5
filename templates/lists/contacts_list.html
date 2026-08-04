@@ -3,15 +3,15 @@
   {% for contact in contacts %}
     <div class="card {% if contact.is_old %}old{% endif %}">
       <span class="title contact" title="{{contact.name}}">
-        <a onclick="setPage('details', 'contacts', {{contact.id}})" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+        <a onclick="removeAllModals(); openModal('contacts-details-modal-frame', 'detailsContact', {{contact.id}})" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
       </span>
 
       <span>
-        моб.: {% if contact.phone %}{{contact.phone}}{% else %}—{% endif %}
+        моб.: {{contact.phone | default:'—'}}
       </span>
       
       <span>
-        л.почта: {% if contact.mail %}{{contact.mail}}{% else %}—{% endif %}
+        л.почта: {{contact.mail | default:'—'}}
       </span>
 
       <span class="comment" title="{{company.comment}}">

@@ -284,3 +284,35 @@ class ModalService:
   def editCompany(id):
     company = CompanyService.get_company(id)
     return 'components/modal_edit_company.html', {'company':company}
+
+  @staticmethod
+  def editContact(id):
+    contact = ContactService.get_contact(id)
+    return 'components/modal_edit_contact.html', {'contact':contact}
+
+  @staticmethod
+  def editMaterial(id):
+    material = MaterialService.get_material(id)
+    material_tree = MaterialService.get_material_tree()
+    materials = MaterialService.get_materials()
+
+    parent = None
+    children = None
+    companies = None
+
+    if material.parent_id:
+      parent = MaterialService.get_parent(material.parent_id)
+    
+    children = MaterialService.get_children(id)
+    companies = material.companies.all()
+  
+    all_children = MaterialService.getAllChildren(id, materials)
+
+    return 'components/modal_edit_material.html', {
+      'this_material':material,
+      'parent': parent,
+      'children': children,
+      'companies': companies,
+      'material_tree': material_tree,
+      'all_children': all_children
+    }

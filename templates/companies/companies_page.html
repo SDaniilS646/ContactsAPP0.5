@@ -1,18 +1,16 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-  <div id="outer" class="outer">
-    <div class="page-menu">
-      <select name="sortList" id="sort-select" onchange="sortList(event)">
-        <option value="">По умолчанию</option>
-        <option value="-date">Старое-новое</option>
-        <option value="date">Новое-старое</option>
-        <option value="A-z">А-я</option>
-        <option value="Z-a">Я-а</option>
-      </select>
-      <input id="companies-list" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
-      
-    </div>
-    <div class="cards-list">
-      {% include 'lists/companies_list.html' %}
-    </div>
+<div id="outer" class="outer">
+  <div class="page-menu">
+    <select name="sortList" id="sort-select" onchange="sortList(event)">
+      <option value="">По умолчанию</option>
+      <option value="-date">Старое-новое</option>
+      <option value="date">Новое-старое</option>
+      <option value="A-z">А-я</option>
+      <option value="Z-a">Я-а</option>
+    </select>
+    <input id="companies-list" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+    
   </div>
-{% comment %} {% endblock %} {% endcomment %}
+  <div class="cards-list">
+    {% include 'lists/companies_list.html' %}
+  </div>
+</div>

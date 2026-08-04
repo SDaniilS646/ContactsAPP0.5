@@ -1,38 +1,44 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-{% include 'components/modal_edit_contact.html'%}
-
-<div class="main-details">
-  <div class="menu-btns">
-    <button onclick="openModal('edit_contact_modal_frame')" class="spec-btn">edit</button>
-    <button onclick="post_delItem('contacts', {{contact.id}})" class="spec-btn">del</button>
-  </div>
-  <div class="group-header">
-    <h1>{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</h1>
-  </div>
-  <hr>
-  <div class="info">
-    <span>моб.: {% if contact.phone %}{{contact.phone}}{% else %}—{% endif %}</span>
-    <span>Личная почта: {% if contact.mail %}{{contact.mail}}{% else %}—{% endif %}</span>
-    <span>Примечание: {% if contact.comment %}{{contact.comment}}{% else %}—{% endif %}</span>
-  </div>
-  <hr>
-  <div class="group-header">
-    <h2>Компании</h2>
-  </div>
-  <hr>
-  <div class="cards-list">
-    {% for info in comp_info %}
-      <div class="card">
-        <span class="title" title="{{info.company_name}}">
-          <a href="/companies/{{info.company_id}}/">{{info.company_name}}</a>
-        </span>
-        <span>{% if info.position %}{{info.position}}{% else %}—{% endif %}</span>
-        <span>раб.тел.: {% if info.phone %}{{info.phone}}{% else %}—{% endif %}</span>
-        <span>Почта: {% if info.mail %}{{info.mail}}{% else %}—{% endif %}</span>
+<div id="contacts-details-modal-frame" class="modal">
+  <div class="modal-content details">
+    <div class="modal-head">
+      <div class="menu-btns">
+        <button onclick="openModal('edit_contact_modal_frame', 'editContact', {{contact.id}})" class="spec-btn">edit</button>
+        <button onclick="post_delItem('contacts', {{contact.id}})" class="spec-btn">del</button>
+        {% include 'components/modal_remove_btn.html' with frame_id='contacts-details-modal-frame' %}
       </div>
-    {% endfor %}
-  <div>
+      <div class="modal-header">
+        <h1>{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</h1>
+      </div>
+    </div>
+    <div class="modal-main">
+      <div class="details-info">
+        <span>моб.:</span><span>{{contact.phone | default:'—'}}</span>
+        <span>Личная почта:</span><span>{{contact.mail | default:'—'}}</span>
+        <span>Примечание:</span><span>{{contact.comment | default:'—'}}</span>
+      </div>
+
+      <div class="addition-info">
+        <div class="menu-btns">
+          
+        </div>
+        <div class="modal-header">
+          <h3>Компании</h3>
+        </div>
+        <div class="cards-list">
+          {% for info in comp_info %}
+            <div class="card">
+              <div class="card-header">
+                <span class="title" title="{{info.company_name}}">
+                  <a onclick="removeModal('companies-details-modal-frame'); openModal('companies-details-modal-frame', 'detailsCompany', {{info.company_id}})">{{info.company_name}}</a>
+                </span>
+              </div>
+              <span>{{info.position | default:'—'}}</span>
+              <span>раб.тел.: {{info.phone | default:'—'}}</span>
+              <span>Почта: {{info.mail | default:'—'}}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-
-{% comment %} {% endblock %} {% endcomment %}

@@ -51,14 +51,12 @@ a:not(.btn):hover:not(:active) {
   cursor: pointer;
 
   background: var(--button-hover-back);
-
-  
-
 }
 
 button:active,
 a:active {
   background: var(--button-active-back);
+  cursor: pointer;
 }
 
 .spec-btn {
@@ -189,12 +187,12 @@ CONTENT
 
   opacity: 0;
   
-  transition: 1s;
+  transition: 0.3s;
 }
 
 .content .outer.show {
   opacity: 1;
-  transition: 1s;
+  transition: 0.3s;
 }
 
 .content .page-menu {
@@ -255,6 +253,8 @@ CARDS
 
   z-index: 0;
 
+  max-height: 120px;
+
   border: 1px solid;
   background-color: var(--card-background);
 
@@ -298,6 +298,17 @@ CARDS
 
 .card.old {
   background-color: var(--card-old-background);
+}
+
+.card .card-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.card .card-header button {
+  align-self: flex-end;
+  max-width: 50px;
+  max-height: 20px;
 }
 
 /* 
@@ -414,8 +425,7 @@ DETAILS PAGE
 
 #meeting-participants #contact, 
 #meeting-participants #employee,
-.main-details .info,
-.main-details .card .card-header,
+/* .main-details .card .card-header, */
 .contact-list {
   display: flex;
   flex-direction: column;
@@ -427,9 +437,11 @@ DETAILS PAGE
   flex-direction: row;
   justify-content: center;
   gap: 25px;
-  height: calc(100vh - 50%);
   width: 100%;
-  overflow-y: auto;
+}
+
+#meeting-participants .group-header {
+  align-self: center;
 }
 
 #meeting-participants #contact, 

@@ -1,5 +1,3 @@
-
-
 .modal {
   display: none;
   position: fixed;
@@ -11,67 +9,254 @@
   width: 100%;
   height: 100%;
 
-
   top: 0%;
   left: 0%;
 
   background-color: var(--modal-background-darken);
 
+  flex-direction: column;
+  gap: 10px;
+
   overflow: hidden;
+
 }
 
+
 .modal-content {
-
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 5px;
-
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 20px;
-
+  
   width: 50%;
   height: 90%;
-  
-  border-radius: 5px;
+
+  min-width: 50%;
+  max-width: 450px;
+  overflow: hidden;
 
   background-color: var(--background-color);
-  border: 1px solid var(--thin-border-color);
+  border: 5px solid var(--thin-border-color);
+  border-radius: 5px;
 }
 
 .modal-content.details {
   width: 90%;
+  max-width: 700px;
+
+  padding: 0px 20px 20px 20px;
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 5px;
+
+  overflow-y: auto;
 }
 
-.modal-content > div {
-  background-color: rgba(255, 216, 216, 0.5);
-}
 
-.modal-content .menu-btns {
+
+.modal-content.details .menu-btns {
   display: flex;
   flex-direction: row;
   justify-content: right;
 }
 
-.modal-content .modal-header,
-.modal-content .modal-main {
+.modal-content.details .modal-head {
+  position: sticky;
+  top: 0;
+  padding-bottom: 5px;
+  background: var(--detail-head-back-color);
+  z-index: 1;
+}
+.modal-content.details .modal-head > .menu-btns {
+  margin-top: 5px;
+}
+
+.modal-content.details .modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content.details .modal-main {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.modal-content.details .modal-main .details-info {
+  padding-top: 10px;
+  justify-self: center; 
+
+  max-width: 50%;
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+
+  align-self: start;
+
+  align-items: start;
+  
+  gap: 5px;
+}
+
+
+.modal-content.details .modal-main::before,
+.modal-content.details .modal-main .addition-info::before
+ {
+  content: "";
+  display: block;
+
+  width: 50%;
+  justify-self: center;
+
+  border-top: 1px solid var(--thin-border-color);
+}
+
+.modal-content.details .modal-main .addition-info {
+  justify-self: center; 
+  width: 100%;
+
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+.modal-content.details .modal-main .addition-info .materials-list {
+  justify-self: center; 
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.modal-content.details .modal-main .addition-info .cards-list {
+  justify-self: center; 
+  max-width: 700px;
+}
+
+.modal-content.details .modal-main .addition-info .material-children {
+  justify-self: center;
+  margin-top: 5px;
+}
+
+
+
+.form-item {
   display: flex;
   flex-direction: column;
 }
 
-.modal-content .modal-header {
-  align-items: center;
+#contact-creation {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
 }
 
-.modal-content .modal-main .details-info {
+.modal-content .header {
+  display: flex;
+  flex-direction: column;
+
+  flex: 0 0 auto;
+
+  height: 10%;
+}
+
+.modal-content .header .close-modal-btn {
+  align-self: flex-end;
+}
+
+.modal-content .header h3 {
   align-self: center;
 }
 
-/* .modal-content .modal-main {
+
+.modal-content .main-frame {
   display: flex;
   flex-direction: column;
-  align-items: center;
-} */
+  gap: 5px;
 
-.modal-content .modal-main .details-info {
-  display: grid;
-  grid-template-columns: auto 1fr;
+  flex: 1 1 auto;
+
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.modal-content .main-frame hr {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.modal-content #contacts-list {
+  overflow-y: auto;
+}
+
+.modal-content #list_material_tree {
+
+  flex: 1 1 auto;
+  overflow-y: auto;
+
+  min-height: 1;
+}
+
+.modal-content #material-creation {
+
+  display: flex;
+  flex-direction: column;
+
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.modal-content #creation_material_tree {
+
+  flex: 1 1 auto;
+  overflow-y: auto;
+  min-height: 0;
+
+  margin-bottom: 10px;
+}
+
+.modal-content #material-creation .inputs {
+    flex: 0 0 auto; /* Не растягиваются */
+    margin-top: auto;
+    padding: 5px 0;
+}
+
+
+
+.modal-content .footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  flex: 0 0 auto;
+
+  height: 15%;
+
+  padding-top: 10px;
+}
+.modal-content .footer button {
+  margin: 5px;
+  flex: 1 1 0px;
+}
+
+
+.modal-content #contacts-list .contact-list-item,
+.modal-content #employees-list .employee-list-item {
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 5px;
+  margin-top: 5px;
+
+  border-bottom-style:solid;
+  border-radius: 5px;
+
+  border-width: 1px;
+
+  transition: 0.2s;
 }

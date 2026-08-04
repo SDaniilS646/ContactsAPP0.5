@@ -1,45 +1,51 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-{% include 'components/modal_edit_material.html'%}
-
-<div class="main-details">
-  <div class="menu-btns">
-    <button onclick="openModal('edit_material_modal_frame')" class="spec-btn">edit</button>
-    <button onclick="post_delItem('materials', {{this_material.id}})" class="spec-btn">del</button>
-  </div>
-  <div class="group-header">
-    {% if parent %}<a href="/materials/{{parent.id}}/">{{parent.name}}</a>{% else %}—{% endif %}
-    <h1>{{this_material.name}}</h1>
-  </div>
-  <hr>
-  <div class="info">
-    <span>Ключевые слова: {% if this_material.keywords %}{{this_material.keywords}}{% else %}—{% endif %}</span>
-    {% if children %}
-      <div class="material-children">
-        {% for child in children %}
-          <a href="/materials/{{child.id}}/">{{child.name}}</a>
-        {% endfor %}
+<div id="materials-details-modal-frame" class="modal">
+  <div class="modal-content details">
+    <div class="modal-head">
+      <div class="menu-btns">
+        <button onclick="removeModal('edit_material_modal_frame'); openModal('edit_material_modal_frame', 'editMaterial', {{this_material.id}})" class="spec-btn">edit</button>
+        <button onclick="post_delItem('materials', {{material.material_id}})" class="spec-btn">del</button>
+        {% include 'components/modal_remove_btn.html' with frame_id='materials-details-modal-frame' %}
       </div>
-    {% endif %}
-  </div>
-  <hr>
-  <div class="group-header">
-    <h2>Компании</h2>
-  </div>
-  <hr>
-  <div class="cards-list">
-    {% for company in companies %}
-      <div class="card">
-      <span class="title" title="{{company.name}}">
-        <a href="/companies/{{company.id}}/">{{company.name}}</a>
-      </span>
-      <hr>
-      <span>ИНН: {% if company.inn %}{{company.inn}}{% else %}—{% endif %}</span>
-      <span>тел.: {% if company.phone %}{{company.phone}}{% else %}—{% endif %}</span>
-      <span>почта: {% if company.mail %}{{company.mail}}{% else %}—{% endif %}</span>
-      <span class="comment" title="{{company.comment}}">{{company.comment}}</span>
+      <div class="modal-header">
+        {% if parent %}<a onclick="removeModal('materials-details-modal-frame'); openModal('materials-details-modal-frame', 'detailsMaterial', {{parent.id}})">{{parent.name}}</a>{% else %}—{% endif %}
+        <h1>{{this_material.name}}</h1>
+      </div>
     </div>
-    {% endfor %}
-  <div>
-</div>
+    <div class="modal-main">
+      <div class="details-info">
+        <span>Ключевые слова:</span><span>{{this_material.keywords | default:"—"}}</span>
+      </div>
 
-{% comment %} {% endblock %} {% endcomment %}
+      <div class="addition-info">
+        {% if children %}
+          <div class="material-children">
+            {% for child in children %}
+              <a onclick="removeModal('materials-details-modal-frame'); openModal('materials-details-modal-frame', 'detailsMaterial', {{child.id}})">{{child.name}}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="addition-info">
+        <div class="modal-header">
+          <h3>Компании</h3>
+        </div>
+        <div class="cards-list">
+          {% for company in companies %}
+            <div class="card">
+              <div class="card-header">
+                <span class="title" title="{{company.name}}">
+                  <a onclick="removeModal('companies-details-modal-frame'); openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})">{{company.name}}</a>
+                </span>
+              </div>
+              <span>ИНН: {{company.inn | default:'—'}}</span>
+              <span>раб.тел.: {{company.phone | default:'—'}}</span>
+              <span>Почта: {{company.mail | default:'—'}}</span>
+              <span class="comment" title="{{company.comment}}">{{company.comment | default:'—'}}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

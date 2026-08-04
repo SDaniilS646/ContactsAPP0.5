@@ -265,8 +265,8 @@ function post_company_edit() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      setPage('details', 'companies', comp_id)
       removeModal('edit_company_modal_frame')
+      reloadModal('companies-details-modal-frame', 'detailsCompany', comp_id)
     }
   })
 }
@@ -329,6 +329,8 @@ function post_contact_edit() {
 
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
+  const cont_id = container.querySelector('[name="id"]').value
+
   fetch('/contacts/edit_cont/', {
     method: 'POST',
     headers: {
@@ -336,7 +338,7 @@ function post_contact_edit() {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-        id: container.querySelector('[name="id"]').value,
+        id: cont_id,
         first_name: cont_first_name.value,
         last_name: cont_last_name.value,
         patronymic: container.querySelector('[name="patronymic"]').value,
@@ -347,8 +349,9 @@ function post_contact_edit() {
   })
   .then(response => response.json())
   .then(data => {
-    if (data.success) {
-      pgReload()
+    if (data.success) {   
+      removeModal('edit_contact_modal_frame')
+      reloadModal('contacts-details-modal-frame', 'detailsContact', cont_id)
     }
   })
 }
@@ -469,16 +472,16 @@ async function post_material_create(comp_id) {
 function post_material_edit(all_children) {
   const container = document.getElementById('edit_material_modal_frame')
 
-  mat_name = container.querySelector('[name="material_name"]')
+  const mat_name = container.querySelector('[name="material_name"]')
   if (mat_name.value == '') {
     container.querySelector('[name="material_name_label"]').value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
     container.querySelector('[name="material_name_label"]').style.color = 'red'
     return
   }
 
-  let new_parent_id = container.querySelector('[name="parent_id"]').value
+  const new_parent_id = container.querySelector('[name="parent_id"]').value
 
-  let this_mat_id = container.querySelector('[name="id"]').value
+  const this_mat_id = container.querySelector('[name="id"]').value
 
   if (all_children.includes(Number(new_parent_id))) {
     alert('Родительский элемент не может быть ниже')
@@ -508,7 +511,8 @@ function post_material_edit(all_children) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      pgReload()
+      removeModal('edit_material_modal_frame')
+      reloadModal('materials-details-modal-frame', 'detailsMaterial', this_mat_id)
     }
   })
 }
@@ -534,7 +538,8 @@ function post_delItem(table, id) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      window.location.href = '/' + table +'/'
+      const cur_pg = AppState.currentPage.split('-')
+      setPage(cur_pg[0], cur_pg[1])
     }
   })
 }
@@ -562,10 +567,11 @@ function post_delConnection(table, id_1, id_2, page=null) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      // pgReload()
-      if (page) {
-        setPage(page['type'], page['table'], page['id'])
-      }
+      reloadModal(
+        AppState.activeModal.at(-1).modal_frame_id,
+        AppState.activeModal.at(-1).modal_name,
+        AppState.activeModal.at(-1).id,
+      )
     }
   })
 }
@@ -587,8 +593,8 @@ function post_ContactsList(table, comp_id) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      setPage('details', table, comp_id)
       removeAllModals()
+      openModal('companies-details-modal-frame', 'detailsCompany', comp_id)
     }
   })
 }
@@ -611,8 +617,8 @@ function post_MaterialsList(comp_id) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      setPage('details', 'companies', comp_id)
       removeAllModals()
+      openModal('companies-details-modal-frame', 'detailsCompany', comp_id)
     }
   })
 }

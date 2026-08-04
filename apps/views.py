@@ -38,7 +38,12 @@ MODALS = {
   'chooseContact': ModalService.chooseContact,
   'chooseEmployee': ModalService.chooseEmployee,
   'editCompany': ModalService.editCompany,
-  'detailsCompany': DetailService.companiesDetail
+  'editContact': ModalService.editContact,
+  'editMaterial': ModalService.editMaterial,
+  'detailsCompany': DetailService.companiesDetail,
+  'detailsContact': DetailService.contactsDetail,
+  'detailsMaterial': DetailService.materialsDetail,
+  'detailsMeeting': DetailService.meetingsDetail,
 }
 
 @login_required

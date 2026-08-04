@@ -18,6 +18,14 @@ async function openModal(modal_frame_id, modal_name=null, id=null) {
   if (modal_frame) {
     modal_frame.style.zIndex = ++currentZIndex
     modal_frame.style.display = 'flex'
+    
+
+    AppState.activeModal.push({
+      modal_frame_id: modal_frame_id,
+      modal_name: modal_name,
+      id: id
+    })
+
     return
   }
 
@@ -40,26 +48,49 @@ async function openModal(modal_frame_id, modal_name=null, id=null) {
     modal_cont.innerHTML += data.html
     // modal_cont.firstChild.style.display = 'flex'
     modal_frame = document.getElementById(modal_frame_id)
+
     if (modal_frame) {
       modal_frame.style.zIndex = ++currentZIndex
       modal_frame.style.display = 'flex'
     }
+    AppState.activeModal.push({
+      modal_frame_id: modal_frame_id,
+      modal_name: modal_name,
+      id: id
+    })
   })
   
 }
 
+function clearActiveModal(modal_frame_id) {
+  AppState.activeModal.forEach((val, idx) => {
+      if (modal_frame_id == val.modal_frame_id) {
+        AppState.activeModal.splice(idx, 1)
+        return
+      }
+  })
+}
+
 function closeModal(modal_frame_id) {
   const modal_frame = document.getElementById(modal_frame_id)
-  if (modal_frame) {modal_frame.style.display = 'none'}
+  if (modal_frame) {
+    modal_frame.style.display = 'none';
+    clearActiveModal(modal_frame_id)
+  }
 }
 
 function removeModal(modal_frame_id) {
   const modal_frame = document.getElementById(modal_frame_id)
-  if (modal_frame) {modal_frame.remove()}
+  if (modal_frame) {
+    modal_frame.remove();
+    clearActiveModal(modal_frame_id)
+  }
 }
 
 function reloadModal(modal_frame_id, modal_name, id=null) {
-  if(document.getElementById(modal_frame_id) == null) {return}
+  
+  const modal_frame = document.getElementById(modal_frame_id)
+  if(modal_frame == null) {return}
   removeModal(modal_frame_id)
   openModal(modal_frame_id, modal_name, id)
 }
@@ -344,6 +375,9 @@ function executeCMD() {
 
 function setPage(type, table, id=null) {
 
+  const outer = document.getElementById("outer")
+  if (outer) {outer.classList.remove('show')}
+
   csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
   fetch('/open_page/', {
@@ -373,6 +407,16 @@ function setPage(type, table, id=null) {
         }
       })
 
+      
+
+      document.getElementById('content').innerHTML = data.html
+      
+      const outer = document.getElementById("outer")
+
+      setTimeout(() => {
+        if (outer) {outer.classList.add('show')}
+      }, 10);
+
       if (type == 'page') {
         removeAllModals()
         menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
@@ -387,14 +431,6 @@ function setPage(type, table, id=null) {
           }
         })
       } 
-
-      document.getElementById('content').innerHTML = data.html
-      const outer = document.getElementById("outer")
-      
-      setTimeout(() => {
-        if (outer) {outer.classList.add('show')}
-      }, 10);
-      
     }
   )
 }

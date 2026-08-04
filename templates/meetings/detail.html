@@ -1,61 +1,64 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
+<div id="meetings-details-modal-frame" class="modal">
+  <div class="modal-content details">
+    <div class="modal-head">
+      <div class="menu-btns">
+        {% comment %} <button onclick="removeModal('edit_meeting_modal_frame'); openModal('edit_meeting_modal_frame', 'editMeeting', {{meeting.id}})" class="spec-btn">edit</button> {% endcomment %}
+        <button onclick="post_delItem('meetings', {{meeting.id}})" class="spec-btn">del</button>
+        {% include 'components/modal_remove_btn.html' with frame_id='meetings-details-modal-frame' %}
+      </div>
+      <div class="modal-header">
+        <h1>{{meeting.subject}}</h1>
+      </div>
+    </div>
+    <div class="modal-main">
+      <div class="details-info">
+        <span>Дата:</span><span>{{meeting.meeting_date | date:"d.m.Y"}}</span>
+        <span class="comment">Комментарий:</span><span>{{meeting.comment}}</span>
+      </div>
 
-<div class="main-details">
-  <div class="menu-btns">
-    {% comment %} <button onclick="openModal('edit_material_modal_frame')">edit</button> {% endcomment %}
-       {% csrf_token %}
-    <button onclick="post_delItem('meetings', {{meeting.id}})" class="spec-btn">del</button>
-  </div>
-  <div class="group-header">
-    <h1>{{meeting.subject}}</h1>
-  </div>
-  <hr>
-  <div class="info">
-    <span>Дата: {{meeting.meeting_date |date:"d.m.Y"}}</span>
-    <span class="comment">{{meeting.comment}}
-  </div>
-  <hr>
-  <div class="group-header">
-      <h2>Участники встречи</h2>
-  </div>
-  <div id="meeting-participants">
-    {% if contacts %}
-      <div id="contact">
-        <div class="group-header">
-          <h3>Гости</h3>
+      <div class="addition-info">
+        <div class="modal-header">
+          <h3>Участники встречи</h3>
         </div>
-        {% for contact in contacts %}
-          <div class="card">
-            <div class="card-header">
-              <button class="del-conn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
-              <span class="title">
-                <a href="/contacts/{{contact.id}}/">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
-              </span> 
+        <div id="meeting-participants">
+          {% if contacts %}
+            <div id="contact">
+              <div class="group-header">
+                <h3>Гости</h3>
+              </div>
+              {% for contact in contacts %}
+                <div class="card">
+                  <div class="card-header">
+                    <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+                    <span class="title">
+                      <a href="/contacts/{{contact.id}}/">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+                    </span> 
+                  </div>
+                  <span>{{contact.phone}}</span>
+                  <span>{{contact.mail}}</span>
+                </div>
+              {% endfor %}
             </div>
-            <span>{{contact.phone}}</span>
-            <span>{{contact.mail}}</span>
+          {% endif %}
+          <div id="employee">
+            <div class="group-header">
+              <h3>Сотрудники</h3>
+            </div>
+            {% for employee in employees %}
+              <div class="card">
+                <div class="card-header">
+                  <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+                  <span class="title">
+                    <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
+                  </span>
+                </div>
+                <span>{{employee.phone}}</span>
+                <span>{{employee.mail}}</span>
+              </div>
+            {% endfor %}
           </div>
-        {% endfor %}
-      </div>
-    {% endif %}
-    <div id="employee">
-      <div class="group-header">
-        <h3>Сотрудники</h3>
-      </div>
-      {% for employee in employees %}
-        <div class="card">
-          <div class="card-header">
-            <button class="del-conn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
-            <span class="title">
-              <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
-            </span>
-          </div>
-          <span>{{employee.phone}}</span>
-          <span>{{employee.mail}}</span>
         </div>
-      {% endfor %}
+      </div>
     </div>
   </div>
 </div>
-
-{% comment %} {% endblock %} {% endcomment %}
