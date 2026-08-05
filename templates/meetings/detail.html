@@ -29,13 +29,13 @@
               {% for contact in contacts %}
                 <div class="card">
                   <div class="card-header">
-                    <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+                    {% comment %} <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button> {% endcomment %}
                     <span class="title">
-                      <a href="/contacts/{{contact.id}}/">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+                      <a onclick="openModal('contacts-details-modal-frame', 'detailsContact', {{contact.id}})">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
                     </span> 
                   </div>
-                  <span>{{contact.phone}}</span>
-                  <span>{{contact.mail}}</span>
+                  <span>тел.: {{contact.phone | default:"—"}}</span>
+                  <span>почта: {{contact.mail | default:"—"}}</span>
                 </div>
               {% endfor %}
             </div>
@@ -47,13 +47,13 @@
             {% for employee in employees %}
               <div class="card">
                 <div class="card-header">
-                  <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button>
+                  {% comment %} <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button> {% endcomment %}
                   <span class="title">
-                    <a href="/employees/{{employee.id}}/">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
+                    {{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}
                   </span>
                 </div>
-                <span>{{employee.phone}}</span>
-                <span>{{employee.mail}}</span>
+                <span>тел.: {{employee.phone | default:"—"}}</span>
+                <span>полчта: {{employee.mail | default:"—"}}</span>
               </div>
             {% endfor %}
           </div>

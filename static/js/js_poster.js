@@ -27,8 +27,7 @@ function post_create_meeting() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert('✅ Встреча добавлена!')
-      pgReload()
+      setPage('page', 'meetings')
     }
   })
 }
@@ -391,8 +390,8 @@ function post_employee_create() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      updateList('/employees/employees_list', document.getElementById('employees-list'), style)
       closeModal('create_employee_modal_frame')
+      setPage('page', 'employees')
     }
   })
 }
@@ -431,7 +430,8 @@ function post_employee_edit() {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      pgReload()
+      closeModal('edit_employee_modal_frame')
+      setPage('page', 'employees')
     }
   })
 }

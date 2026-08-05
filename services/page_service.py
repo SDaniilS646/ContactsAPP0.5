@@ -316,3 +316,8 @@ class ModalService:
       'material_tree': material_tree,
       'all_children': all_children
     }
+
+  @staticmethod
+  def editEmployee(id):
+    employee = EmployeeService.get_employee(id)
+    return 'components/modal_edit_employee.html', {'employee': employee}

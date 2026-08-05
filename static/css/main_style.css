@@ -305,6 +305,10 @@ CARDS
   flex-direction: column;
 }
 
+.card .card-header .menu-btns {
+  align-self: flex-end;
+}
+
 .card .card-header button {
   align-self: flex-end;
   max-width: 50px;

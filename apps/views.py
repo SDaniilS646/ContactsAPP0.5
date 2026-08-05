@@ -40,6 +40,7 @@ MODALS = {
   'editCompany': ModalService.editCompany,
   'editContact': ModalService.editContact,
   'editMaterial': ModalService.editMaterial,
+  'editEmployee': ModalService.editEmployee,
   'detailsCompany': DetailService.companiesDetail,
   'detailsContact': DetailService.contactsDetail,
   'detailsMaterial': DetailService.materialsDetail,
@@ -72,6 +73,8 @@ def setPage(request):
 
 def loadModal(request):
   page_data = json.loads(request.body)
+
+  print(page_data)
   
   html, vars = MODALS[page_data['modal_name']](page_data['id'])
 

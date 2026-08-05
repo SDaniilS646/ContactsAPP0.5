@@ -2,9 +2,15 @@
 
   {% for employee in employees %}
     <div class="card">
-      <span class="title employee" title="{{employee.name}}">
-        <a onclick="setPage('details', 'employees', {{employee.id}})">{{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}</a>
-      </span>
+      <div class="card-header">
+        <div class="menu-btns">
+          <button class="spec-btn" onclick="openModal('edit_employee_modal_frame', 'editEmployee', {{employee.id}})">edit</button>
+          <button class="spec-btn" onclick="post_delItem('employees', {{employee.id}})">X</button>
+        </div>
+        <span class="title employee" title="{{employee.name}}">
+          {{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}
+        </span>
+      </div>
 
       <span>
         Доб.Тел.: {% if employee.phone %}{{employee.phone}}{% else %}—{% endif %}
