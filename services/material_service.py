@@ -1,6 +1,8 @@
 from apps.materials.models import Materials
 from django.utils import timezone
 
+from collections import defaultdict
+
 class MaterialService:
   @staticmethod
   def get_materials():
@@ -27,10 +29,14 @@ class MaterialService:
     return
   
   @staticmethod
-  def get_material_tree(old_mats = []):
-    materials = Materials.objects.all()
+  def get_material_tree(materials=None, old_mats=None):
+    old_mats = old_mats or []
+    old_mats_set = set(old_mats)
+
+    if not materials:
+      materials = Materials.objects.all()
+
     def create_tree(materials):
-        # materials = materials.order_by('-parent_id')
         nodes = {}
         material_tree = []
 
@@ -40,7 +46,7 @@ class MaterialService:
             'material_name': material.name,
             'parent_id': material.parent_id,
             'children': [],
-            'selected': True if material.id in old_mats else False
+            'selected': material.id in old_mats_set
           }
 
         for material in materials:
@@ -83,7 +89,6 @@ class MaterialService:
     
     def get_parent(mat_id):
       material = Materials.objects.get(id=mat_id)
-      # parent = Materials.objects.get(id=material.parent_id)
       
       if material.parent_id:
         result.append(material.parent_id)
@@ -96,18 +101,18 @@ class MaterialService:
     return result[::-1]
 
   @staticmethod
-  def getAllChildren(mat_id, all_materials):
-    result = []
-    id = mat_id
-    
-    def findChildren(par_id):
-      for mat in all_materials:
-        if mat.parent_id == par_id:
-          result.append(mat.id)
-          findChildren(mat.id)
+  def getAllChildren(material_id, materials):
+    children_by_parent = defaultdict(list)
+    for material in materials:
+      children_by_parent[material.parent_id].append(material.id)
 
-    findChildren(id)
-    return result
+    descendant_ids = []
+    stack = list(children_by_parent[material_id])
+    while stack:
+      child_id = stack.pop()
+      descendant_ids.append(child_id)
+      stack.extend(children_by_parent[child_id])
+    return descendant_ids
       
   @staticmethod
   def delete(id):

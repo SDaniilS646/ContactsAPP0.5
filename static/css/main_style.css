@@ -519,6 +519,15 @@ MATERIAL TREE
   
 }
 
+/* .tree-title .material-btn, */
+.text-btn {
+  height: 22px;
+  border-right: none;
+  border-color: var(--standard-border-color);
+  font-size: 16px;
+  color: var(--a-href-color);
+}
+
 
 
 .tree-node {

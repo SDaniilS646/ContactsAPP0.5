@@ -17,14 +17,6 @@ PAGES = {
   'cmd': PageService.cmd_page
 }
 
-DETAILS = {
-  'companies': DetailService.companiesDetail,
-  'materials': DetailService.materialsDetail,
-  'contacts': DetailService.contactsDetail,
-  'meetings': DetailService.meetingsDetail,
-  'employees': DetailService.employeesDetail
-}
-
 ADD = {
   'companies': AddService.addCompanyPage,
   'meetings': AddService.addMeetingPage
@@ -56,13 +48,10 @@ def setPage(request):
 
   if page_data['type'] == 'page':
     html, vars = PAGES[page_data['table']]()
-  elif page_data['type'] == 'details':
-    html, vars = DETAILS[page_data['table']](page_data['id'])
   elif page_data['type'] == 'add':
     html, vars = ADD[page_data['table']]()
   else:
     return JsonResponse({'success': False})
-
 
   return JsonResponse({
     'success': True,
@@ -73,8 +62,6 @@ def setPage(request):
 
 def loadModal(request):
   page_data = json.loads(request.body)
-
-  print(page_data)
   
   html, vars = MODALS[page_data['modal_name']](page_data['id'])
 

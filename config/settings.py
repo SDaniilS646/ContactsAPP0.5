@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.meetings',
     'apps.employees',
     'apps.commands',
+    'apps.templatetags',
     'apps',
     'django.contrib.postgres',
     'users'

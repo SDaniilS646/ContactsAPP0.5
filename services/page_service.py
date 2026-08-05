@@ -20,9 +20,7 @@ class PageService:
     for cont in contacts:
       loaded_contacts.append({
         'id': cont.id,
-        'first_name': cont.first_name,
-        'last_name': cont.last_name,
-        'patronymic': cont.patronymic,
+        'name': f'{cont.last_name} {cont.first_name} {cont.patronymic}',
         'phone': cont.phone,
         'mail': cont.mail,
         'comment':cont.comment,
@@ -55,7 +53,6 @@ class PageService:
 
     return 'companies/companies_page.html', {'companies':loaded_companies} 
 
-
   @staticmethod
   def materials_page():
     materials = MaterialService.get_materials()
@@ -86,20 +83,16 @@ class PageService:
 
 class DetailService:
   @staticmethod
-  def companiesDetail(id):
-    company = CompanyService.get_company(id)
+  def companiesDetail(company_id):
+    company = CompanyService.get_company(company_id)
     
-    comp_cont = ConnectionService.get_company_contact('company', id)
+    comp_cont = ConnectionService.get_company_contact('company', company_id)
   
     contacts = company.contacts.all()
     cont_info = []
   
     materials = None
     materials = company.materials.all()
-  
-    comp_mat_ids = [item.id for item in materials]
-  
-    material_tree = MaterialService.get_material_tree(comp_mat_ids)
   
     for cont in contacts:
       temp_info = [item for item in comp_cont if item.contact_id == cont.id]
@@ -116,10 +109,10 @@ class DetailService:
       rating = '★' * int(company.rating)
 
     return 'companies/detail.html', {'company':company,
-          'cont_info': cont_info,
-          'materials': materials,
-          'rating': rating,
-          'material_tree': material_tree}
+      'cont_info': cont_info,
+      'materials': materials,
+      'rating': rating, 
+      }
 
   @staticmethod
   def contactsDetail(id):
@@ -145,7 +138,7 @@ class DetailService:
   @staticmethod
   def materialsDetail(id):
     material = MaterialService.get_material(id)
-    material_tree = MaterialService.get_material_tree()
+    # material_tree = MaterialService.get_material_tree()
   
     materials = MaterialService.get_materials()
   
@@ -166,19 +159,9 @@ class DetailService:
           'parent': parent,
           'children': children,
           'companies': companies,
-          'material_tree': material_tree,
+          # 'material_tree': material_tree,
           'all_children': all_children
         }
-
-  @staticmethod
-  def employeesDetail(id):
-    employee = EmployeeService.get_employee(id)
-    emp_info = []
-
-    return 'employees/detail.html', {
-      'employee':employee,
-      'emp_info':emp_info
-    }
 
   @staticmethod
   def meetingsDetail(id):
@@ -219,62 +202,83 @@ class ModalService:
     return 'components/modal_create_employee.html', {}
 
   @staticmethod
-  def chooseMaterial(id):
-    material_tree = MaterialService.get_material_tree()
-    if not id:
-      return 'components/modal_choose_material.html', {'material_tree': material_tree}
+  def chooseMaterial(company_id):
+    """
 
-    company = CompanyService.get_company(id)
-    
-    materials = None
-    materials = company.materials.all()
+    Строит иерархическое дерево материалов.
+
+    :param old_mats: id материалов, которые нужно пометить как выбранные (selected=True)
+
+    :return: список корневых узлов дерева, каждый узел содержит вложенные children
+
+    """
+    template = 'components/modal_choose_material.html'
+    if not company_id:
+      material_tree = MaterialService.get_material_tree()
+      return template, {'material_tree': material_tree}
+
+    company = CompanyService.get_company(company_id)
   
-    comp_mat_ids = [item.id for item in materials]
-    material_tree = MaterialService.get_material_tree(comp_mat_ids)
+    comp_mat_ids = list(company.materials.values_list('id', flat=True))
 
-    return 'components/modal_choose_material.html', {'material_tree': material_tree, 'company_id':id}
+    material_tree = MaterialService.get_material_tree(old_mats=comp_mat_ids)
+
+    return template, {'material_tree': material_tree, 'company_id':company_id}
 
   @staticmethod
-  def chooseContact(id):
+  def chooseContact(company_id):
+    """
+
+    Готовит контекст для модалки выбора контакта.
+
+    Если company_id не передан — возвращает список всех контактов без выделения.
+
+    Если передан — помечает selected=True для контактов, привязанных к компании,
+
+    и добавляет корпоративные данные (mail, phone, position), сортируя выбранные наверх.
+
+    """
+
+    template = 'components/modal_choose_contact.html'
     all_contacts = ContactService.get_contacts()
-    contacts_list = []
-    for cont in all_contacts:
-      contact_data = {
-        'id': cont.id,
-        'cont_name': f'{cont.last_name} {cont.first_name} {cont.patronymic}',
-        'phone': cont.phone,
-        'mail': cont.mail
+
+    contacts_list = [
+      {
+        'id': contact.id,
+        'cont_name': ' '.join(filter(None, [contact.last_name, contact.first_name, contact.patronymic])),
+        'phone': contact.phone,
+        'mail': contact.mail,
+        'selected': False,
+        'corp_mail': None,
+        'corp_phone': None,
+        'position': None
       }
-      contacts_list.append(contact_data)
+      for contact in all_contacts
+    ]
 
-    if (not id):
-      return 'components/modal_choose_contact.html', {'contacts': contacts_list}
+    if not company_id:
+      return template, {'contacts': contacts_list}
 
-    
-    comp_cont = ConnectionService.get_company_contact('company', id)
+    company_contacts_connection = ConnectionService.get_company_contact('company', company_id)
 
-    company_contacts = {item.contact_id: item for item in comp_cont}
+    company_contacts = {item.contact_id: item for item in company_contacts_connection}
             
-    for cont in contacts_list:
+    for contact in contacts_list:
       
-      if cont['id'] in company_contacts:
-        temp = company_contacts[cont['id']]
+      if contact['id'] in company_contacts:
+        connection = company_contacts[contact['id']]
 
-        cont.update({
+        contact.update({
           'selected': True,
-          'corp_mail': temp.mail,
-          'corp_phone': temp.phone,
-          'position': temp.position
+          'corp_mail': connection.mail,
+          'corp_phone': connection.phone,
+          'position': connection.position
         })
-    contacts_list = sorted(
-      contacts_list,
-      key=lambda x: x.get('selected', False),
-      reverse=True
-    )
 
-    return 'components/modal_choose_contact.html', {'contacts': contacts_list, 'company_id':id}
+    contacts_list.sort(key=lambda contact: contact['selected'], reverse=True)
+
+    return template, {'contacts': contacts_list, 'company_id':company_id}
     
-
   @staticmethod
   def chooseEmployee(id):
     employees = EmployeeService.get_employees()
@@ -291,22 +295,18 @@ class ModalService:
     return 'components/modal_edit_contact.html', {'contact':contact}
 
   @staticmethod
-  def editMaterial(id):
-    material = MaterialService.get_material(id)
-    material_tree = MaterialService.get_material_tree()
-    materials = MaterialService.get_materials()
-
-    parent = None
-    children = None
-    companies = None
-
-    if material.parent_id:
-      parent = MaterialService.get_parent(material.parent_id)
+  def editMaterial(material_id):
+    material = MaterialService.get_material(material_id)
     
-    children = MaterialService.get_children(id)
+    materials = MaterialService.get_materials()
+    material_tree = MaterialService.get_material_tree(materials=materials)
+
+    parent = MaterialService.get_parent(material.parent_id) if material.parent_id else None
+    
+    children = [m for m in materials if m.parent_id == material.id]
     companies = material.companies.all()
   
-    all_children = MaterialService.getAllChildren(id, materials)
+    all_children = MaterialService.getAllChildren(material_id, materials)
 
     return 'components/modal_edit_material.html', {
       'this_material':material,

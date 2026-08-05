@@ -6,69 +6,101 @@ let currentZIndex = 1000;
 
 function removeAllModals() {
   const modal_cont = document.getElementById('modals-content')
-  if (modal_cont) {modal_cont.innerHTML = ''}
+  if (modal_cont) {
+    modal_cont.innerHTML = '';
+    AppState.activeModal = []
+  }
 }
 
-async function openModal(modal_frame_id, modal_name=null, id=null) {
+function showModalFrame(modalFrame) {
+  modalFrame.style.zIndex = ++currentZIndex
+  modalFrame.style.display = 'flex'
+}
 
-  const modal_cont = document.getElementById('modals-content')
-  // modal_cont.innerHTML = ''
-
-  let modal_frame = document.getElementById(modal_frame_id)
-  if (modal_frame) {
-    modal_frame.style.zIndex = ++currentZIndex
-    modal_frame.style.display = 'flex'
-    
-
-    AppState.activeModal.push({
-      modal_frame_id: modal_frame_id,
-      modal_name: modal_name,
+function trackActiveModal(modalFrameId, modalName, id) {
+  AppState.activeModal.push({
+      modal_frame_id: modalFrameId,
+      modal_name: modalName,
       id: id
     })
+}
 
-    return
-  }
+const pendingModals = new Set()
 
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+async function fetchModalHtml(modalName, id) {
+  const csrftoken = getCsrfToken()
 
-  await fetch('/modal/', {
+  const response = await fetch('/modal/', {
     method: 'POST',
     headers: {
       'X-CSRFToken': csrftoken,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      'modal_name': modal_name, 
-      'id': id
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    
-    modal_cont.innerHTML += data.html
-    // modal_cont.firstChild.style.display = 'flex'
-    modal_frame = document.getElementById(modal_frame_id)
-
-    if (modal_frame) {
-      modal_frame.style.zIndex = ++currentZIndex
-      modal_frame.style.display = 'flex'
-    }
-    AppState.activeModal.push({
-      modal_frame_id: modal_frame_id,
-      modal_name: modal_name,
-      id: id
+      modal_name:modalName, id
     })
   })
   
+  if (!response.ok) {
+    throw new Error(`Server responsed with ${response.status}`)
+  }
+  const data = await response.json()
+  return data.html
 }
 
-function clearActiveModal(modal_frame_id) {
-  AppState.activeModal.forEach((val, idx) => {
-      if (modal_frame_id == val.modal_frame_id) {
-        AppState.activeModal.splice(idx, 1)
-        return
-      }
-  })
+function getCsrfToken() {
+  const tokenInput = document.querySelector('[name=csrfmiddlewaretoken]')
+  if (!tokenInput) {
+    throw new Error('CSRF token not found on page')
+  }
+  return tokenInput.value
+}
+
+async function openModal(modal_frame_id, modal_name=null, id=null) {
+
+  const modal_cont = document.getElementById('modals-content')
+  const existingFrame = document.getElementById(modal_frame_id)
+
+  if (existingFrame) {
+    showModalFrame(existingFrame)
+    trackActiveModal(modal_frame_id, modal_name, id)
+    return
+  }
+
+  if (pendingModals.has(modal_frame_id)) {
+    return
+  }
+  pendingModals.add(modal_frame_id)
+
+  try {
+    const html = await fetchModalHtml(modal_name, id)
+    const modalContainer = document.getElementById('modals-content')
+    console.log(modalContainer)
+
+    if (!modalContainer) {
+      console.error('Modal container not found')
+      return
+    }
+
+    modalContainer.insertAdjacentHTML('beforeend', html)
+
+    const modalFrame = document.getElementById(modal_frame_id)
+
+    if (modalFrame) {
+      showModalFrame(modalFrame)
+      trackActiveModal(modal_frame_id, modal_name, id)
+    }
+  } catch(error) {
+    console.error(`Failed to open modal "${modal_name}":`, error)
+  } finally {
+    pendingModals.delete(modal_frame_id)
+  }
+}
+
+function clearActiveModal(modalFrameId) {
+  AppState.activeModal = AppState.activeModal.filter(
+    (modal) => modal.modal_frame_id !== modalFrameId
+  )
 }
 
 function closeModal(modal_frame_id) {

@@ -3,7 +3,7 @@
   {% for contact in contacts %}
     <div class="card {% if contact.is_old %}old{% endif %}">
       <span class="title contact" title="{{contact.name}}">
-        <a onclick="removeAllModals(); openModal('contacts-details-modal-frame', 'detailsContact', {{contact.id}})" name="name">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
+        <a onclick="removeAllModals(); openModal('contacts-details-modal-frame', 'detailsContact', {{contact.id}})" name="name">{{contact.name}}</a>
       </span>
 
       <span>
@@ -50,7 +50,4 @@
       {% endif %}
     </div>
   {% endfor %}
-
-
-
 {% endif %}
