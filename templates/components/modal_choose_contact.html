@@ -23,7 +23,7 @@
     <hr>
     <div class="footer">
       {% if company_id %}
-        <button onclick="saveContactsList(); post_ContactsList('companies', {{company_id}})">Сохранить изменения</button>
+        <button onclick="saveContactsList(); post_ContactsList({{company_id}})">Сохранить изменения</button>
       {% else %}
         <button onclick="saveContactsList()">Сохранить</button>
       {% endif %}

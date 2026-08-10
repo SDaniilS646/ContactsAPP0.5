@@ -7,7 +7,7 @@ urlpatterns = [
   path('add_comp_view/', add_company_view),
   path('add_comp/', company_create),
   path('<int:id>/', company_details_page),
-  path('edit_cont/', company_edit),
+  path('edit_comp/', company_edit),
   path('delete_connection/', delete_connection),
   path('edit_contact_list/', edit_contact_list),
   path('edit_material_list/', edit_material_list),

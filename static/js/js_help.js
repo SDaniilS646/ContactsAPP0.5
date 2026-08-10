@@ -75,7 +75,6 @@ async function openModal(modal_frame_id, modal_name=null, id=null) {
   try {
     const html = await fetchModalHtml(modal_name, id)
     const modalContainer = document.getElementById('modals-content')
-    console.log(modalContainer)
 
     if (!modalContainer) {
       console.error('Modal container not found')

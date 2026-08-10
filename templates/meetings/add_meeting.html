@@ -1,13 +1,6 @@
-{% comment %} {% extends 'base.html' %} {% block content %}
-{% include 'components/modal_create_contact.html' %}
-{% include 'components/modal_create_employee.html' %}
-
-{% include 'components/modal_choose_contact.html' %}
-{% include 'components/modal_choose_employees.html' %} {% endcomment %}
 
 <div id="company-creation">
   <h1>Новая встреча</h1>
-  {% csrf_token %}
   <div class="form-item">
     <label for="subject" name="subject-label">Тема встречи</label>
     <input type="text" name="subject">
@@ -32,4 +25,3 @@
 
   <button onclick="post_create_meeting()">Сохранить</button>
 </div>
-{% comment %} {% endblock %} {% endcomment %}

@@ -14,20 +14,18 @@
     <script src="{% static 'js/js_cache.js' %}"></script>
     <script src="{% static 'js/js_state.js' %}"></script>
 
-    {% comment %} <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> {% endcomment %}
-
+    {% csrf_token %}
   </head>
   <body>
-    {% csrf_token %}
+    
     <div class="menu">
       {% include 'components/menu.html' %}
     </div>
     <div id="modals-content">
+      {% comment %} КОД МОДАЛКИ {% endcomment %}
     </div>
     <div id="content" class="content">
-      {% comment %} {% include 'companies/companies_page.html' %} {% endcomment %}
-       
-      {% comment %} {% block content %}{% endblock %} {% endcomment %}
+      {% comment %} КОД СТРАНИЦЫ {% endcomment %}
     </div>
   </body>
 </html>

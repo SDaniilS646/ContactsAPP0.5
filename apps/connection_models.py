@@ -63,3 +63,13 @@ class MeetingEmployee(models.Model):
     class Meta:
         managed = False
         db_table = 'meeting_employee'
+
+
+class MeetingCompany(models.Model):
+    meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE, related_name='meeting_companies')
+    company = models.ForeignKey(Companies, on_delete=models.CASCADE, related_name='meeting_companies')
+    updated_at = models.DateTimeField(auto_now=True)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'meeting_company'
