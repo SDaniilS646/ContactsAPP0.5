@@ -1,16 +1,34 @@
-{% for company in companies %}
-  <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
-    <span class="title" title="{{company.name}}">
-       <a onclick="removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})" name="name">{{company.name}}</a>
-    </span>
-    <hr>
-    <span>ИНН: {{company.inn | default:"—"}}</span>
-    <span>тел.: {{company.phone | default:"—"}}</span>
-    <span>почта: {{company.mail | default:"—"}}</span>
-    <span class="comment" title="{{company.comment}}">{{company.comment}}</span>
-    <span hidden name="id">{{company.id}}</span>
-    <span hidden name="date">{{company.updated_at|date:"Y, m, d" }}</span>
-    <span hidden>{{company.materials}}</span>
-    <span hidden>{% if company.is_old %}старый{% endif %}</span>
-  </div>
-{% endfor %}
+
+
+{% if style == 'meet_creation' %}
+
+  {% for company in companies %}
+    <div id="{{company.id}}" class="company-list-item {% if company.selected %}selected{% endif %}" onclick="selectCompanies(event, this, 'companies-list')" style="order: none;">
+      <span name="name">
+      {{company.name}}
+      </span>
+      <span>ИНН: {{company.inn | default:"—"}}</span>
+      <span>тел.: {{company.phone | default:"—"}}</span>
+      <span>почта: {{company.mail | default:"—"}}</span>
+      <span hidden name="id">{{company.id}}</span>
+      <span hidden name="date">{{company.updated_at|date:"Y, m, d" }}</span>
+    </div>
+  {% endfor %}
+{% else %}
+  {% for company in companies %}
+    <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
+      <span class="title" title="{{company.name}}">
+        <a onclick="removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})" name="name">{{company.name}}</a>
+      </span>
+      <hr>
+      <span>ИНН: {{company.inn | default:"—"}}</span>
+      <span>тел.: {{company.phone | default:"—"}}</span>
+      <span>почта: {{company.mail | default:"—"}}</span>
+      <span class="comment" title="{{company.comment}}">{{company.comment}}</span>
+      <span hidden name="id">{{company.id}}</span>
+      <span hidden name="date">{{company.updated_at|date:"Y, m, d" }}</span>
+      <span hidden>{{company.materials}}</span>
+      <span hidden>{% if company.is_old %}старый{% endif %}</span>
+    </div>
+  {% endfor %}
+{% endif %}

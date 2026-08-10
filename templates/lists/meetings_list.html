@@ -3,9 +3,10 @@
     <span class="title" title="{{meeting.subject}}">
       <a onclick="removeAllModals(); openModal('meetings-details-modal-frame', 'detailsMeeting', {{meeting.id}})">{{meeting.subject}}</a>
     </span>
+    <span>{{meeting.companies|truncatechars:24}}</span>
     <hr>
-    <span>CG: — </span>
-    <span>Гости: — </span>
+    <span>CG: {{meeting.employees|truncatechars:24 | default:'—' }}</span>
+    <span>Гости: {{meeting.contacts|truncatechars:24 | default:'—'}}</span>
     <hr>
     <span class="date" >{{ meeting.meeting_date|date:"d-m-Y" }}</span>
   </div>

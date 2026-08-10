@@ -245,7 +245,8 @@
 
 
 .modal-content #contacts-list .contact-list-item,
-.modal-content #employees-list .employee-list-item {
+.modal-content #employees-list .employee-list-item,
+.modal-content .company-list-item {
 
   display: flex;
   flex-direction: column;

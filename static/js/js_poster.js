@@ -49,7 +49,8 @@ async function post_create_meeting() {
       record_link: container.querySelector('[name="record-link"]').value,
       meeting_date: meetingDateInput.value.trim() === '' ? null : meetingDateInput.value,
       meeting_contacts: selectedContacts,
-      meeting_employees: selectedEmployees
+      meeting_employees: selectedEmployees,
+      meeting_companies: selectedCompanies
     })
     if (data.success) {
       setPage('page', 'meetings')

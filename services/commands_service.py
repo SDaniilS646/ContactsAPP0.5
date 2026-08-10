@@ -8,7 +8,7 @@ from apps.contacts.models import Contacts
 from apps.materials.models import Materials
 from apps.meetings.models import Meetings
 from apps.employees.models import Employees
-from apps.connection_models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
+from apps.connections.models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
 from pathlib import Path
 

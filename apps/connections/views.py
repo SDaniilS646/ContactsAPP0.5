@@ -37,6 +37,7 @@ MODALS = {
   'detailsContact': DetailService.contactsDetail,
   'detailsMaterial': DetailService.materialsDetail,
   'detailsMeeting': DetailService.meetingsDetail,
+  'chooseCompany': ModalService.chooseCompany
 }
 
 @login_required

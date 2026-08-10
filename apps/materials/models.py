@@ -10,7 +10,7 @@ class Materials(models.Model):
 
     companies = models.ManyToManyField(
         'companies.Companies',
-        through='apps.CompanyMaterial',
+        through='connections.CompanyMaterial',
         related_name='companies_material'
     )
 

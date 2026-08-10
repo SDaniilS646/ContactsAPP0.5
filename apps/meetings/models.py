@@ -10,14 +10,20 @@ class Meetings(models.Model):
 
     contacts = models.ManyToManyField(
         'contacts.Contacts',
-        through='apps.MeetingContact',
+        through='connections.MeetingContact',
         related_name='meetings_contact'
     )
 
     employees = models.ManyToManyField(
         'employees.Employees',
-        through='apps.MeetingEmployee',
+        through='connections.MeetingEmployee',
         related_name='meetings_employee'
+    )
+
+    companies = models.ManyToManyField(
+        'companies.Companies',
+        through='connections.MeetingCompany',
+        related_name='meeting_company'
     )
 
     class Meta:

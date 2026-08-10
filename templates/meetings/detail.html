@@ -8,6 +8,11 @@
       </div>
       <div class="modal-header">
         <h1>{{meeting.subject}}</h1>
+        {% for company in companies %}
+          <span class="title" title="{{company.name}}">
+            <a onclick="openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})" name="name">{{company.name}}</a>
+          </span>
+        {% endfor %}
       </div>
     </div>
     <div class="modal-main">

@@ -1,0 +1,29 @@
+<div id="choose_company_modal_frame" class="modal" style="z-index: 1">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='choose_company_modal_frame' %}
+      <h3>Компании</h3>
+    </div>
+    
+    <div class="main-frame">
+      {% comment %} <select name="sortList" id="sort-select" onchange="sortList(event, 'div.contact-list-item')">
+        <option value="">--Сортировать--</option>
+        <option value="-date">Старое-новое</option>
+        <option value="date">Новое-старое</option>
+        <option value="A-z">А-я</option>
+        <option value="Z-a">Я-а</option>
+        <option value="">По умолчанию</option>
+      </select> {% endcomment %}
+      <input id="companies-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <hr>
+      <div id="companies-list" class="companies-list meet_creation">
+        {% include 'lists/companies_list.html' with style='meet_creation' %}
+      </div>
+    </div>
+    <hr>
+    <div class="footer">
+      <button onclick="saveCompaniesList()">Сохранить</button>
+      {% comment %} <button onclick="openModal('create_comapany_modal_frame', 'createCompany')">Создать новый</button> {% endcomment %}
+    </div>
+  </div>
+</div>

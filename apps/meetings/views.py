@@ -16,37 +16,35 @@ from django.contrib.auth.decorators import login_required
 
 import json
 
-@login_required
-def meetings_page(request):
-  meetings = MeetingService.get_meetings()
+# @login_required
+# def meetings_page(request):
+#   meetings = MeetingService.get_meetings()
 
-  return
+#   return
 
-  return render(
-    request,
-    'meetings/meetings_page.html',
-    {
-      'meetings':meetings
-    }
-  )
+#   return render(
+#     request,
+#     'meetings/meetings_page.html',
+#     {
+#       'meetings':meetings
+#     }
+#   )
 
-@login_required
-def add_meeting_view(request):
-  # material_tree = MaterialService.get_material_tree()
-  # contacts = ContactService.get_contacts()
+# @login_required
+# def add_meeting_view(request):
 
-  contacts = ContactService.get_contacts()
-  employees = EmployeeService.get_employees()
+#   contacts = ContactService.get_contacts()
+#   employees = EmployeeService.get_employees()
 
-  return render(
-    request,
-    'meetings/add_meeting.html',
-    {
-      'contacts': contacts,
-      'employees': employees,
-      'meeting_create': True
-    }
-  )
+#   return render(
+#     request,
+#     'meetings/add_meeting.html',
+#     {
+#       'contacts': contacts,
+#       'employees': employees,
+#       'meeting_create': True
+#     }
+#   )
 
 
 def meeting_create(request):
@@ -61,6 +59,7 @@ def meeting_create(request):
 
   meeting_contacts = input_data['meeting_contacts']
   meeting_employees = input_data['meeting_employees']
+  meeting_companies = input_data['meeting_companies']
 
   if meeting_contacts:
     for contact in meeting_contacts:
@@ -79,26 +78,35 @@ def meeting_create(request):
         }
       )
 
+  if meeting_companies:
+    for company in meeting_companies:
+      ConnectionService.set_meeting_company(
+        {
+          'meet_id': meet_id,
+          'company_id':company['id']
+        }
+      )
+
   return JsonResponse({
     'success': True
   })
 
-@login_required
-def meeting_details_page(request, id):
-  meeting = MeetingService.get_meeting(id)
+# @login_required
+# def meeting_details_page(request, id):
+#   meeting = MeetingService.get_meeting(id)
 
-  contacts = meeting.contacts.all()
-  employees = meeting.employees.all()
+#   contacts = meeting.contacts.all()
+#   employees = meeting.employees.all()
 
-  return render(
-    request,
-    'meetings/detail.html',
-    {
-      'meeting':meeting,
-      'contacts': contacts,
-      'employees': employees
-    }
-  )
+#   return render(
+#     request,
+#     'meetings/detail.html',
+#     {
+#       'meeting':meeting,
+#       'contacts': contacts,
+#       'employees': employees
+#     }
+#   )
 
 def delete(request):
   input_data = json.loads(request.body)

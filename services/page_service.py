@@ -74,8 +74,25 @@ class PageService:
   @staticmethod
   def meetings_page():
     meetings = MeetingService.get_meetings()
+    loaded_meetings = []
 
-    return 'meetings/meetings_page.html', {'meetings':meetings}
+    for meeting in meetings:
+      contacts = meeting.contacts.all()
+      employees = meeting.employees.all()
+      companies = meeting.companies.all()
+
+      loaded_meetings.append({
+        'id': meeting.id,
+        'subject': meeting.subject,
+        'meeting_date': meeting.meeting_date,
+        'employees': ', '.join([employee.last_name for employee in employees]),
+        'contacts': ', '.join([contact.last_name for contact in contacts]),
+        'companies': ', '.join([company.name for company in companies])
+      })
+
+
+
+    return 'meetings/meetings_page.html', {'meetings':loaded_meetings}
 
   @staticmethod
   def cmd_page():
@@ -169,11 +186,13 @@ class DetailService:
     
     contacts = meeting.contacts.all()
     employees = meeting.employees.all()
+    companies = meeting.companies.all()
 
     return 'meetings/detail.html', {
           'meeting':meeting,
           'contacts': contacts,
-          'employees': employees
+          'employees': employees,
+          'companies': companies
         }
 
 class AddService:
@@ -224,6 +243,14 @@ class ModalService:
     material_tree = MaterialService.get_material_tree(old_mats=comp_mat_ids)
 
     return template, {'material_tree': material_tree, 'company_id':company_id}
+
+  @staticmethod
+  def chooseCompany(meeting_id):
+    template = 'components/modal_choose_company.html'
+
+    if not meeting_id:
+      companies = CompanyService.get_companies()
+      return template, {'companies': companies}
 
   @staticmethod
   def chooseContact(company_id):

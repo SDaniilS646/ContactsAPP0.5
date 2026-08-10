@@ -13,13 +13,13 @@ class Companies(models.Model):
 
     contacts = models.ManyToManyField(
         'contacts.Contacts',
-        through='apps.CompanyContact',
+        through='connections.CompanyContact',
         related_name='companies_contact'
     )
 
     materials = models.ManyToManyField(
         'materials.Materials',
-        through='apps.CompanyMaterial',
+        through='connections.CompanyMaterial',
         related_name='companies_contact'
     )
 

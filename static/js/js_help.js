@@ -1,6 +1,7 @@
 let selectedMaterials = []
 let selectedContacts = []
 let selectedEmployees = []
+let selectedCompanies = []
 
 let currentZIndex = 1000;
 
@@ -208,6 +209,16 @@ function selectContacts(event, element, container_id=null, input_box_id=null) {
   }
 }
 
+function selectCompanies(event, element, container_id=null) {
+  const container = document.getElementById(container_id)
+
+  if (element.classList.contains('selected')) {
+    element.classList.remove('selected')
+  } else {
+    element.classList.add('selected')
+  }
+}
+
 function selectEmployees(event, element, container_id=null, input_box_id=null) {
   const container = document.getElementById(container_id)
 
@@ -243,6 +254,26 @@ function saveContactsList() {
     }
   }) 
   closeModal('choose_contact_modal_frame')
+}
+
+function saveCompaniesList() {
+
+  const container = document.getElementById('companies-list')
+  let elements = container.querySelectorAll('div')
+
+  selectedCompanies = []
+
+  elements.forEach(val => {
+    if (val.classList.contains('selected')) {
+      
+      let company_id = val.getAttribute('id')
+      
+      selectedCompanies.push({
+        'id': company_id
+      })
+    }
+  })
+  closeModal('choose_company_modal_frame')
 }
 
 function saveEmployeesList() {

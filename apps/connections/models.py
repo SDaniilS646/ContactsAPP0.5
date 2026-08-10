@@ -24,7 +24,6 @@ class CompanyContact(models.Model):
         managed = False
         db_table = 'company_contact'
 
-
 class CompanyMaterial(models.Model):
     company = models.ForeignKey(
         Companies,
@@ -42,7 +41,6 @@ class CompanyMaterial(models.Model):
         managed = False
         db_table = 'company_material'
 
-
 class MeetingContact(models.Model):
     meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE)
     contact = models.ForeignKey(Contacts, on_delete=models.CASCADE)
@@ -53,7 +51,6 @@ class MeetingContact(models.Model):
         managed = False
         db_table = 'meeting_contact'
 
-
 class MeetingEmployee(models.Model):
     meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE)
     emloyee = models.ForeignKey(Employees, on_delete=models.CASCADE)
@@ -63,7 +60,6 @@ class MeetingEmployee(models.Model):
     class Meta:
         managed = False
         db_table = 'meeting_employee'
-
 
 class MeetingCompany(models.Model):
     meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE, related_name='meeting_companies')

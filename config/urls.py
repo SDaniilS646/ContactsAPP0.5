@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
 
-from apps.views import setPage, clearPage, loadModal
+from apps.connections.views import setPage, clearPage, loadModal
 
 
 urlpatterns = [

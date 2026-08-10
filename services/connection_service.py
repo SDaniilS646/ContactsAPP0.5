@@ -1,4 +1,4 @@
-from apps.connection_models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
+from apps.connections.models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany
 from services.company_service import CompanyService
 from services.material_service import MaterialService
 from services.contact_service import ContactService
@@ -92,6 +92,15 @@ class ConnectionService:
       meeting = MeetingService.get_meeting(input_data['meet_id']),
       emloyee = EmployeeService.get_employee(input_data['emp_id']),
       added_at = timezone.now()
+    )
+    return new_id
+
+  @staticmethod
+  def set_meeting_company(input_data):
+    new_id = MeetingCompany.objects.create(
+      meeting = MeetingService.get_meeting(input_data['meet_id']),
+      company = CompanyService.get_company(input_data['company_id']),
+      # added_at = timezone.now()
     )
     return new_id
 

@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import companies_page, company_create, add_company_view, company_details_page, delete_connection, company_edit, edit_contact_list, delete, edit_material_list, parse_comp, parse_comp_page
+from .views import company_create, delete_connection, company_edit, edit_contact_list, delete, edit_material_list, parse_comp, parse_comp_page #, companies_page, add_company_view, company_details_page
 
 urlpatterns = [
-  path('', companies_page),
+  # path('', companies_page),
 
-  path('add_comp_view/', add_company_view),
+  # path('add_comp_view/', add_company_view),
   path('add_comp/', company_create),
-  path('<int:id>/', company_details_page),
+  # path('<int:id>/', company_details_page),
   path('edit_comp/', company_edit),
   path('delete_connection/', delete_connection),
   path('edit_contact_list/', edit_contact_list),

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 import json
 from services.material_service import MaterialService
-from apps.connection_models import CompanyMaterial
+from apps.connections.models import CompanyMaterial
 
 from django.contrib.auth.decorators import login_required
 
