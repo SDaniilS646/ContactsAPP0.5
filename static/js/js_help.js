@@ -521,6 +521,9 @@ document.addEventListener(
       case 'contacts-list-search':
         filter_pg_list(event, '.card')
         break;
+      case 'companies-list-search':
+        filter_pg_list(event, '.company-list-item')
+        break
     }
 
     function filter_pg_list(event, selector_class) {
