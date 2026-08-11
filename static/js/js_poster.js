@@ -385,7 +385,7 @@ async function post_MaterialsList(comp_id) {
   }
 }
 
-function start_parsing() {
+async function start_parsing() {
   const container = document.getElementById('company-parsing')
 
   const parse_btn = container.querySelector('[name="start-parsing-btn"]')
@@ -415,16 +415,14 @@ function start_parsing() {
       data.results.forEach((url_val, url_idx) => {
         const url_container = document.createElement('div')
 
-
-        const span = document.createElement('span');
-        span.textContent = url_val['url'];
-        div.appendChild(span);
+        const urlSpan = document.createElement('span');
+        urlSpan.textContent = url_val['url'];
+        div.appendChild(urlSpan);
         
         url_val['mail'].forEach((val, idx) => {
-
-          span = document.createElement('span')
-          span.setAttribute('hidden', '')
-          span.textContent = url_val['url']
+          const hiddenSpan = document.createElement('span')
+          hiddenSpan.setAttribute('hidden', '')
+          hiddenSpan.textContent = url_val['url']
           
           const form_container = document.createElement('div')
           form_container.setAttribute('class', 'form_container')
@@ -442,7 +440,7 @@ function start_parsing() {
           label.appendChild(checkbox)
 
           form_container.appendChild(label)
-          form_container.appendChild(span);
+          form_container.appendChild(hiddenSpan);
           url_container.appendChild(form_container);
           
           // div.appendChild(checkbox);
@@ -453,16 +451,15 @@ function start_parsing() {
     else {
       div = document.querySelector('[name=companies]')
 
-      span = document.createElement('span');
-      span.textContent = 'Ничего не найдено (возможно лимит)';
-      div.appendChild(span);
-
+      const errorSpan = document.createElement('span');
+      errorSpan.textContent = 'Ничего не найдено (возможно лимит)';
+      div.appendChild(errorSpan);
       div.appendChild(document.createElement('hr'))
 
       if (data.err_txt) {
-        span = document.createElement('span');
-        span.textContent = data.err_txt;
-        div.appendChild(span);
+        const errTextSpan = document.createElement('span');
+        errTextSpan.textContent = data.err_txt;
+        div.appendChild(errTextSpan);
       }
     }
   })

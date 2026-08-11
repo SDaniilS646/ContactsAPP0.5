@@ -14,7 +14,8 @@ PAGES = {
   'contacts': PageService.contacts_page,
   'meetings': PageService.meetings_page,
   'employees': PageService.employees_page,
-  'cmd': PageService.cmd_page
+  'cmd': PageService.cmd_page,
+  'parser': PageService.parser_page
 }
 
 ADD = {
@@ -39,6 +40,7 @@ MODALS = {
   'detailsMeeting': DetailService.meetingsDetail,
   'chooseCompany': ModalService.chooseCompany
 }
+
 
 @login_required
 def clearPage(request):

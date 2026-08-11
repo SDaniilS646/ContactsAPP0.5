@@ -98,6 +98,10 @@ class PageService:
   def cmd_page():
     return 'commands/commands_page.html', {}
 
+  @staticmethod
+  def parser_page():
+    return 'companies/parse_comp_page.html', {}
+
 class DetailService:
   @staticmethod
   def companiesDetail(company_id):
