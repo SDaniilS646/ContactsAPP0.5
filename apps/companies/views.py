@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
 
 
@@ -9,9 +9,6 @@ from services.connection_service import ConnectionService
 
 from services.contact_service import ContactService
 
-from django.utils import timezone
-
-
 import json
 
 
@@ -20,62 +17,6 @@ from django.contrib.auth.decorators import login_required
 from backend.web_parser.config import SEARCH_PROVIDER, LOADER, EXTRACTOR
 
 from urllib.parse import urlparse
-
-from datetime import datetime
-
-
-# @login_required
-# def companies_page(request):
-  
-
-#   # web_parser()
-  
-#   companies = CompanyService.get_companies()
-#   companies = companies.order_by('id')
-  
-#   loaded_companies = []
-
-#   for comp in companies:
-#     loaded_companies.append({
-#       'id': comp.id,
-#       'name': comp.name,
-#       'inn': comp.inn,
-#       'phone': comp.phone,
-#       'mail': comp.mail,
-#       'comment': comp.comment,
-#       'materials': ' '.join([item.name for item in comp.materials.all()]),
-#       'is_old': True if (timezone.now().date() - comp.updated_at.date()).days > 365 else False,
-#       'updated_at': comp.updated_at
-#     })
-#     # print(datetime.strptime(comp.updated_at, "%Y-%m-%d").date())
-#   return render(
-#       request,
-#       'base.html',
-#       {
-#         'companies':loaded_companies
-#       }
-#   )
-#   return render(
-#     request,
-#     'companies/companies_page.html',
-#     {
-#       'companies':loaded_companies
-#     }
-#   )
-
-# @login_required
-# def add_company_view(request):
-#   # material_tree = MaterialService.get_material_tree()
-#   # contacts = ContactService.get_contacts()
-
-#   return render(
-#     request,
-#     'companies/add_comp.html',
-#     {
-#       # 'material_tree': material_tree,
-#       # 'contacts': contacts
-#     }
-#   )
 
 def company_create(request):
   input_data = json.loads(request.body)
@@ -130,81 +71,6 @@ def company_create(request):
     'comp_name': comp_name,
     'comp_id':new_comp_id
   })
-
-# @login_required
-# def company_details_page(request, id):
-#   company = CompanyService.get_company(id)
-
-#   comp_cont = ConnectionService.get_company_contact('company', id)
-#   comp_cont_ids = [item.contact_id for item in comp_cont]
-
-#   contacts = company.contacts.all()
-#   cont_info = []
-
-#   materials = None
-#   materials = company.materials.all()
-
-#   comp_mat_ids = [item.id for item in materials]
-
-#   material_tree = MaterialService.get_material_tree(comp_mat_ids)
-#   all_contacts = ContactService.get_contacts()
-
-#   contacts_list = []
-
-#   for cont in all_contacts:
-#     if cont.id in comp_cont_ids:
-#       temp = [{'corp_mail': item.mail, 'corp_phone': item.phone, 'position': item.position} for item in comp_cont if item.contact_id == cont.id][0]
-#       contacts_list.append({
-#         'id': cont.id,
-#         'first_name': cont.first_name,
-#         'last_name': cont.last_name,
-#         'patronymic': cont.patronymic,
-#         'phone': cont.phone,
-#         'mail': cont.mail,
-#         'selected': True,
-#         'corp_mail': temp['corp_mail'],
-#         'corp_phone': temp['corp_phone'],
-#         'position': temp['position']
-#       })
-#     else:
-#       contacts_list.append({
-#         'id': cont.id,
-#         'first_name': cont.first_name,
-#         'last_name': cont.last_name,
-#         'patronymic': cont.patronymic,
-#         'phone': cont.phone,
-#         'mail': cont.mail
-#       })
-
-#   for cont in contacts:
-#     temp_info = [item for item in comp_cont if item.contact_id == cont.id]
-#     cont_info.append({
-#       'contact_id': cont.id,
-#       'cont_name': f'{cont.last_name} {cont.first_name}',
-#       'position': temp_info[0].position,
-#       'phone': temp_info[0].phone,
-#       'mail':temp_info[0].mail
-#     })
-
-  
-
-#   rating = company.rating
-#   if company.rating:
-#     rating = '★' * int(company.rating)
-  
-
-#   return render(
-#     request,
-#     'companies/detail.html',
-#     {
-#       'company':company,
-#       'cont_info': cont_info,
-#       'materials': materials,
-#       'rating': rating,
-#       'material_tree': material_tree,
-#       'contacts': contacts_list
-#     }
-#   )
 
 def delete_connection(request):
   input_data = json.loads(request.body)

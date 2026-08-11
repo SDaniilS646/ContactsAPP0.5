@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'apps.meetings',
     'apps.employees',
     'apps.commands',
-    # 'apps.templatetags',
+    'apps.templatetags',
     'apps.connections',
     # 'apps.core',
     # 'apps',
