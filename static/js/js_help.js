@@ -5,6 +5,22 @@ let selectedCompanies = []
 
 let currentZIndex = 1000;
 
+function lockButtons(btns) {
+  for (const button of btns) {
+    button.disabled = true
+    // button.inert = true;
+    // button.style.backgroundColor = "grey"
+  }
+}
+
+function ulockButtons(btns) {
+  for (const button of btns) {
+    button.disabled = false
+    // button.inert = false;
+    // button.removeAttribute('style')
+  }
+}
+
 function removeAllModals() {
   const modal_cont = document.getElementById('modals-content')
   if (modal_cont) {
@@ -369,14 +385,14 @@ function sortList(event, query_el='div.card') {
   }
 }
 
-function executeCMD() {
+async function executeCMD() {
   
+  const mainContainer = document.getElementById("commands-block")
+  const cmdInput = mainContainer.querySelector('input')
 
-  main_cont = document.getElementById("commands-block")
-
-  cmd = main_cont.querySelector('input').value
+  const cmd = cmdInput.value
   if (cmd == '') {return}
-  if (cmd == 'clear') {main_cont.querySelector('textarea').value = ''; main_cont.querySelector('input').value = ''; return}
+  if (cmd == 'clear') {mainContainer.querySelector('textarea').value = ''; cmdInput.value = ''; return}
   
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
@@ -405,11 +421,11 @@ function executeCMD() {
 
     document.body.removeChild(form)
 
-    result = 'loaded archive'
-    output = main_cont.querySelector('textarea')
-    output_val = output.value
-    output.value = output_val == '' ? result : output_val + '\n\n' + result
-    main_cont.querySelector('input').value = ''
+    const result = 'loaded archive'
+    const output = mainContainer.querySelector('textarea')
+    const outputValue = output.value
+    output.value = outputValue == '' ? result : outputValue + '\n\n' + result
+    cmdInput.value = ''
     return
   }
 
@@ -427,11 +443,11 @@ function executeCMD() {
   })
   .then(response => response.json())
   .then(data => {
-      result = data.res
-      output = main_cont.querySelector('textarea')
-      output_val = output.value
-      output.value = output_val == '' ? result : output_val + '\n\n' + result
-      main_cont.querySelector('input').value = ''
+      const result = data.res
+      const output = mainContainer.querySelector('textarea')
+      const outputValue = output.value
+      output.value = outputValue == '' ? result : outputValue + '\n\n' + result
+      cmdInput.value = ''
   })
 }
 
@@ -497,46 +513,50 @@ function setPage(type, table, id=null) {
   )
 }
 
+const FILTER_TARGETS = {
+  'companies-list': '.card',
+  'companies-list':'.card',
+  'contacts-list-search': '.card',
+  'employees-list-on-create': '.employee-list-item',
+  'contacts-list-on-comp-edit': '.contact-list-item',
+  'companies-list-search': '.company-list-item'
+}
+
+
+
+function filterPageList(event, selector_class) {
+  const inputText = event.target.value.toLowerCase()
+  
+  document.querySelectorAll(selector_class)
+  .forEach(el => {
+    const text = el.textContent.toLowerCase();
+    const isMatch = text.includes(inputText)
+    el.classList.toggle('is-hidden', !isMatch)
+
+    // el.style.display = text.includes(inputText) ? '' : 'none';
+  })
+}
+
+function debounce(fn,  delay) {
+  let timeoutId
+  return function(...args) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
+
+const debouncedFilter = debounce((event, selectorClass) => {
+  filterPageList(event, selectorClass)
+}, 200)
 
 document.addEventListener(
   'input',
 
   function(event) {
     let input_box = event.target.id;
-
-    switch (input_box) {
-      case 'companies-list':
-        filter_pg_list(event, '.card')
-        break;
-      case 'employees-list-search':
-        filter_pg_list(event, '.card')
-        break;
-      case 'employees-list-on-create':
-        console.log('nigga')
-        filter_pg_list(event, '.employee-list-item')
-        break;
-      case 'contacts-list-on-comp-edit':
-        filter_pg_list(event, '.contact-list-item')
-        break
-      case 'contacts-list-search':
-        filter_pg_list(event, '.card')
-        break;
-      case 'companies-list-search':
-        filter_pg_list(event, '.company-list-item')
-        break
-    }
-
-    function filter_pg_list(event, selector_class) {
-      input_text = event.target.value.toLowerCase()
-      
-      document.querySelectorAll(selector_class)
-      .forEach(el => {
-        const text = el.textContent.toLowerCase();
-
-        //querySelector('.inn').
-
-        el.style.display = text.includes(input_text) ? '' : 'none';
-      })
+    const selectorClass = FILTER_TARGETS[event.target.id]
+    if (selectorClass) {
+      debouncedFilter(event, selectorClass)
     }
   }
 )

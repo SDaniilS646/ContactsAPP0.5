@@ -1,4 +1,4 @@
-async function postJson(url, payload=null) {
+async function postRequest(url, payload) {
   if (!AppState.csrfToken) {
     throw new Error('CSRF token not initialized')
   }
@@ -27,7 +27,17 @@ async function postJson(url, payload=null) {
     throw new Error(message)
   }
 
+  return response
+}
+
+async function postJson(url, payload=null) {
+  const response = await postRequest(url, payload)
   return response.json()
+}
+
+async function postFile(url, payload=null) {
+  const response = await postRequest(url, payload)
+  return response.blob()
 }
 
 async function post_create_meeting() {
@@ -388,143 +398,195 @@ async function post_MaterialsList(comp_id) {
 async function start_parsing() {
   const container = document.getElementById('company-parsing')
 
-  const parse_btn = container.querySelector('[name="start-parsing-btn"]')
-  parse_btn.inert = true;
-  parse_btn.style.backgroundColor = "grey"
-  let div = document.querySelector('[name=companies]')
-  div.innerHTML = ''
+  const requestText = container.querySelector('[name="request_txt"]').value.trim()
+  if (requestText === '') {
+    return
+  }
 
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  const resultsDiv = document.querySelector('[name=companies]')
+  resultsDiv.innerHTML = ''
 
-  fetch('/companies/parse_company/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        request_txt: container.querySelector('[name="request_txt"]').value
+  const saveButton = container.querySelector('[name="save-parsed-companies"]')
+  const parseButton = container.querySelector('[name="start-parsing-btn"]')
+  lockButtons([saveButton, parseButton])
+
+  try {
+    const data = await postJson('/companies/parse_company/', {
+      request_txt: requestText
     })
-  })
-  .then(response => response.json())
-  .then(data => {
-    parse_btn.inert = false;
-    parse_btn.style.backgroundColor = "white"
-    if (data.success) {
-      
-      data.results.forEach((url_val, url_idx) => {
-        const url_container = document.createElement('div')
 
-        const urlSpan = document.createElement('span');
-        urlSpan.textContent = url_val['url'];
-        div.appendChild(urlSpan);
+    if  (data.success) {
+      renderParsingResults(resultsDiv, data.results)
+    } else {
+      renderParsingError(resultsDiv, data.err_txt)
+    }
+  } catch(error) {
+    console.log('Parsing request failed:', error)
+    renderParsingError(resultsDiv, 'Произошла ошибка при выполнении запроса')
+  } finally {
+    unlockButtons([saveButton, parseButton])
+  }
+}
+
+function renderParsingResults(container, results) {
+  results.forEach((urlResult, urlIdx) => {
+    container.appendChild(createCompanyResultBlock(urlResult, urlIdx))
+  })
+}
+
+function createCompanyResultBlock(urlResult, urlIdx) {
+  const urlContainer = document.createElement('div')
+
+  const urlSpan = document.createElement('span');
+  urlSpan.textContent = urlResult.url;
+  urlContainer.appendChild(urlSpan);
+
+  urlResult.mail.forEach((mailValue, mailIdx) => {
+    urlContainer.appendChild(createMailCheckBoxRow(urlResult.url, mailValue, urlIdx, mailIdx))
+  })
+
+  return urlContainer
+}
+
+function renderParsingError(container, errText) {
+  const noResultsSpan = document.createElement('span');
+  noResultsSpan.textContent = 'Ничего не найдено (возможно лимит)';
+  container.appendChild(noResultsSpan)
+  container.appendChild(document.createElement('hr'))
+
+  if (errText) {
+    const errSpan = document.createElement('span');
+    errSpan.textContent = errText;
+    container.appendChild(errSpan);
+  }
+}
+
+function createMailCheckBoxRow(url, mailValue, urlIdx, mailIdx) {
+  const formContainer = document.createElement('div')
+  formContainer.setAttribute('class', 'form_container')
+
+  // const inputId = `parsed-mail-${urlIdx}-${mailIdx}`
+  const inputId = `${urlIdx}-${mailIdx}`
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = inputId
+  checkbox.value = mailValue; 
+  checkbox.name = inputId;
+  checkbox.dataset.url = url
         
-        url_val['mail'].forEach((val, idx) => {
-          const hiddenSpan = document.createElement('span')
-          hiddenSpan.setAttribute('hidden', '')
-          hiddenSpan.textContent = url_val['url']
-          
-          const form_container = document.createElement('div')
-          form_container.setAttribute('class', 'form_container')
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.value = val; 
-          checkbox.name = `${url_idx} - ${idx}`;
+  const label = document.createElement('label');
+  label.textContent = mailValue;
+  label.setAttribute('for', inputId)
+  label.prepend(checkbox)
 
-          const label = document.createElement('label');
-          
-          label.textContent = val;
-          label.setAttribute('for', `${url_idx} - ${idx}`)
-          
-
-          label.appendChild(checkbox)
-
-          form_container.appendChild(label)
-          form_container.appendChild(hiddenSpan);
-          url_container.appendChild(form_container);
-          
-          // div.appendChild(checkbox);
-        })
-        div.appendChild(url_container)
-      })
-    }
-    else {
-      div = document.querySelector('[name=companies]')
-
-      const errorSpan = document.createElement('span');
-      errorSpan.textContent = 'Ничего не найдено (возможно лимит)';
-      div.appendChild(errorSpan);
-      div.appendChild(document.createElement('hr'))
-
-      if (data.err_txt) {
-        const errTextSpan = document.createElement('span');
-        errTextSpan.textContent = data.err_txt;
-        div.appendChild(errTextSpan);
-      }
-    }
-  })
+  formContainer.appendChild(label)
+  return formContainer
 }
 
 async function post_create_parse_company() {
 
   const container = document.getElementById('company-parsing')
-  let added_comps = 0
-  let new_comps = []
 
-  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
   let checkboxes = null
   checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
 
-  if (checkboxes.length == 0) {
+  if (checkboxes.length === 0) {
     return
   }
-  for (const checkbox of checkboxes) {
-    console.log(checkbox.parentElement.parentElement.querySelector('span').textContent)
-    const response = await fetch('/companies/add_comp/', {
-      method: 'POST',
-      headers: {
-        'X-CSRFToken': csrftoken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          company_name: checkbox.parentElement.parentElement.querySelector('span').textContent,
-          inn: '',
-          site: checkbox.parentElement.parentElement.querySelector('span').textContent,
-          rating: 0,
-          mail: checkbox.value,
-          phone: '',
-          comment: '',
-          company_contacts: [],
-          company_materials: []
-      })
-    })
 
-    const data = await response.json()
+  const saveButton = container.querySelector('[name="save-parsed-companies"]')
+  const parseButton = container.querySelector('[name="start-parsing-btn"]')
+  lockButtons([saveButton, parseButton])
 
-    if (data.success) {
-      added_comps++
-      new_comps.push({
-        'comp_name':data.comp_name,
-        'comp_id':data.comp_id
-      })
-    }
-  }
   
-  div = container.querySelector('[name=companies]')
-  div.innerHTML = ''
-  span = document.createElement('span');
-  if (added_comps > 0) {
-    span.textContent = `Добавлено ${added_comps} компаний`;
-    div.appendChild(span);
-    for (const new_comp of new_comps) {
-      a = document.createElement('a');
-      a.textContent = new_comp['comp_name'];
-      a.setAttribute('href', `/companies/${new_comp['comp_id']}/`);
-      div.appendChild(a);
+  const resultsDiv = container.querySelector('[name=companies]')
+  let addedCompanies = 0
+  const newCompanies = []
+
+  try {
+    for (const checkbox of checkboxes) {
+      try {
+        const data = await postJson('/companies/add_comp/', buildCompanyPayload(checkbox))
+      if (data.success) {
+          addedCompanies++
+          newCompanies.push({'comp_name':data.comp_name, 'comp_id':data.comp_id})
+        }
+      } catch (error) {
+        console.error('Failed to create comapany for checkbox:', checkbox.value, error)
+      }
     }
-  } else {
-    span.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
-    div.appendChild(span);
+  } finally {
+    renderCreationSummary(resultsDiv, addedCompanies, newCompanies)
+    unlockButtons([saveButton, parseButton])
   }
-  cachePage('parse_page', div.innerHTML)
+}
+
+function buildCompanyPayload(checkbox) {
+  const url = checkbox.dataset.url
+  return {
+    company_name: url,
+    inn: '',
+    site: url,
+    rating: 0,
+    mail: checkbox.value,
+    phone: '',
+    comment: '',
+    company_contacts: [],
+    company_materials: []
+  }
+}
+
+function renderCreationSummary(container, addedCount, newCompanies) {
+  container.innerHTML = ''
+  const summarySpan = document.createElement('span');
+
+  if (addedCount > 0) {
+    summarySpan.textContent = `Компаний добавлено: ${addedCount} шт`;
+    container.appendChild(summarySpan);
+
+    newCompanies.forEach(company => {
+      const link = document.createElement('a');
+      link.textContent = company['comp_name'];
+      link.setAttribute('onclick', 
+        `removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', ${company['comp_id']})`
+      );
+      container.appendChild(link);
+    })
+  } else {
+    summarySpan.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
+    container.appendChild(summarySpan);
+  }
+}
+
+async function postCreateExcelOutput() {
+  console.log('export')
+  const companiesContainer = document.getElementById('companies-cards-list')
+  if (!companiesContainer) {return}
+
+  const cards = companiesContainer.querySelectorAll('[name="company-card"]')
+
+  const cardsIds = []
+
+  cards.forEach(val => {
+    if (!val.classList.contains('is-hidden')) {
+      cardsIds.push(val.id)
+    }
+  })
+  if (cardsIds.length === 0) {
+    return
+  }
+  const blob = await postFile('/companies/create_Excel_Output/', {company_ids: cardsIds})
+  
+  const url = window.URL.createObjectURL(blob)
+
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'output.xlsm'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+
+  window.URL.revokeObjectURL(url)
+  
 }

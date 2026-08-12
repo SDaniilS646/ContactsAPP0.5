@@ -53,11 +53,11 @@ def executeCMD(request):
   if cmd == 'load_csv':
     return res
 
-  if cmd == 'load_csv':
-    return JsonResponse({
-      'success': True,
-      'res': 'loaded'
-    })
+  # if cmd == 'load_csv':
+  #   return JsonResponse({
+  #     'success': True,
+  #     'res': 'loaded'
+  #   })
   
   return JsonResponse({
     'success': True,

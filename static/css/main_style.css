@@ -582,3 +582,8 @@ MATERIAL TREE
   font-weight: bold;
   margin-bottom: 5px;
 }
+
+
+.is-hidden {
+  display: none;
+}

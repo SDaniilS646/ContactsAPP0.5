@@ -16,7 +16,7 @@
   {% endfor %}
 {% else %}
   {% for company in companies %}
-    <div class="card {% if company.is_old %}old{% endif %}" style="order: none">
+    <div id="{{company.id}}" name="company-card" class="card {% if company.is_old %}old{% endif %}" style="order: none">
       <span class="title" title="{{company.name}}">
         <a onclick="removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', {{company.id}})" name="name">{{company.name}}</a>
       </span>
