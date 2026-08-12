@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 
 
 from services.company_service import CompanyService
@@ -15,6 +15,7 @@ import json
 from django.contrib.auth.decorators import login_required
 
 from backend.web_parser.config import SEARCH_PROVIDER, LOADER, EXTRACTOR
+from backend.xl_sender.sender_create import create_sendfile
 
 from urllib.parse import urlparse
 
@@ -154,6 +155,58 @@ def company_edit(request):
     'success': True
   })
 
+def create_Excel_Output(request):
+  companies_ids = json.loads(request.body)['company_ids']
+
+  # output_result = create_sendfile(companies_ids)
+
+  companies = CompanyService.get_companies()
+
+  output_companies = [company for company in companies if str(company.id) in companies_ids]
+  output_data = []
+
+  for company in output_companies:
+    comp_cont = ConnectionService.get_company_contact('company', company.id)
+      
+    contacts = company.contacts.all()
+  
+    materials = company.materials.all()
+    materials_list = '; '.join([material.name for material in materials])
+  
+    for cont in contacts:
+      temp_info = [item for item in comp_cont if item.contact_id == cont.id]
+      # output_data.append({
+      #   'company_name': company.name,
+      #   'contact_name': f'{cont.last_name} {cont.first_name}',
+      #   'position': temp_info[0].position,
+      #   'phone': temp_info[0].phone,
+      #   'mail':temp_info[0].mail,
+      #   'materials': materials_list
+      # })
+      output_data.append(
+        [company.name, 
+        f'{cont.last_name} {cont.first_name}',
+        temp_info[0].position,
+        temp_info[0].phone,
+        temp_info[0].mail,
+        materials_list]
+      )
+
+  buffer = create_sendfile(output_data)
+
+  if buffer is None:
+    return JsonResponse({'success': False})
+
+  filename = f"sendfile_test.xlsm"
+  response = HttpResponse(
+    buffer.getvalue(),
+    content_type='application/vnd.ms-excel.sheet.macroEnbled.12'
+  )
+  response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+
+  return response
+
 def web_parser(input):
   while True:
     print()
@@ -196,16 +249,6 @@ def web_parser(input):
         })
 
     return result
-
-@login_required
-def parse_comp_page(request):
-  return render(
-    request,
-    'companies/parse_comp_page.html',
-    {
-      
-    }
-  )
 
 def parse_comp(request):
   parse_input = json.loads(request.body)['request_txt']

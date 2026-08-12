@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import company_create, delete_connection, company_edit, edit_contact_list, delete, edit_material_list, parse_comp, parse_comp_page
+from .views import company_create, delete_connection, company_edit, edit_contact_list, delete, edit_material_list, parse_comp, create_Excel_Output
 
 urlpatterns = [
   path('add_comp/', company_create),
@@ -8,7 +8,7 @@ urlpatterns = [
   path('edit_contact_list/', edit_contact_list),
   path('edit_material_list/', edit_material_list),
   path('delete/', delete),
-  path('parse_company_page/', parse_comp_page),
-  path('parse_company/', parse_comp)
+  path('parse_company/', parse_comp),
+  path('create_Excel_Output/', create_Excel_Output)
 ]
 
