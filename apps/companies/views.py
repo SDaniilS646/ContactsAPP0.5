@@ -6,10 +6,11 @@ from services.company_service import CompanyService
 from services.material_service import MaterialService
 from services.contact_service import ContactService
 from services.connection_service import ConnectionService
+from services.export_service import ExportService
 
-from services.contact_service import ContactService
 
 import json
+from datetime import datetime
 
 
 from django.contrib.auth.decorators import login_required
@@ -156,55 +157,31 @@ def company_edit(request):
   })
 
 def create_Excel_Output(request):
-  companies_ids = json.loads(request.body)['company_ids']
-
-  # output_result = create_sendfile(companies_ids)
-
-  companies = CompanyService.get_companies()
-
-  output_companies = [company for company in companies if str(company.id) in companies_ids]
-  output_data = []
-
-  for company in output_companies:
-    comp_cont = ConnectionService.get_company_contact('company', company.id)
-      
-    contacts = company.contacts.all()
-  
-    materials = company.materials.all()
-    materials_list = '; '.join([material.name for material in materials])
-  
-    for cont in contacts:
-      temp_info = [item for item in comp_cont if item.contact_id == cont.id]
-      # output_data.append({
-      #   'company_name': company.name,
-      #   'contact_name': f'{cont.last_name} {cont.first_name}',
-      #   'position': temp_info[0].position,
-      #   'phone': temp_info[0].phone,
-      #   'mail':temp_info[0].mail,
-      #   'materials': materials_list
-      # })
-      output_data.append(
-        [company.name, 
-        f'{cont.last_name} {cont.first_name}',
-        temp_info[0].position,
-        temp_info[0].phone,
-        temp_info[0].mail,
-        materials_list]
-      )
+  try:
+    payload = json.loads(request.body)
+    companies_ids = payload['company_ids']
+  except (json.JSONDecodeError, KeyError):
+    return HttpResponseBadRequest(
+      json.dumps({'success': False, 'error': 'Некорректны данные запроса'}),
+      content_type='application/json'
+    )
+  output_data = ExportService.get_companies_output(companies_ids)
 
   buffer = create_sendfile(output_data)
 
   if buffer is None:
-    return JsonResponse({'success': False})
+    return HttpResponseBadRequest(
+      json.dumps({'success': False, 'error':  'Нет данных для экспорта'}), 
+      content_type='application/json'
+    )
 
-  filename = f"sendfile_test.xlsm"
+  filename = f"sendfile_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsm"
   response = HttpResponse(
     buffer.getvalue(),
-    content_type='application/vnd.ms-excel.sheet.macroEnbled.12'
+    content_type='application/vnd.ms-excel.sheet.macroEnabled.12'
   )
   response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
-
   return response
 
 def web_parser(input):
