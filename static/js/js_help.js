@@ -5,19 +5,31 @@ let selectedCompanies = []
 
 let currentZIndex = 1000;
 
+function lockMenu() {
+  const menuContainer = document.getElementById('menu-btns')
+  const menuBtns = menuContainer.querySelectorAll('button')
+  menuBtns.forEach(btn => console.log(btn))
+
+  lockButtons(menuBtns)
+}
+
+function unlockMenu() {
+  const menuContainer = document.getElementById('menu-btns')
+  const menuBtns = menuContainer.querySelectorAll('button')
+  menuBtns.forEach(btn => console.log(btn))
+
+  unlockButtons(menuBtns)
+}
+
 function lockButtons(btns) {
   for (const button of btns) {
     button.disabled = true
-    // button.inert = true;
-    // button.style.backgroundColor = "grey"
   }
 }
 
-function ulockButtons(btns) {
+function unlockButtons(btns) {
   for (const button of btns) {
     button.disabled = false
-    // button.inert = false;
-    // button.removeAttribute('style')
   }
 }
 
@@ -201,19 +213,18 @@ function checkOtherSelected(container) {
   let elements = container.querySelectorAll('span')
   
   elements.forEach(val => val.classList.remove('selected'))
-
 }
 
-function updateList(fetch_link, container, style=null, is_meeting=null) {
-  if (style) {
-    fetch_link = fetch_link + `/?style=${style}&`+ `is_meeting=${is_meeting}`
-  }
-  fetch(fetch_link)
-  .then(response => response.text())
-  .then(html => {
-    container.innerHTML = html;
-  })
-}
+// function updateList(fetch_link, container, style=null, is_meeting=null) {
+//   if (style) {
+//     fetch_link = fetch_link + `/?style=${style}&`+ `is_meeting=${is_meeting}`
+//   }
+//   fetch(fetch_link)
+//   .then(response => response.text())
+//   .then(html => {
+//     container.innerHTML = html;
+//   })
+// }
 
 function selectContacts(event, element, container_id=null, input_box_id=null) {
   const container = document.getElementById(container_id)
@@ -313,76 +324,55 @@ function saveEmployeesList() {
   closeModal('choose_employee_modal_frame')
 }
 
-function pgReload() {
-  window.location.reload();
+function applySortOrder(elems, getValue, compareFn) {
+  const indexed = Array.from(elems).map((el, i) => ({
+    el, 
+    value: getValue(el), 
+    i
+  }))
+  indexed.sort((a, b) => compareFn(a.value, b.value))
+  indexed.forEach((item, order) => {item.el.style.setProperty('order', order.toString())})
 }
 
 function sortList(event, query_el='div.card') {
 
-  new_val = event.target.value
+  const newOrderValue = event.target.value
 
-  elems = document.querySelectorAll(query_el)
-  ordered_array = []
+  const elems = document.querySelectorAll(query_el)
+  let ordered_array = []
 
-  switch (new_val) {
-    case 'A-z':
-      elems.forEach(val => {
-        ordered_array.push(val.querySelector('[name="name"]').textContent)
-      })
-      ordered_array.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-
-
-      elems.forEach(val => {
-        ind = ordered_array.indexOf(val.querySelector('[name="name"]').textContent)
-        val.style.setProperty('order', ind.toString())
-      })
-      break;
-    case 'Z-a':
-      elems.forEach(val => {
-        ordered_array.push(val.querySelector('[name="name"]').textContent)
-      })
-
-      ordered_array.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-      ordered_array.reverse()
-
-      elems.forEach(val => {
-        ind = ordered_array.indexOf(val.querySelector('[name="name"]').textContent)
-        val.style.setProperty('order', ind.toString())
-      })
-      break;
-    case 'date':
-      elems.forEach(val => {
-        ordered_array.push(val.querySelector('[name="date"]').textContent)
-      })
-      ordered_array.sort((a, b) => new Date(a) - new Date(b))
-      ordered_array.reverse()
-      elems.forEach(val => {
-        ind = ordered_array.indexOf(val.querySelector('[name="date"]').textContent)
-        val.style.setProperty('order', ind.toString())
-      })
-      break;
-    case '-date':
-      elems.forEach(val => {
-        ordered_array.push(val.querySelector('[name="date"]').textContent)
-      })
-      ordered_array.sort((a, b) => new Date(a) - new Date(b))
-      
-      elems.forEach(val => {
-        ind = ordered_array.indexOf(val.querySelector('[name="date"]').textContent)
-        val.style.setProperty('order', ind.toString())
-      })
-      break;
-    case '':
-      elems.forEach(val => {
-        ordered_array.push(Number(val.querySelector('[name="id"]').textContent))
-      })
-      ordered_array.sort()
-      elems.forEach(val => {
-        ind = ordered_array.indexOf(Number(val.querySelector('[name="id"]').textContent))
-        val.style.setProperty('order', ind.toString())
-      })
-      break;
+  const sortConfigs = {
+    'A-z': {
+      field: 'name',
+      compare: (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())
+    },
+    'Z-a': {
+      field: 'name',
+      compare: (a, b) => b.toLowerCase().localeCompare(a.toLowerCase())
+    },
+    'date': {
+      field: 'date',
+      compare: (a, b) => new Date(b) - new Date(a)
+    },
+    '-date': {
+      field: 'date',
+      compare: (a, b) => new Date(a) - new Date(b)
+    },
+    '':{
+      field: 'id',
+      compare: (a, b) => Number(a) - Number(b),
+      isNumeric: true
+    }
   }
+
+  const config = sortConfigs[newOrderValue]
+  if (!config) {return}
+
+  applySortOrder(
+    elems, 
+    (el) => el.querySelector(`[name="${config.field}"]`).textContent, 
+    config.compare
+  )
 }
 
 async function executeCMD() {
@@ -522,8 +512,6 @@ const FILTER_TARGETS = {
   'companies-list-search': '.company-list-item'
 }
 
-
-
 function filterPageList(event, selector_class) {
   const inputText = event.target.value.toLowerCase()
   
@@ -532,8 +520,6 @@ function filterPageList(event, selector_class) {
     const text = el.textContent.toLowerCase();
     const isMatch = text.includes(inputText)
     el.classList.toggle('is-hidden', !isMatch)
-
-    // el.style.display = text.includes(inputText) ? '' : 'none';
   })
 }
 
@@ -560,24 +546,3 @@ document.addEventListener(
     }
   }
 )
-
-// window.onload = function() {
-//   cur_url_path = new URL(window.location.href).pathname
-
-//   menu_cont = document.getElementById('menu-btns')
-
-//   menu_cont.querySelectorAll('a').forEach(val => 
-//     { 
-//     if (val.getAttribute('href') == cur_url_path) {
-
-//       // val.querySelector('button').classList.add('active')
-
-//       // val.querySelector('button').setAttribute('disabled', '')
-//     }
-//   })
-
-//   sub_menu_btns = menu_cont.querySelector(`[name="${cur_url_path.slice(1, -1)}-menu-btns"]`)
-//   if (sub_menu_btns) {
-//     sub_menu_btns.classList.remove('hidden')
-//   }
-// }

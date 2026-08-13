@@ -17,11 +17,6 @@ def create_sendfile(output_data=None):
   # ЧТЕНИЕ ШАБЛОНА
   # ====================================================
 
-  # this_file_path = Path(__file__).parent
-  # template = this_file_path / 'sender_template.xlsm'
-  # xl_output = this_file_path / 'new_file.xlsm'
-  # copyfile(template, xl_output)
-
   with open(TEMPLATE_PATH, 'rb') as f:
     template_bytes = f.read()
 
@@ -33,21 +28,22 @@ def create_sendfile(output_data=None):
   wb = load_workbook(buffer, keep_vba=True)
   ws = wb["Рассылка"]
 
-  lo = ws.tables
+  table = ws.tables["Рассылка"]
 
-  table = lo["Рассылка"]
-  table_adr = table.ref
-
-  min_col, min_row, max_col, max_row = range_boundaries(table_adr)
+  min_col, min_row, max_col, _ = range_boundaries(table.ref)
 
   # ====================================================
-  # СОХРАНЕНИЕ СТИЛЕЙ СТРОКИ
+  # СОХРАНЕНИЕ СТИЛЕЙ СТРОКИ И ЗАГОЛОВКОВ СТОЛБЦОВ
   # ====================================================
 
   row_style = {}
+  column_names = {}
+
+  table.tableStyleInfo = None
 
   for col in range(min_col, max_col + 1):
     row_style[col] = ws.cell(min_row + 1, col)._style
+    column_names[ws.cell(min_row, col).value] = col
 
   # ====================================================
   # ПРОСТАВЛЕНИЕ ЗАЧЕНИЙ
@@ -57,33 +53,39 @@ def create_sendfile(output_data=None):
 
   for i, row_values in enumerate(output_data):
     current_row = start_row + i
-    for col_idx, value in enumerate(row_values, start=min_col):
+    ws.cell(current_row, get_column(column_names, 'п/п')).value = i + 1
+    ws.cell(current_row, get_column(column_names, 'Компания')).value = row_values.get('company_name', '')
+    ws.cell(current_row, get_column(column_names, 'Контакты')).value = row_values.get('names', '')
+    ws.cell(current_row, get_column(column_names, 'Почты')).value = row_values.get('mails', '')
+    ws.cell(current_row, get_column(column_names, 'Телефоны')).value = row_values.get('phones', '')
+    ws.cell(current_row, get_column(column_names, 'Примечание')).value = row_values.get('materials', '')
+
+
+    for col_idx in range(min_col, max_col + 1):
       cell = ws.cell(current_row, col_idx)
-      cell.value = value
       cell._style = row_style.get(col_idx, row_style[min_col])
 
-    # # ЗНАЧЕНИЯ
-    # ws.cell(i, 2).value = "ТЕСТ"
-
-    # ПРОТЯГИВАНИЕ ТАБЛИЦЫ
-    # table.ref = f"A1:N{ws.max_row}"
   table.ref = (
     f"{ws.cell(min_row, min_col).coordinate}:"
     f"{ws.cell(ws.max_row, max_col).coordinate}"
   )
-
-    # # ПРОСТАВЛЕНИЕ СТИЛЕЙ В СТРОКЕ
-    # for col in range(min_col, max_col + 1):
-    #   ws.cell(i, col)._style = row_style[col]
-
   # ====================================================
   # СОХРАНЕНИЕ И ЗАКРЫТИЕ ФАЙЛА
   # ====================================================
 
   output_buffer = BytesIO()
   wb.save(output_buffer)
-  wb.close()
   # gc.collect()
   output_buffer.seek(0)
+  buffer.close()
 
   return output_buffer
+
+def get_column(column_names, header_name):
+  try:
+    return column_names[header_name]
+  except KeyError:
+    return ValueError(
+      f"В шаблоне не  найден столбец с заголовком '{header_name}. "
+      f"Найденные заголовки: {list(column_names.keys())}"
+    )

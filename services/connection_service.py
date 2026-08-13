@@ -39,6 +39,10 @@ class ConnectionService:
       return CompanyContact.objects.filter(company=id)
     elif column == 'company_contact':
       return CompanyContact.objects.filter(company=id, contact=id_2)
+
+  @staticmethod
+  def get_companies_contacts(all_company_ids):
+    return CompanyContact.objects.filter(company_id__in=all_company_ids)
     
   @staticmethod
   def get_company_material(column, id):

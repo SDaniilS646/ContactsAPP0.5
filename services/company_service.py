@@ -49,3 +49,7 @@ class CompanyService:
   def delete(id):
     Companies.objects.filter(id=id).delete()
     return
+
+  @staticmethod
+  def companies_filter_ids(companies_ids):
+    return Companies.objects.filter(id__in=companies_ids)

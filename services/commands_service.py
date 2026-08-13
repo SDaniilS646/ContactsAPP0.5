@@ -30,7 +30,6 @@ MODELS = {
 }
 
 class Commands:
-
   @staticmethod
   def checkrole(user):
     return user.is_superuser

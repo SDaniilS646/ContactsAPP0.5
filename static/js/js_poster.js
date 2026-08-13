@@ -409,6 +409,7 @@ async function start_parsing() {
   const saveButton = container.querySelector('[name="save-parsed-companies"]')
   const parseButton = container.querySelector('[name="start-parsing-btn"]')
   lockButtons([saveButton, parseButton])
+  lockMenu()
 
   try {
     const data = await postJson('/companies/parse_company/', {
@@ -425,6 +426,7 @@ async function start_parsing() {
     renderParsingError(resultsDiv, 'Произошла ошибка при выполнении запроса')
   } finally {
     unlockButtons([saveButton, parseButton])
+    unlockMenu()
   }
 }
 
@@ -498,6 +500,7 @@ async function post_create_parse_company() {
   const saveButton = container.querySelector('[name="save-parsed-companies"]')
   const parseButton = container.querySelector('[name="start-parsing-btn"]')
   lockButtons([saveButton, parseButton])
+  lockMenu()
 
   
   const resultsDiv = container.querySelector('[name=companies]')
@@ -519,6 +522,7 @@ async function post_create_parse_company() {
   } finally {
     renderCreationSummary(resultsDiv, addedCompanies, newCompanies)
     unlockButtons([saveButton, parseButton])
+    unlockMenu()
   }
 }
 
@@ -560,33 +564,55 @@ function renderCreationSummary(container, addedCount, newCompanies) {
 }
 
 async function postCreateExcelOutput() {
-  console.log('export')
   const companiesContainer = document.getElementById('companies-cards-list')
   if (!companiesContainer) {return}
+
+  lockMenu()
 
   const cards = companiesContainer.querySelectorAll('[name="company-card"]')
 
   const cardsIds = []
 
-  cards.forEach(val => {
-    if (!val.classList.contains('is-hidden')) {
-      cardsIds.push(val.id)
+  cards.forEach(card => {
+    if (!card.classList.contains('is-hidden')) {
+      cardsIds.push(card.id)
     }
   })
   if (cardsIds.length === 0) {
     return
   }
-  const blob = await postFile('/companies/create_Excel_Output/', {company_ids: cardsIds})
-  
-  const url = window.URL.createObjectURL(blob)
 
-  const link = document.createElement('a')
-  link.href = url
-  link.download = 'output.xlsm'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  try {
+    const blob = await postFile('/companies/create_Excel_Output/', {company_ids: cardsIds})
+    
+    const url = window.URL.createObjectURL(blob)
 
-  window.URL.revokeObjectURL(url)
-  
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${getTimestamp()}_output.xlsm`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    window.URL.revokeObjectURL(url)
+  } catch (error) {
+    console.error('ОШибка при экспорте в Excel:', error)
+  } finally {
+    unlockMenu()
+  }
+}
+
+function getTimestamp() {
+  const now = new Date()
+  const pad = (num) => String(num).padStart(2, '0')
+
+  const year = pad(now.getFullYear() % 100)
+  const month = pad(now.getMonth() + 1)
+  const day = pad(now.getDate())
+
+  const hours = pad(now.getHours())
+  const minutes = pad(now.getMinutes())
+  const seconds = pad(now.getSeconds())
+
+  return `${year}${month}${day}_${hours}${minutes}${seconds}`
 }
