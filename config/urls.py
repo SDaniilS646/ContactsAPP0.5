@@ -36,6 +36,7 @@ urlpatterns = [
     path('meetings/', include('apps.meetings.urls')),
     path('employees/', include('apps.employees.urls')),
     path('commands/', include('apps.commands.urls')),
+    path('sender/', include('apps.sender.urls')),
 
     path('open_page/', setPage),
     path('modal/', loadModal)
