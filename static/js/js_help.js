@@ -395,7 +395,7 @@ async function executeCMD() {
     const form = document.createElement('form')
     form.method = 'POST'
     form.action = '/commands/executeCMD/'
-    // form.target = iframe.name = 'hidden_download_frame_' + Date.now() 
+    form.target = 'hidden_download_frame'
 
     const csrf = document.createElement('input')
     csrf.type = 'hidden'
@@ -414,7 +414,6 @@ async function executeCMD() {
 
     setTimeout(() => {
       document.body.removeChild(form)
-      // document.body.removeChild(iframe)
     }, 5000)
 
     const result = 'loaded archive'
