@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.commands',
     'apps.templatetags',
     'apps.connections',
+    'apps.sender',
     # 'apps.core',
     # 'apps',
     'django.contrib.postgres',

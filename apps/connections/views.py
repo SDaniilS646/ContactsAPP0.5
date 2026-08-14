@@ -15,7 +15,8 @@ PAGES = {
   'meetings': PageService.meetings_page,
   'employees': PageService.employees_page,
   'cmd': PageService.cmd_page,
-  'parser': PageService.parser_page
+  'parser': PageService.parser_page,
+  'sender': PageService.sender_page
 }
 
 ADD = {

@@ -31,7 +31,6 @@ def company_create(request):
   old_companies_mails = [item.mail for item in old_companies]
 
   if comp_name in old_companies_names or (comp_mail and comp_mail in old_companies_mails):
-    print('exists')
     return JsonResponse({
       'Success': False,
       'result': 'Exists'

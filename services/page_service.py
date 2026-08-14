@@ -12,6 +12,10 @@ from .connection_service import ConnectionService
 
 class PageService:
   @staticmethod
+  def sender_page():
+    return 'sender/sender_page.html', {}
+  
+  @staticmethod
   def contacts_page():
     contacts = ContactService.get_contacts()
     contacts = contacts.order_by('last_name')

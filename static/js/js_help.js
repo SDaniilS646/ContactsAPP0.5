@@ -8,7 +8,6 @@ let currentZIndex = 1000;
 function lockMenu() {
   const menuContainer = document.getElementById('menu-btns')
   const menuBtns = menuContainer.querySelectorAll('button')
-  menuBtns.forEach(btn => console.log(btn))
 
   lockButtons(menuBtns)
 }
@@ -16,7 +15,6 @@ function lockMenu() {
 function unlockMenu() {
   const menuContainer = document.getElementById('menu-btns')
   const menuBtns = menuContainer.querySelectorAll('button')
-  menuBtns.forEach(btn => console.log(btn))
 
   unlockButtons(menuBtns)
 }
