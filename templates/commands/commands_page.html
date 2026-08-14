@@ -1,15 +1,12 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-  <div id="outer" class="outer">
-    {% csrf_token %}
-    <div id="commands-block">
-      
-      <textarea readonly></textarea>
-      
-      <div>
-        Команда:
-        <input>
-        <button onclick="executeCMD()">Выполнить</button>
-      </div>
+<div id="outer" class="outer">
+  <div id="commands-block">
+    
+    <textarea readonly></textarea>
+    
+    <div>
+      Команда:
+      <input>
+      <button type="button" onclick="executeCMD()">Выполнить</button>
     </div>
   </div>
-{% comment %} {% endblock %} {% endcomment %}
+</div>

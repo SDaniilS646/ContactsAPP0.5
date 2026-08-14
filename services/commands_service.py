@@ -49,10 +49,10 @@ class Commands:
         csv_buffer = io.StringIO()
         writer = csv.writer(csv_buffer)
 
-        fields = [field.name for field in model._meta.fields]
+        fields = [field.attname for field in model._meta.fields]
 
         writer.writerow(fields)
-        for obj in model.objects.all():
+        for obj in model.objects.all().iterator(chunk_size=2000):
           try:
             row = [getattr(obj, field) for field in fields]
             writer.writerow(row)

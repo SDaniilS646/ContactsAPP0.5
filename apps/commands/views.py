@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBase
 from django.contrib.auth.decorators import login_required, user_passes_test
 import json
 import shlex
@@ -32,32 +32,56 @@ def commands_page(request):
 def executeCMD(request):
   if not Commands.checkrole(request.user):
     return JsonResponse({
-      'success': True,
+      'success': False,
       'res': 'Нет доступа'
-    })
+    }, status=403)
+
+  if request.method != 'POST':
+    return JsonResponse({
+      'success': False,
+      'res': 'Метод не поддерживается'
+    }, status=405)
   
   if request.content_type == 'application/json':
     full_cmd = json.loads(request.body)['command']
   else:
     full_cmd = request.POST['command']
+
+  try:
+    full_cmd = shlex.split(full_cmd)
+  except ValueError as e:
+    return JsonResponse({
+      'success': False,
+      'res': f'Ошибка разбора команды: {e}'
+    }, status=400)
   
-  full_cmd = shlex.split(full_cmd)
+  if not full_cmd:
+    return JsonResponse({
+      'success': False,
+      'res': 'Пустая команда'
+    }, status=400)
+  
   cmd = full_cmd[0]
   args = full_cmd[1:]
 
-  if COMMANDS.get(cmd):
-    res = COMMANDS.get(cmd)(args)
-  else:
-    res = 'unknown'
+  handler = COMMANDS.get(cmd)
+  if not handler:
+    return JsonResponse({
+      'success': False,
+      'res': f'Неизвестная команда: {cmd}'
+    }, status=400)
 
-  if cmd == 'load_csv':
+  try:
+    res = handler(args)
+  except Exception as e:
+    return JsonResponse({
+      'success': False,
+      'res': f'Ошибка выполнения команнды: {e}'
+    }, status=500)
+
+
+  if isinstance(res, HttpResponseBase):
     return res
-
-  # if cmd == 'load_csv':
-  #   return JsonResponse({
-  #     'success': True,
-  #     'res': 'loaded'
-  #   })
   
   return JsonResponse({
     'success': True,

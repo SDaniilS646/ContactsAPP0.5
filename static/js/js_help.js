@@ -387,10 +387,15 @@ async function executeCMD() {
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
   if (cmd == 'load_csv') {
-    const form = document.createElement('form')
 
+    // const iframe = document.createElement('iframe')
+    // iframe.style.display = 'none'
+    // document.body.appendChild(iframe)
+
+    const form = document.createElement('form')
     form.method = 'POST'
     form.action = '/commands/executeCMD/'
+    // form.target = iframe.name = 'hidden_download_frame_' + Date.now() 
 
     const csrf = document.createElement('input')
     csrf.type = 'hidden'
@@ -404,12 +409,13 @@ async function executeCMD() {
 
     form.appendChild(csrf)
     form.appendChild(command)
-
     document.body.appendChild(form)
-
     form.submit()
 
-    document.body.removeChild(form)
+    setTimeout(() => {
+      document.body.removeChild(form)
+      // document.body.removeChild(iframe)
+    }, 5000)
 
     const result = 'loaded archive'
     const output = mainContainer.querySelector('textarea')
@@ -419,26 +425,15 @@ async function executeCMD() {
     return
   }
 
-  
-  
-  fetch('/commands/executeCMD/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      command: cmd
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-      const result = data.res
-      const output = mainContainer.querySelector('textarea')
-      const outputValue = output.value
-      output.value = outputValue == '' ? result : outputValue + '\n\n' + result
-      cmdInput.value = ''
-  })
+  const output = mainContainer.querySelector('textarea')
+  try {
+    const data = await postJson('/commands/executeCMD/', {command: cmd})
+    const result = data.res
+    output.value += output.value == '' ? result : '\n\n' + result
+    cmdInput.value = ''
+  } catch (error) {
+    output.value += output.value == '' ? error.message : '\n\n' + error.message
+  }
 }
 
 function setPage(type, table, id=null) {
