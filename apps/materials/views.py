@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.http import JsonResponse
 import json
-from services.material_service import MaterialService
+from apps.crm.services.material_service import MaterialService
 from apps.connections.models import CompanyMaterial
 
 from django.contrib.auth.decorators import login_required

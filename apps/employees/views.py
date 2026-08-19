@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from services.employees_service import EmployeeService
-from services.connection_service import ConnectionService
+from apps.crm.services.employees_service import EmployeeService
+from apps.crm.services.connection_service import ConnectionService
 from django.contrib.auth.decorators import login_required
 
 from django.utils import timezone

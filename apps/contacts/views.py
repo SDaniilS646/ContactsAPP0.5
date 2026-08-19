@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from services.contact_service import ContactService
-from services.connection_service import ConnectionService
+from apps.crm.services.contact_service import ContactService
+from apps.crm.services.connection_service import ConnectionService
 
 from django.contrib.auth.decorators import login_required
 

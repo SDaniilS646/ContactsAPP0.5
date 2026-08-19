@@ -1,4 +1,4 @@
-from apps.materials.models import Materials
+from ..models.models import Material
 from django.utils import timezone
 
 from collections import defaultdict
@@ -6,26 +6,26 @@ from collections import defaultdict
 class MaterialService:
   @staticmethod
   def get_materials():
-    return Materials.objects.all()
+    return Material.objects.all()
   
   @staticmethod
   def set_material(input_data):
-    new_id = Materials.objects.create(
+    new_id = Material.objects.create(
       name = input_data['material_name'],
-      parent_id = input_data['parent_id'],
+      parent = MaterialService.get_material(mat_id=input_data['parent_id']),
       keywords = input_data['keywords'],
       updated_at = timezone.now(),
-      added_at = timezone.now()
+      created_at = timezone.now()
     ).id
     return new_id
   
   @staticmethod
   def get_material(mat_id):
-    return Materials.objects.get(id=mat_id)
+    return Material.objects.filter(id=mat_id).first()
   
   @staticmethod
   def item_update(mat_id):
-    Materials.objects.filter(id=mat_id).update(updated_at = timezone.now())
+    Material.objects.filter(id=mat_id).update(updated_at = timezone.now())
     return
   
   @staticmethod
@@ -34,7 +34,7 @@ class MaterialService:
     old_mats_set = set(old_mats)
 
     if not materials:
-      materials = Materials.objects.all()
+      materials = Material.objects.all()
 
     def create_tree(materials):
         nodes = {}
@@ -65,18 +65,18 @@ class MaterialService:
 
   @staticmethod
   def get_parent(par_id):
-    return Materials.objects.get(id=par_id)
+    return Material.objects.get(id=par_id)
   
   @staticmethod
   def get_children(mat_id):
-    return Materials.objects.filter(parent_id=mat_id)
+    return Material.objects.filter(parent=mat_id)
   
   @staticmethod
   def edit_material(input_data):
     mat_id = input_data['id']
-    Materials.objects.filter(id=mat_id).update(
+    Material.objects.filter(id=mat_id).update(
       name = input_data['material_name'],
-      parent_id = input_data['parent_id'],
+      parent = input_data['parent_id'],
       keywords = input_data['keywords'],
       updated_at = timezone.now()
     )
@@ -85,10 +85,10 @@ class MaterialService:
   @staticmethod
   def getAllParents(mat_id):
     result = []
-    material = Materials.objects.get(id=mat_id)
+    material = Material.objects.get(id=mat_id)
     
     def get_parent(mat_id):
-      material = Materials.objects.get(id=mat_id)
+      material = Material.objects.get(id=mat_id)
       
       if material.parent_id:
         result.append(material.parent_id)
@@ -116,7 +116,7 @@ class MaterialService:
       
   @staticmethod
   def delete(id):
-    Materials.objects.filter(id=id).delete()
+    Material.objects.filter(id=id).delete()
     return
 
     
