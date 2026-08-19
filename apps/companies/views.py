@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 
 
-from services.company_service import CompanyService
-from services.material_service import MaterialService
-from services.contact_service import ContactService
-from services.connection_service import ConnectionService
+from apps.crm.services.company_service import CompanyService
+from apps.crm.services.material_service import MaterialService
+from apps.crm.services.contact_service import ContactService
+from apps.crm.services.connection_service import ConnectionService
 from services.export_service import ExportService
+
+from apps.crm.services.common_service import CommonService
 
 
 import json
@@ -35,7 +37,8 @@ def company_create(request):
       'Success': False,
       'result': 'Exists'
     })
-  
+
+  input_data['user'] = request.user
   new_comp_id = CompanyService.set_company(input_data)
 
   company_contacts = input_data['company_contacts']
@@ -49,7 +52,8 @@ def company_create(request):
           'cont_id': contact['id'],
           'cont_mail': contact['corp-mail'],
           'cont_phone': contact['corp-phone'],
-          'cont_position': contact['position']
+          'cont_position': contact['position'],
+          'user': request.user
         }
       )
   if company_materials:
@@ -63,7 +67,8 @@ def company_create(request):
       ConnectionService.set_company_material(
         {
           'comp_id': new_comp_id,
-          'mat_id': material
+          'mat_id': material,
+          'user': request.user
         }
       )
 
@@ -82,7 +87,7 @@ def delete_connection(request):
     ConnectionService.delete_contact_connection(input_data['id_1'], input_data['id_2'])
     ContactService.item_update(input_data['id_2'])
 
-  CompanyService.item_update(input_data['id_1'])
+  CommonService.item_update('companies', input_data['id_1'], request.user)
 
   return JsonResponse({
     'success': True
@@ -103,12 +108,14 @@ def edit_contact_list(request):
           'cont_id': contact['id'],
           'cont_mail': contact['corp-mail'],
           'cont_phone': contact['corp-phone'],
-          'cont_position': contact['position']
+          'cont_position': contact['position'],
+          'user': request.user
         }
       )
+      input_data['user'] = request.user
       ContactService.item_update(contact['id'])
 
-  CompanyService.item_update(input_data['id'])
+  CommonService.item_update('companies', input_data['id'], request.user)
   
 
   return JsonResponse({
@@ -127,11 +134,12 @@ def edit_material_list(request):
       ConnectionService.edit_company_material(
         {
           'comp_id': input_data['id'],
-          'mat_id': material
+          'mat_id': material,
+          'user': request.user
         }
       )
 
-  CompanyService.item_update(input_data['id'])
+  CommonService.item_update('companies', input_data['id'], request.user)
 
   return JsonResponse({
     'success': True
@@ -149,6 +157,7 @@ def delete(request):
 def company_edit(request):
   input_data = json.loads(request.body)
 
+  input_data['user'] = request.user
   CompanyService.edit_company(input_data)
 
   return JsonResponse({

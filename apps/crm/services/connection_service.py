@@ -1,9 +1,9 @@
-from apps.connections.models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany
-from services.company_service import CompanyService
-from services.material_service import MaterialService
-from services.contact_service import ContactService
-from services.meeting_service import MeetingService
-from services.employees_service import EmployeeService
+from ..models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany
+from apps.crm.services.company_service import CompanyService
+from apps.crm.services.material_service import MaterialService
+from apps.crm.services.contact_service import ContactService
+from apps.crm.services.meeting_service import MeetingService
+from apps.crm.services.employees_service import EmployeeService
 
 from django.utils import timezone
 
@@ -16,7 +16,7 @@ class ConnectionService:
       position = input_data['cont_position'],
       mail = input_data['cont_mail'],
       phone = input_data['cont_phone'],
-      added_at = timezone.now()
+      created_at = timezone.now()
     )
 
     return new_id
@@ -26,8 +26,8 @@ class ConnectionService:
     new_id = CompanyMaterial.objects.create(
       company = CompanyService.get_company(input_data['comp_id']),
       material = MaterialService.get_material(input_data['mat_id']),
-      is_main = None,
-      added_at = timezone.now()
+      is_main = False,
+      created_at = timezone.now()
     )
     return new_id
   
@@ -69,7 +69,7 @@ class ConnectionService:
       position = input_data['cont_position'],
       mail = input_data['cont_mail'],
       phone = input_data['cont_phone'],
-      added_at = timezone.now()
+      created_at = timezone.now()
     )
 
   @staticmethod
@@ -78,7 +78,7 @@ class ConnectionService:
       company = CompanyService.get_company(input_data['comp_id']),
       material = MaterialService.get_material(input_data['mat_id']),
       is_main = None,
-      added_at = timezone.now()
+      created_at = timezone.now()
     )
 
   @staticmethod
@@ -86,7 +86,7 @@ class ConnectionService:
     new_id = MeetingContact.objects.create(
       meeting = MeetingService.get_meeting(input_data['meet_id']),
       contact = ContactService.get_contact(input_data['cont_id']),
-      added_at = timezone.now()
+      created_at = timezone.now()
     )
     return new_id
   
@@ -94,8 +94,8 @@ class ConnectionService:
   def set_meeting_employee(input_data):
     new_id = MeetingEmployee.objects.create(
       meeting = MeetingService.get_meeting(input_data['meet_id']),
-      emloyee = EmployeeService.get_employee(input_data['emp_id']),
-      added_at = timezone.now()
+      employee = EmployeeService.get_employee(input_data['emp_id']),
+      created_at = timezone.now()
     )
     return new_id
 
@@ -104,7 +104,7 @@ class ConnectionService:
     new_id = MeetingCompany.objects.create(
       meeting = MeetingService.get_meeting(input_data['meet_id']),
       company = CompanyService.get_company(input_data['company_id']),
-      # added_at = timezone.now()
+      created_at = timezone.now()
     )
     return new_id
 

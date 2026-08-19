@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import json
 import time
 
-from services.page_service import PageService, DetailService, AddService, ModalService
+from apps.crm.services.page_service import PageService, DetailService, AddService, ModalService
 
 PAGES = {
   'companies': PageService.companies_page,
@@ -43,33 +43,33 @@ MODALS = {
 }
 
 
-@login_required
-def clearPage(request):
-  return render(request, 'base.html')
+# @login_required
+# def clearPage(request):
+#   return render(request, 'base.html')
 
-def setPage(request):
-  page_data = json.loads(request.body)
+# def setPage(request):
+#   page_data = json.loads(request.body)
 
-  if page_data['type'] == 'page':
-    html, vars = PAGES[page_data['table']]()
-  elif page_data['type'] == 'add':
-    html, vars = ADD[page_data['table']]()
-  else:
-    return JsonResponse({'success': False})
+#   if page_data['type'] == 'page':
+#     html, vars = PAGES[page_data['table']]()
+#   elif page_data['type'] == 'add':
+#     html, vars = ADD[page_data['table']]()
+#   else:
+#     return JsonResponse({'success': False})
 
-  return JsonResponse({
-    'success': True,
-    'result': 'Exists',
-    'html': render_to_string(
-      html, vars, request=request)
-  })
+#   return JsonResponse({
+#     'success': True,
+#     'result': 'Exists',
+#     'html': render_to_string(
+#       html, vars, request=request)
+#   })
 
-def loadModal(request):
-  page_data = json.loads(request.body)
+# def loadModal(request):
+#   page_data = json.loads(request.body)
   
-  html, vars = MODALS[page_data['modal_name']](page_data['id'])
+#   html, vars = MODALS[page_data['modal_name']](page_data['id'])
 
-  return JsonResponse({
-    'html': render_to_string(html, vars, request=request)
-  })
+#   return JsonResponse({
+#     'html': render_to_string(html, vars, request=request)
+#   })
 

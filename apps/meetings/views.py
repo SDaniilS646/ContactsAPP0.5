@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from services.meeting_service import MeetingService
+from apps.crm.services.meeting_service import MeetingService
 
-from services.contact_service import ContactService
+from apps.crm.services.contact_service import ContactService
 
-from services.employees_service import EmployeeService
+from apps.crm.services.employees_service import EmployeeService
 
-from services.connection_service import ConnectionService
+from apps.crm.services.connection_service import ConnectionService
 
 from datetime import datetime
 

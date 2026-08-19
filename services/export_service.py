@@ -1,7 +1,7 @@
-from services.company_service import CompanyService
+from apps.crm.services.company_service import CompanyService
 # from services.material_service import MaterialService
 # from services.contact_service import ContactService
-from services.connection_service import ConnectionService
+from apps.crm.services.connection_service import ConnectionService
 
 class ExportService:
   @staticmethod
