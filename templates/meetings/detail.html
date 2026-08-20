@@ -34,7 +34,7 @@
               {% for contact in contacts %}
                 <div class="card">
                   <div class="card-header">
-                    {% comment %} <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button> {% endcomment %}
+                    <button class="del-conn spec-btn" onclick="post_delConnection('meetings', {{meeting.id}}, 'contacts', {{contact.id}})">X</button>
                     <span class="title">
                       <a onclick="openModal('contacts-details-modal-frame', 'detailsContact', {{contact.id}})">{{contact.last_name}} {{contact.first_name}} {{contact.patronymic}}</a>
                     </span> 
@@ -52,7 +52,7 @@
             {% for employee in employees %}
               <div class="card">
                 <div class="card-header">
-                  {% comment %} <button class="del-conn spec-btn" onclick="post_delConnection('meet_emp', {{meeting.id}}, {{employee.id}})">X</button> {% endcomment %}
+                  <button class="del-conn spec-btn" onclick="post_delConnection('meetings', {{meeting.id}}, 'employees', {{employee.id}})">X</button>
                   <span class="title">
                     {{employee.last_name}} {{employee.first_name}} {{employee.patronymic}}
                   </span>

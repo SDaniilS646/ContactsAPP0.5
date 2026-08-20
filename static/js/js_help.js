@@ -176,7 +176,10 @@ function saveMaterialsList() {
     if (val.classList.contains('selected')) {
       console.log(val)
       let mat_id = val.getAttribute('id')
-      selectedMaterials.push(mat_id)
+      selectedMaterials.push({
+        'id': mat_id,
+        'is_main':false
+      })
     }
   })
 
@@ -272,8 +275,8 @@ function saveContactsList() {
 
       selectedContacts.push({
         'id': cont_id,
-        'corp-mail':corp_mail == '' ? null : corp_mail,
-        'corp-phone':corp_phone == '' ? null : corp_phone,
+        'mail':corp_mail == '' ? null : corp_mail,
+        'phone':corp_phone == '' ? null : corp_phone,
         'position':position == '' ? null : position
       })
     }
@@ -374,6 +377,7 @@ function sortList(event, query_el='div.card') {
 }
 
 async function executeCMD() {
+  const url = '/executeCMD/'
   
   const mainContainer = document.getElementById("commands-block")
   const cmdInput = mainContainer.querySelector('input')
@@ -392,7 +396,7 @@ async function executeCMD() {
 
     const form = document.createElement('form')
     form.method = 'POST'
-    form.action = '/commands/executeCMD/'
+    form.action = url
     form.target = 'hidden_download_frame'
 
     const csrf = document.createElement('input')
@@ -424,7 +428,7 @@ async function executeCMD() {
 
   const output = mainContainer.querySelector('textarea')
   try {
-    const data = await postJson('/commands/executeCMD/', {command: cmd})
+    const data = await postJson(url, {command: cmd})
     const result = data.res
     output.value += output.value == '' ? result : '\n\n' + result
     cmdInput.value = ''
