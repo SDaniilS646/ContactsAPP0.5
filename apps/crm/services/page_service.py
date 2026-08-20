@@ -1,12 +1,12 @@
 from django.utils import timezone
 
-from .company_service import CompanyService
-from .contact_service import ContactService
-from .employees_service import EmployeeService
-from .material_service import MaterialService
-from .meeting_service import MeetingService
+from .model_services.company_service import CompanyService
+from .model_services.contact_service import ContactService
+from .model_services.employees_service import EmployeeService
+from .model_services.material_service import MaterialService
+from .model_services.meeting_service import MeetingService
 
-from .connection_service import ConnectionService
+from .model_services.connection_service import ConnectionService
 
 
 
@@ -51,7 +51,7 @@ class PageService:
         'mail': comp.mail,
         'comment': comp.comment,
         'materials': ' '.join([item.name for item in comp.materials.all()]),
-        'is_old': True if (timezone.now().date() - comp.updated_at.date()).days > 365 else False,
+        'is_old': True if comp.updated_at and ( timezone.now().date() - comp.updated_at.date()).days > 365 else False,
         'updated_at': comp.updated_at
       })
 
@@ -163,7 +163,6 @@ class DetailService:
   @staticmethod
   def materialsDetail(id):
     material = MaterialService.get_material(id)
-    # material_tree = MaterialService.get_material_tree()
   
     materials = MaterialService.get_materials()
   
@@ -180,13 +179,12 @@ class DetailService:
     all_children = MaterialService.getAllChildren(id, materials)
 
     return 'materials/detail.html', {
-          'this_material':material,
-          'parent': parent,
-          'children': children,
-          'companies': companies,
-          # 'material_tree': material_tree,
-          'all_children': all_children
-        }
+      'material':material,
+      'parent': parent,
+      'children': children,
+      'companies': companies,
+      'all_children': all_children
+    }
 
   @staticmethod
   def meetingsDetail(id):
@@ -214,15 +212,15 @@ class AddService:
     return 'meetings/add_meeting.html', {}
 
 class ModalService:
+  modal_template = 'components/modals'
   @staticmethod
   def createMaterial(id):
     material_tree = MaterialService.get_material_tree()
-
-    return 'components/modal_create_material.html', {'material_tree': material_tree}
+    return ModalService.modal_template + '/modal_create_material.html', {'material_tree': material_tree}
 
   @staticmethod
   def createContact(id):
-    return 'components/modal_create_contact.html', {}
+    return 'components/modals/modal_create_contact.html', {}
 
   @staticmethod
   def createEmployee(id):
@@ -230,16 +228,7 @@ class ModalService:
 
   @staticmethod
   def chooseMaterial(company_id):
-    """
-
-    Строит иерархическое дерево материалов.
-
-    :param old_mats: id материалов, которые нужно пометить как выбранные (selected=True)
-
-    :return: список корневых узлов дерева, каждый узел содержит вложенные children
-
-    """
-    template = 'components/modal_choose_material.html'
+    template = 'components/modals/modal_choose_material.html'
     if not company_id:
       material_tree = MaterialService.get_material_tree()
       return template, {'material_tree': material_tree}
@@ -262,19 +251,7 @@ class ModalService:
 
   @staticmethod
   def chooseContact(company_id):
-    """
-
-    Готовит контекст для модалки выбора контакта.
-
-    Если company_id не передан — возвращает список всех контактов без выделения.
-
-    Если передан — помечает selected=True для контактов, привязанных к компании,
-
-    и добавляет корпоративные данные (mail, phone, position), сортируя выбранные наверх.
-
-    """
-
-    template = 'components/modal_choose_contact.html'
+    template = 'components/modals/modal_choose_contact.html'
     all_contacts = ContactService.get_contacts()
 
     contacts_list = [
@@ -327,23 +304,24 @@ class ModalService:
   @staticmethod
   def editContact(id):
     contact = ContactService.get_contact(id)
-    return 'components/modal_edit_contact.html', {'contact':contact}
+    return 'components/modals/modal_edit_contact.html', {'contact':contact}
 
   @staticmethod
   def editMaterial(material_id):
+    template = 'components/modals/modal_edit_material.html'
     material = MaterialService.get_material(material_id)
     
     materials = MaterialService.get_materials()
     material_tree = MaterialService.get_material_tree(materials=materials)
 
-    parent = MaterialService.get_parent(material.parent_id) if material.parent_id else None
+    parent = MaterialService.get_parent(material.parent.id) if material.parent else None
     
-    children = [m for m in materials if m.parent_id == material.id]
+    children = [m for m in materials if m.parent == material.id]
     companies = material.companies.all()
   
     all_children = MaterialService.getAllChildren(material_id, materials)
 
-    return 'components/modal_edit_material.html', {
+    return template, {
       'this_material':material,
       'parent': parent,
       'children': children,

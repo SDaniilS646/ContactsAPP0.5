@@ -29,12 +29,12 @@
         </div>
         <div class="materials-list">
           {% for info in materials %}
-            <button class="del-conn spec-btn" onclick="post_delConnection('comp_mat', {{company.id}}, {{info.id}}, {'type': 'details', 'table': 'companies', 'id': {{company.id}}})">X</button>
-            <span><a href="/materials/{{info.id}}/">{{info.name}}</a></span>
+            <button class="del-conn spec-btn" onclick="post_delConnection('companies', {{company.id}}, 'materials', {{info.id}})">X</button>
+            <span><a onclick="openModal('materials-details-modal-frame', 'detailsMaterial', {{info.id}})">{{info.name}}</a></span>
           {% endfor %}
         </div>
       </div>
-
+ 
       <div class="addition-info">
         <div class="menu-btns">
           <button onclick="openModal('choose_contact_modal_frame', 'chooseContact', {{company.id}})" class="spec-btn">edit</button>
@@ -46,7 +46,7 @@
           {% for info in cont_info %}
             <div class="card">
               <div class="card-header">
-                <button class="del-conn spec-btn" onclick="post_delConnection('comp_cont', {{company.id}}, {{info.contact_id}}, {'type': 'details', 'table': 'companies', 'id': {{company.id}}})">X</button>
+                <button class="del-conn spec-btn" onclick="post_delConnection('companies', {{company.id}}, 'contacts', {{info.contact_id}})">X</button>
                 <span class="title" title="{{info.cont_name}}">
                   <a onclick="removeModal('contacts-details-modal-frame'); openModal('contacts-details-modal-frame', 'detailsContact', {{info.contact_id}})">{{info.cont_name}}</a>
                 </span>

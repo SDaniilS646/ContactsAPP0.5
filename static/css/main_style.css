@@ -430,7 +430,7 @@ DETAILS PAGE
 #meeting-participants #contact, 
 #meeting-participants #employee,
 /* .main-details .card .card-header, */
-.contact-list {
+.contacts-list {
   display: flex;
   flex-direction: column;
 }

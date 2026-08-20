@@ -3,12 +3,8 @@ from django.apps import apps
 from django.http import FileResponse
 from django.db import connection
 
-from apps.companies.models import Companies
-from apps.contacts.models import Contacts
-from apps.materials.models import Materials
-from apps.meetings.models import Meetings
-from apps.employees.models import Employees
-from apps.connections.models import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
+from apps.crm.models.models import Company, Contact, Material, Meeting, Employee
+from apps.crm.models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
 from pathlib import Path
 
@@ -18,11 +14,11 @@ import zipfile
 from datetime import datetime
 
 MODELS = {
-  'companies': Companies,
-  'contacts': Contacts,
-  'meetings': Meetings,
-  'materials': Materials,
-  'employees': Employees,
+  'companies': Company,
+  'contacts': Contact,
+  'meetings': Meeting,
+  'materials': Material,
+  'employees': Employee,
   'company_contacts': CompanyContact,
   'company_materials': CompanyMaterial,
   'meeting_contacts': MeetingContact,
@@ -161,8 +157,6 @@ class Commands:
       )
     return f'User created'
 
-
-  
   @staticmethod
   def deleteUser(args):
     username = args[0]

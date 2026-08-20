@@ -2,18 +2,18 @@
   <div class="modal-content details">
     <div class="modal-head">
       <div class="menu-btns">
-        <button onclick="removeModal('edit_material_modal_frame'); openModal('edit_material_modal_frame', 'editMaterial', {{this_material.id}})" class="spec-btn">edit</button>
-        <button onclick="post_delItem('materials', {{material.material_id}})" class="spec-btn">del</button>
+        <button onclick="removeModal('edit_material_modal_frame'); openModal('edit_material_modal_frame', 'editMaterial', {{material.id}})" class="spec-btn">edit</button>
+        <button onclick="post_delItem('materials', {{material.id}})" class="spec-btn">del</button>
         {% include 'components/modal_remove_btn.html' with frame_id='materials-details-modal-frame' %}
       </div>
       <div class="modal-header">
         {% if parent %}<a onclick="removeModal('materials-details-modal-frame'); openModal('materials-details-modal-frame', 'detailsMaterial', {{parent.id}})">{{parent.name}}</a>{% else %}—{% endif %}
-        <h1>{{this_material.name}}</h1>
+        <h1>{{material.name}}</h1>
       </div>
     </div>
     <div class="modal-main">
       <div class="details-info">
-        <span>Ключевые слова:</span><span>{{this_material.keywords | default:"—"}}</span>
+        <span>Ключевые слова:</span><span>{{material.keywords | default:"—"}}</span>
       </div>
 
       <div class="addition-info">

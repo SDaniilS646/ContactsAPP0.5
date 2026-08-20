@@ -1,4 +1,4 @@
-from ..models.models import Material
+from ...models.models import Material
 from django.utils import timezone
 
 from collections import defaultdict
@@ -9,13 +9,11 @@ class MaterialService:
     return Material.objects.all()
   
   @staticmethod
-  def set_material(input_data):
+  def create(input_data, user):
     new_id = Material.objects.create(
       name = input_data['material_name'],
       parent = MaterialService.get_material(mat_id=input_data['parent_id']),
-      keywords = input_data['keywords'],
-      updated_at = timezone.now(),
-      created_at = timezone.now()
+      keywords = input_data['keywords']
     ).id
     return new_id
   
@@ -72,13 +70,11 @@ class MaterialService:
     return Material.objects.filter(parent=mat_id)
   
   @staticmethod
-  def edit_material(input_data):
-    mat_id = input_data['id']
-    Material.objects.filter(id=mat_id).update(
+  def edit(item, input_data):
+    item.update(
       name = input_data['material_name'],
       parent = input_data['parent_id'],
-      keywords = input_data['keywords'],
-      updated_at = timezone.now()
+      keywords = input_data['keywords']
     )
     return
   
@@ -114,10 +110,6 @@ class MaterialService:
       stack.extend(children_by_parent[child_id])
     return descendant_ids
       
-  @staticmethod
-  def delete(id):
-    Material.objects.filter(id=id).delete()
-    return
 
     
     

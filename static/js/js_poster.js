@@ -40,7 +40,7 @@ async function postFile(url, payload=null) {
   return response.blob()
 }
 
-async function post_create_meeting() {
+async function post_meeting_create() {
   const container = document.getElementById('company-creation')
   const subject = container.querySelector('[name="subject"]')
   if (subject.value.trim() === '') {
@@ -53,7 +53,8 @@ async function post_create_meeting() {
   const meetingDateInput = container.querySelector('[name="meeting-date"]')
 
   try {
-    const data = await postJson('/meetings/add_meet/', {
+    const data = await postJson('/add/', {
+      table: 'meetings',
       subject: subject.value,
       comment: container.querySelector('[name="comment"]').value,
       record_link: container.querySelector('[name="record-link"]').value,
@@ -72,7 +73,7 @@ async function post_create_meeting() {
   }
 }
 
-async function post_create_company() {
+async function post_company_create() {
   const container = document.getElementById('company-creation')
   const comp_name = container.querySelector('[name="company_name"]')
   const companyLabel = container.querySelector('[name="company_name_label"]')
@@ -90,7 +91,8 @@ async function post_create_company() {
   rating = Math.min(Math.max(rating, 0), 5)
 
   try {
-    const data = await postJson('/companies/add_comp/', {
+    const data = await postJson('/add/', {
+      table: 'companies',
       company_name: comp_name.value,
       inn: container.querySelector('[name="inn"]').value,
       site: container.querySelector('[name="site"]').value,
@@ -136,7 +138,8 @@ async function post_company_edit() {
 
   const comp_id = container.querySelector('[name="id"]').value
 
-  const data = await postJson('/companies/edit_comp/', {
+  const data = await postJson('/edit/', {
+    table: 'companies',
     id: comp_id,
     company_name: comp_name.value,
     inn: container.querySelector('[name="inn"]').value,
@@ -167,7 +170,8 @@ async function post_contact_create(comp_id=null) {
     return
   }
 
-  const data = await postJson('/contacts/add_cont/', {
+  const data = await postJson('/add/', {
+    table: 'contacts',
     first_name: cont_first_name.value,
     last_name: cont_last_name.value,
     patronymic: container.querySelector('[name="patronymic"]').value,
@@ -201,7 +205,8 @@ async function post_contact_edit() {
 
   const contactId = container.querySelector('[name="id"]').value
 
-  const data = await postJson('/contacts/edit_cont/', {
+  const data = await postJson('/edit/', {
+    table: 'contacts',
     id: contactId,
     first_name: cont_first_name.value,
     last_name: cont_last_name.value,
@@ -231,7 +236,8 @@ async function post_employee_create() {
     return
   }
 
-  const data = await postJson('/employees/add_emp/', {
+  const data = await postJson('/add/', {
+    table: 'employees',
     first_name: emp_first_name.value,
     last_name: emp_last_name.value,
     patronymic: container.querySelector('[name="patronymic"]').value,
@@ -263,7 +269,8 @@ async function post_employee_edit() {
     return
   }
 
-  const data = await postJson('/employees/edit_emp/', {
+  const data = await postJson('/edit/', {
+    table: 'employees',
     id: container.querySelector('[name="id"]').value,
     first_name: emp_first_name.value,
     last_name: emp_last_name.value,
@@ -288,7 +295,8 @@ async function post_material_create(comp_id=null) {
     return
   }
 
-  const data = await postJson('/materials/add_mat/', {
+  const data = await postJson('/add/', {
+    table: 'materials',
     material_name: mat_name.value,
     keywords: container.querySelector('[name="keywords"]').value,
     parent_id: container.querySelector('[name="parent_id"]').value == '' ? null : container.querySelector('[name="parent_id"]').value
@@ -326,7 +334,8 @@ async function post_material_edit(all_children) {
     return
   }
 
-  const data = await postJson('/materials/edit_mat/', {
+  const data = await postJson('/edit/', {
+    table: 'materials',
     id: this_mat_id,
     material_name: mat_name.value,
     keywords: container.querySelector('[name="keywords"]').value,
@@ -345,22 +354,23 @@ async function post_delItem(table, id) {
     return
   }
 
-  const data = await postJson('/' + table + '/delete/', {id: id})
+  const data = await postJson(`/delete/`, {table:table, id: id})
   if (data.success) {
     const cur_pg = AppState.currentPage.split('-')
+    print(cur_pg)
     setPage(cur_pg[0], cur_pg[1])
+  } else {
+    console.log(data.error)
   }
 }
 
-async function post_delConnection(table, id_1, id_2, page=null) {
+async function post_delConnection(table1, id1, table2, id2, page=null) {
 
   if (!confirm('Удалить?')) {
     return
   }
-  const data = await postJson('/companies/delete_connection/', {
-    table: table,
-    id_1: id_1,
-    id_2: id_2
+  const data = await postJson('/delete_connection/', {
+    table1, id1, table2, id2
   })
 
   if (data.success) {
@@ -369,13 +379,15 @@ async function post_delConnection(table, id_1, id_2, page=null) {
       AppState.activeModal.at(-1).modal_name,
       AppState.activeModal.at(-1).id,
     )
-  }
+  } 
 }
 
 async function post_ContactsList(comp_id) {
-  const data = await postJson('/companies/edit_contact_list/', {
-      id: comp_id,
-      company_contacts: selectedContacts
+  const data = await postJson('/edit_connections/', {
+      table1: 'companies',
+      id1: comp_id,
+      table2: 'contacts',
+      connections: selectedContacts
   })
 
   if (data.success) {
@@ -385,9 +397,11 @@ async function post_ContactsList(comp_id) {
 }
 
 async function post_MaterialsList(comp_id) {
-  const data = await postJson('/companies/edit_material_list/', {
-    id: comp_id,
-    company_materials: selectedMaterials
+  const data = await postJson('/edit_connections/', {
+    table1: 'companies',
+    id1: comp_id,
+    table2: 'materials',
+    connections: selectedMaterials
   })
   if (data.success) {
     removeAllModals()
@@ -412,7 +426,7 @@ async function start_parsing() {
   lockMenu()
 
   try {
-    const data = await postJson('/companies/parse_company/', {
+    const data = await postJson('/parse_company/', {
       request_txt: requestText
     })
 
@@ -510,10 +524,11 @@ async function post_create_parse_company() {
   try {
     for (const checkbox of checkboxes) {
       try {
-        const data = await postJson('/companies/add_comp/', buildCompanyPayload(checkbox))
+        const data = await postJson('/add/', buildCompanyPayload(checkbox))
       if (data.success) {
           addedCompanies++
-          newCompanies.push({'comp_name':data.comp_name, 'comp_id':data.comp_id})
+          
+          newCompanies.push({'comp_name':checkbox.dataset.url, 'comp_id':data.new_id})
         }
       } catch (error) {
         console.error('Failed to create comapany for checkbox:', checkbox.value, error)
@@ -529,6 +544,7 @@ async function post_create_parse_company() {
 function buildCompanyPayload(checkbox) {
   const url = checkbox.dataset.url
   return {
+    table: 'companies',
     company_name: url,
     inn: '',
     site: url,
@@ -583,7 +599,7 @@ async function postCreateExcelOutput() {
   }
 
   try {
-    const blob = await postFile('/companies/create_Excel_Output/', {company_ids: cardsIds})
+    const blob = await postFile('/create_Excel_Output/', {company_ids: cardsIds})
     
     const url = window.URL.createObjectURL(blob)
 

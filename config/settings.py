@@ -42,18 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    # 'apps.companies',
-    # 'apps.contacts',
-    # 'apps.materials',
-    # 'apps.meetings',
-    # 'apps.employees',
-    'apps.commands',
     'apps.templatetags',
-    # 'apps.connections',
     'apps.sender',
     'apps.crm',
-    # 'apps.core',
-    # 'apps',
     'django.contrib.postgres',
     'users'
 ]

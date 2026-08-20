@@ -1,22 +1,33 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import JsonResponse, HttpResponseBase, HttpResponse, HttpResponseBadRequest
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+
+
+from backend.web_parser.config import SEARCH_PROVIDER, LOADER, EXTRACTOR
+from backend.xl_sender.sender_create import create_sendfile
+
+from urllib.parse import urlparse
 
 import json
-import time
 
 from datetime import datetime
-from django.utils import timezone
+import shlex
 
 from apps.crm.services.page_service import PageService, DetailService, AddService, ModalService
-from apps.crm.services.contact_service import ContactService
-from apps.crm.services.material_service import MaterialService
-from apps.crm.services.employees_service import EmployeeService
-from apps.crm.services.company_service import CompanyService
-from apps.crm.services.meeting_service import MeetingService
+from apps.crm.services.model_services.contact_service import ContactService
+from apps.crm.services.model_services.material_service import MaterialService
+from apps.crm.services.model_services.employees_service import EmployeeService
+from apps.crm.services.model_services.company_service import CompanyService
+from apps.crm.services.model_services.meeting_service import MeetingService
+from apps.crm.services.common_service import CommonService
+from apps.crm.services.commands_service import Commands
 
-from apps.crm.services.connection_service import ConnectionService
+from apps.crm.services.export_service import ExportService
+from apps.crm.services.parser_service import WebParser
+
+from apps.crm.services.model_services.connection_service import ConnectionService
 
 PAGES = {
   'companies': PageService.companies_page,
@@ -52,6 +63,19 @@ MODALS = {
   'chooseCompany': ModalService.chooseCompany
 }
 
+COMMANDS = {
+  'help': Commands.HelpCommand,
+  'all_users': Commands.getUsers,
+  'create_user': Commands.createUser,
+  'reset_password': Commands.resetPassword,
+  'delete_user': Commands.deleteUser,
+  'load_csv': Commands.getalldata,
+  'check_con': Commands.checkConnections,
+  'models': Commands.getModels,
+  'sql': Commands.sqlQuery
+}
+
+@login_required
 def clearPage(request):
   return render(request, 'base.html')
 
@@ -81,171 +105,212 @@ def loadModal(request):
     'html': render_to_string(html, vars, request=request)
   })
 
-class ContactOperations:
-  @staticmethod
-  def contacts_list(request):
-    print('ГРУЗИМ СПИСОК')
-
-    contacts = ContactService.get_contacts().order_by('-added_at')
-    style = request.GET.get('style')
-    is_meeting = request.GET.get('is_meeting')
-
-    return render(
-      request,
-      'lists/contacts_list.html',
-      {
-        'contacts':contacts,
-        'style': style,
-        'meeting_create': is_meeting
-      }
-    )
-
-  @staticmethod
-  def contact_create(request):
+class CommonOperations:
+  def delete(request):
     input_data = json.loads(request.body)
+    table_name = input_data.get('table')
+    id = input_data.get('id')
 
-    new_id = ContactService.set_contact(input_data)
-
-    return JsonResponse({
-      'success': True,
-      'cont_id':new_id
-    })
-
-  @staticmethod
-  def contact_edit(request):
-    input_data = json.loads(request.body)
-
-    ContactService.edit_contact(input_data)
-
-    ContactService.item_update(input_data['id'])
-
-    return JsonResponse({
-      'success': True
-    })
-
-class MaterialOperations:
-  @staticmethod
-  def material_create(request):
-    input_data = json.loads(request.body)
-
-    new_id = MaterialService.set_material(input_data)
-
-    return JsonResponse({
-      'success': True,
-      'mat_id':new_id
-    })
-
-class EmployeeOperations:
-  @staticmethod
-  def employee_create(request):
-    input_data = json.loads(request.body)
-
-    new_id = EmployeeService.set_employee(input_data)
-
-    return JsonResponse({
-      'success': True
-    })
-
-class  MeetingOperations:
-  @staticmethod
-  def meeting_create(request):
-    input_data = json.loads(request.body)
-
-    if input_data['meeting_date']:
-      input_data['meeting_date'] = datetime.strptime(input_data['meeting_date'], '%Y-%m-%d')
-    else:
-      input_data['meeting_date'] = timezone.now()
-
-    meet_id = MeetingService.set_meeting(input_data)
-
-    meeting_contacts = input_data['meeting_contacts']
-    meeting_employees = input_data['meeting_employees']
-    meeting_companies = input_data['meeting_companies']
-
-    if meeting_contacts:
-      for contact in meeting_contacts:
-        ConnectionService.set_meeting_contact(
-          {
-            'meet_id': meet_id,
-            'cont_id': contact['id']
-          }
-        )
-    if meeting_employees:
-      for employee in meeting_employees:
-        ConnectionService.set_meeting_employee(
-          {
-            'meet_id': meet_id,
-            'emp_id':employee['id']
-          }
-        )
-
-    if meeting_companies:
-      for company in meeting_companies:
-        ConnectionService.set_meeting_company(
-          {
-            'meet_id': meet_id,
-            'company_id':company['id']
-          }
-        )
-
-    return JsonResponse({
-      'success': True
-    })
-
-class CompanyOperations:
-  @staticmethod
-  def company_create(request):
-    input_data = json.loads(request.body)
-
-    old_companies = CompanyService.get_companies()
-    comp_name = input_data['company_name']
-    comp_mail = input_data['mail']
-
-    old_companies_names = [item.name for item in old_companies]
-    old_companies_mails = [item.mail for item in old_companies]
-
-    if comp_name in old_companies_names or (comp_mail and comp_mail in old_companies_mails):
+    if not table_name or not id:
       return JsonResponse({
-        'Success': False,
-        'result': 'Exists'
+        'success': False,
+        'error': f'no id ({id}) or table name ({table_name})'
+      })
+    
+    CommonService.delete_item(table_name, id)
+
+    return JsonResponse({
+      'success': True
+    })
+
+  def edit(request):
+    input_data = json.loads(request.body)
+    table_name = input_data.get('table')
+    id = input_data.get('id')
+
+    user = request.user
+
+    if not table_name or not id:
+      return JsonResponse({
+        'success': False,
+        'error': f'no id ({id}) or table name ({table_name})'
       })
 
-    input_data['user'] = request.user
-    new_comp_id = CompanyService.set_company(input_data)
+    CommonService.edit(table_name, id, input_data, user)
 
-    company_contacts = input_data['company_contacts']
+    return JsonResponse({
+      'success': True
+    })
+
+  def create(request):
+    input_data = json.loads(request.body)
+    table_name = input_data.get('table')
+    user = request.user
+    
+    new_id = CommonService.add(table_name, input_data, user)
+
+    return JsonResponse({
+      'success': True,
+      'new_id':new_id
+    })
+
+  def delete_connections(request):
+    input_data = json.loads(request.body)
+    print(input_data)
+
+    user = request.user
+
+    ConnectionService.delete_connection(input_data, user)
+
+    return JsonResponse({
+      'success': True
+    })
+
+  def edit_connections(request):
+    input_data = json.loads(request.body)
+    user = request.user
+
+    connection_data = {}
+    connection_data['table1'] = input_data['table1']
+    connection_data['table2'] = input_data['table2']
+    connection_data['id1'] = input_data['id1']
+
+    for item in input_data['connections']:
+      connection_data['id2'] = item['id']
+      extra = {key: value for key, value in item.items() if key != 'id'}
+      connection_data['extra'] = extra
+      ConnectionService.create_connection(connection_data, user)
+
+    return JsonResponse({
+      'success': True
+    })
+
+class SpecialOperations:
+  def create_Excel_Output(request):
+    try:
+      payload = json.loads(request.body)
+      companies_ids = payload['company_ids']
+    except (json.JSONDecodeError, KeyError):
+      return HttpResponseBadRequest(
+        json.dumps({'success': False, 'error': 'Некорректны данные запроса'}),
+        content_type='application/json'
+      )
+    output_data = ExportService.get_companies_output(companies_ids)
+
+    buffer = create_sendfile(output_data)
+
+    if buffer is None:
+      return HttpResponseBadRequest(
+        json.dumps({'success': False, 'error':  'Нет данных для экспорта'}), 
+        content_type='application/json'
+      )
+
+    filename = f"sendfile_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsm"
+    response = HttpResponse(
+      buffer.getvalue(),
+      content_type='application/vnd.ms-excel.sheet.macroEnabled.12'
+    )
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+      
+    return response
+
+  def parse_comp(request):
+    parse_input = json.loads(request.body)['request_txt']
+    results = []
+    err = None
+    try:
+      results = WebParser.web_parser(parse_input) #[f'url: {item['url']} - mail: {item['mail']}' for item in web_parser(parse_input)]
+    except Exception as e:
+      err = f"Ошибка: {e}"
+      return JsonResponse({
+        'success': False,
+        'err_txt':err
+      })
+
+    return JsonResponse({
+      'success': True,
+      'results':results
+    })
+
+class CommandOperations:
+  def executeCMD(request):
+    if not Commands.checkrole(request.user):
+      return JsonResponse({
+        'success': False,
+        'res': 'Нет доступа'
+      }, status=403)
+
+    if request.method != 'POST':
+      return JsonResponse({
+        'success': False,
+        'res': 'Метод не поддерживается'
+      }, status=405)
+    
+    if request.content_type == 'application/json':
+      full_cmd = json.loads(request.body)['command']
+    else:
+      full_cmd = request.POST['command']
+
+    try:
+      full_cmd = shlex.split(full_cmd)
+    except ValueError as e:
+      return JsonResponse({
+        'success': False,
+        'res': f'Ошибка разбора команды: {e}'
+      }, status=400)
+    
+    if not full_cmd:
+      return JsonResponse({
+        'success': False,
+        'res': 'Пустая команда'
+      }, status=400)
+    
+    cmd = full_cmd[0]
+    args = full_cmd[1:]
+
+    handler = COMMANDS.get(cmd)
+    if not handler:
+      return JsonResponse({
+        'success': False,
+        'res': f'Неизвестная команда: {cmd}'
+      }, status=400)
+
+    try:
+      res = handler(args)
+    except Exception as e:
+      return JsonResponse({
+        'success': False,
+        'res': f'Ошибка выполнения команнды: {e}'
+      }, status=500)
+
+
+    if isinstance(res, HttpResponseBase):
+      return res
+    
+    return JsonResponse({
+      'success': True,
+      'res': res
+    })
+
+
+    input_data = json.loads(request.body)
+
     company_materials = input_data['company_materials']
 
-    if company_contacts:
-      for contact in company_contacts:
-        ConnectionService.set_company_contact(
-          {
-            'comp_id': new_comp_id,
-            'cont_id': contact['id'],
-            'cont_mail': contact['corp-mail'],
-            'cont_phone': contact['corp-phone'],
-            'cont_position': contact['position'],
-            'user': request.user
-          }
-        )
+    ConnectionService.delete_all_material_connections(input_data['id'])
+
     if company_materials:
-      mat_list = []
-      for mat in company_materials:
-        temp = []
-        temp = MaterialService.getAllParents(mat)
-        mat_list.extend(temp)
-      company_materials = list(set(mat_list))
       for material in company_materials:
-        ConnectionService.set_company_material(
+        ConnectionService.edit_company_material(
           {
-            'comp_id': new_comp_id,
+            'comp_id': input_data['id'],
             'mat_id': material,
             'user': request.user
           }
         )
 
+    CommonService.item_update('companies', input_data['id'], request.user)
+
     return JsonResponse({
-      'success': True,
-      'comp_name': comp_name,
-      'comp_id':new_comp_id
+      'success': True
     })

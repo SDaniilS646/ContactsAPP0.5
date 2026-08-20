@@ -188,7 +188,8 @@
   margin-top: 0;
 }
 
-.modal-content #contacts-list {
+.modal-content #contacts-list,
+.modal-content #companies-list {
   overflow-y: auto;
 }
 
