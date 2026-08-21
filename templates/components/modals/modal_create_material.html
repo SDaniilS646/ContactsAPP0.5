@@ -16,10 +16,18 @@
         <input type="hidden" name="parent_id">
 
         <div class="inputs">
-          <div class="form-item">
-            <label for="material_name" name="material_name_label">Наименование</label>
+          <label for="material_name" name="material_name_label">Наименование</label>
+          <div class="form-item material-and-measure">
+            
             <input type="text" name="material_name">
+
+            <select name="measureList" id="measure-select" >
+              {% for measure in measures %}
+                <option value="{{measure.id}}">{{measure.name}}</option>
+              {% endfor %}
+            </select>
           </div>
+
 
           <div class="form-item">
             <label for="keywords">Ключевые слова</label>

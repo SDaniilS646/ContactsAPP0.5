@@ -288,6 +288,7 @@ async function post_employee_edit() {
 async function post_material_create(comp_id=null) {
   const container = document.getElementById('create_material_modal_frame')
   const mat_name = container.querySelector('[name="material_name"]')
+
   if (mat_name.value == '') {
     const materialLabel = container.querySelector('[name="material_name_label"]')
     materialLabel.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
@@ -299,7 +300,8 @@ async function post_material_create(comp_id=null) {
     table: 'materials',
     material_name: mat_name.value,
     keywords: container.querySelector('[name="keywords"]').value,
-    parent_id: container.querySelector('[name="parent_id"]').value == '' ? null : container.querySelector('[name="parent_id"]').value
+    parent_id: container.querySelector('[name="parent_id"]').value == '' ? null : container.querySelector('[name="parent_id"]').value,
+    measure_id: container.querySelector('[name="measureList"]').value
   })
 
   if (data.success) {

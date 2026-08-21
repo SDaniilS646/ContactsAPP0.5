@@ -1,4 +1,4 @@
-from ...models.models import Material
+from ...models.models import Material, Measure
 from django.utils import timezone
 
 from collections import defaultdict
@@ -13,9 +13,18 @@ class MaterialService:
     new_id = Material.objects.create(
       name = input_data['material_name'],
       parent = MaterialService.get_material(mat_id=input_data['parent_id']),
-      keywords = input_data['keywords']
+      keywords = input_data['keywords'],
+      measure = MaterialService.get_measure(id=input_data['measure_id'])
     ).id
     return new_id
+
+  @staticmethod
+  def get_measures():
+    return Measure.objects.all()
+
+  @staticmethod
+  def get_measure(id):
+    return Measure.objects.filter(id=id).first()
   
   @staticmethod
   def get_material(mat_id):
@@ -43,6 +52,7 @@ class MaterialService:
             'material_id': material.id,
             'material_name': material.name,
             'parent_id': material.parent_id,
+            'measure': material.measure,
             'children': [],
             'selected': material.id in old_mats_set
           }

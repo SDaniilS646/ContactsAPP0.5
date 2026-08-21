@@ -262,3 +262,13 @@
 
   transition: 0.2s;
 }
+
+.material-and-measure {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
+.material-and-measure input {
+  width: 90%;
+}

@@ -216,7 +216,8 @@ class ModalService:
   @staticmethod
   def createMaterial(id):
     material_tree = MaterialService.get_material_tree()
-    return ModalService.modal_template + '/modal_create_material.html', {'material_tree': material_tree}
+    measures = MaterialService.get_measures()
+    return ModalService.modal_template + '/modal_create_material.html', {'material_tree': material_tree, 'measures': measures}
 
   @staticmethod
   def createContact(id):
