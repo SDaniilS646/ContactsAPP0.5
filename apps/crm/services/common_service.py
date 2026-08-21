@@ -1,11 +1,11 @@
 from apps.crm.models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany
 from .model_services.company_service import CompanyService
-from .model_services.material_service import MaterialService
+from .model_services.material_service import MaterialService, MeasureService
 from .model_services.contact_service import ContactService
 from .model_services.meeting_service import MeetingService
 from .model_services.employees_service import EmployeeService
 
-from ..models.models import Company, Contact, Material, Meeting, Employee
+from ..models.models import Company, Contact, Material, Meeting, Employee, Measure
 
 from django.utils import timezone
 
@@ -16,7 +16,8 @@ TABLE_MODELS = {
   'contacts': Contact,
   'materials':  Material,
   'meetings': Meeting,
-  'employees': Employee
+  'employees': Employee,
+  'measures':  Measure
 }
 
 TABLE_SERVICES = {
@@ -24,7 +25,8 @@ TABLE_SERVICES = {
   'contacts': ContactService,
   'materials':  MaterialService,
   'meetings': MeetingService,
-  'employees': EmployeeService
+  'employees': EmployeeService,
+  'measures': MeasureService
 }
 
 def model_get(table):

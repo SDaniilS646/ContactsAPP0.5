@@ -48,6 +48,7 @@ ADD = {
 MODALS = {
   'createMaterial': ModalService.createMaterial,
   'createContact': ModalService.createContact,
+  'createMeasure': ModalService.createMeasure,
   'createEmployee': ModalService.createEmployee,
   'chooseMaterial': ModalService.chooseMaterial,
   'chooseContact': ModalService.chooseContact,
@@ -60,7 +61,9 @@ MODALS = {
   'detailsContact': DetailService.contactsDetail,
   'detailsMaterial': DetailService.materialsDetail,
   'detailsMeeting': DetailService.meetingsDetail,
-  'chooseCompany': ModalService.chooseCompany
+  'chooseCompany': ModalService.chooseCompany,
+  'listMeasure': ModalService.listMeasure,
+  'editMeasure': ModalService.editMeasure
 }
 
 COMMANDS = {

@@ -3,6 +3,31 @@ from django.utils import timezone
 
 from collections import defaultdict
 
+class MeasureService:
+  @staticmethod
+  def create(input_data, user):
+    new_id = Measure.objects.create(
+      name = input_data['name'],
+      title = input_data['title'],
+    ).id
+    return new_id
+
+  @staticmethod
+  def get_measures():
+    return Measure.objects.all()
+  
+  @staticmethod
+  def get_measure(id):
+    return Measure.objects.filter(id=id).first()
+
+  @staticmethod
+  def edit(item, input_data):
+    item.update(
+      name = input_data['name'],
+      title = input_data['title']
+    )
+    return
+  
 class MaterialService:
   @staticmethod
   def get_materials():
@@ -14,18 +39,10 @@ class MaterialService:
       name = input_data['material_name'],
       parent = MaterialService.get_material(mat_id=input_data['parent_id']),
       keywords = input_data['keywords'],
-      measure = MaterialService.get_measure(id=input_data['measure_id'])
+      measure = MeasureService.get_measure(id=input_data['measure_id'])
     ).id
     return new_id
 
-  @staticmethod
-  def get_measures():
-    return Measure.objects.all()
-
-  @staticmethod
-  def get_measure(id):
-    return Measure.objects.filter(id=id).first()
-  
   @staticmethod
   def get_material(mat_id):
     return Material.objects.filter(id=mat_id).first()

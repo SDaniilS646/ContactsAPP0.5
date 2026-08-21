@@ -1,0 +1,28 @@
+<div id="create_measure_modal_frame" class="modal create" style="z-index:2;">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='create_measure_modal_frame' %}
+    </div>
+
+    <div class="main-frame">
+      <hr>
+      <div id="measure-creation">
+        <div class="inputs">
+          <div class="form-item">
+            <label for="measure_name" name="measure_name_label">Обозначение</label>
+            <input type="text" name="measure_name" placeholder="м">
+          </div>
+
+          <div class="form-item">
+            <label for="measure_full_name">Полное наименование</label>
+            <input type="text" name="measure_full_name" placeholder="метр"></input>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button onclick="post_measure_create();">Сохранить единицу измерения</button>
+    </div>
+  </div>
+</div>

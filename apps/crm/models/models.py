@@ -55,7 +55,7 @@ class Employee(AuditedModel, PersonNameModel, ContactsModel):
   def __str__(self):
       return self.last_name or f'Сотрудник #{self.pk}'
 
-class Measure(models.Model):
+class Measure(AuditedModel):
   name = models.CharField(max_length=10, blank=True)
   title = models.CharField(max_length=50, blank=True)
   class Meta:

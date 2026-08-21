@@ -285,6 +285,59 @@ async function post_employee_edit() {
   }
 }
 
+async function post_measure_create() {
+  const container = document.getElementById('create_measure_modal_frame')
+  const measure_name = container.querySelector('[name="measure_name"]')
+  const measure_title = container.querySelector('[name="measure_full_name"]')
+
+  if (measure_name.value == '') {
+    const measure_name_label = container.querySelector('[name="measure_name_label"]')
+    measure_name_label.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
+    measure_name_label.style.color = 'red'
+    return
+  }
+
+  const data = await postJson('/add/', {
+    table: 'measures',
+    name: measure_name.value,
+    title:  measure_title.value
+  })
+  if (data.success) {
+    // if (AppState.currentPage === 'page-materials') {
+    //   setPage('page', 'materials')
+    // }
+    removeModal('create_measure_modal_frame')
+    reloadModal('list_measure_modal_frame', 'listMeasure')
+  }
+}
+
+async function post_measure_edit(id) {
+  const container = document.getElementById('edit_measure_modal_frame')
+  const measure_name = container.querySelector('[name="measure_name"]')
+  const measure_title = container.querySelector('[name="measure_full_name"]')
+
+  if (measure_name.value == '') {
+    const measure_name_label = container.querySelector('[name="measure_name_label"]')
+    measure_name_label.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
+    measure_name_label.style.color = 'red'
+    return
+  }
+
+  const data = await postJson('/edit/', {
+    id: id,
+    table: 'measures',
+    name: measure_name.value,
+    title:  measure_title.value
+  })
+  if (data.success) {
+    // if (AppState.currentPage === 'page-materials') {
+    //   setPage('page', 'materials')
+    // }
+    removeModal('edit_measure_modal_frame')
+    reloadModal('list_measure_modal_frame', 'listMeasure')
+  }
+}
+
 async function post_material_create(comp_id=null) {
   const container = document.getElementById('create_material_modal_frame')
   const mat_name = container.querySelector('[name="material_name"]')
