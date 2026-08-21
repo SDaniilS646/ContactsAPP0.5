@@ -18,7 +18,8 @@
     {% csrf_token %}
   </head>
   <body>
-    
+    {% include 'components/confirm_frame.html' %}
+    {% include 'components/alert_frame.html' %}
     <div class="menu">
       {% include 'components/menu.html' %}
     </div>

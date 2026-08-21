@@ -101,7 +101,8 @@ class MaterialService:
     item.update(
       name = input_data['material_name'],
       parent = input_data['parent_id'],
-      keywords = input_data['keywords']
+      keywords = input_data['keywords'],
+      measure = MeasureService.get_measure(id=input_data['measure_id'])
     )
     return
   

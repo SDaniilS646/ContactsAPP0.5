@@ -41,8 +41,8 @@ class CompanyService:
             'id2': contact['id'],
             'extra': {
               'position': contact['position'], 
-              'mail': contact['corp-mail'], 
-              'phone': contact['corp-phone']
+              'mail': contact['mail'], 
+              'phone': contact['phone']
             }
           }
           ConnectionService.create_connection(connection_input, user)

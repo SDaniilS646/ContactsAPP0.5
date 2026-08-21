@@ -8,23 +8,27 @@
     <div class="main-frame">
       <hr>
       <div id="material-creation">
-        {% csrf_token %}
         <div id="creation_material_tree" class="tree">
           {% include 'lists/materials_list.html' with style='material_editor' %}
         </div>
-
-        <input type="hidden" name="parent_id">
-        <input type="hidden" name="id" value="{{this_material.id}}">
+        <input type="hidden" name="parent_id" value="{{parent.id}}">
+        <input type="hidden" name="id" value="{{material.id}}">
 
         <div class="inputs">
-          <div class="form-item">
-            <label for="material_name" name="material_name_label">Наименование</label>
-            <input type="text" name="material_name" value="{{this_material.name}}">
+          <label for="material_name" name="material_name_label" >Наименование</label>
+          <div class="form-item material-and-measure">
+            
+            <input type="text" name="material_name" value="{{material.name}}">
+            <select name="measureList" id="measure-select">
+              {% for measure in measures %}
+                <option value="{{measure.id}}" title="{{measure.title}}" {% if material.measure.id == measure.id %}selected{% endif %}>{{measure.name}}</option>
+              {% endfor %}
+            </select>
           </div>
 
           <div class="form-item">
             <label for="keywords">Ключевые слова</label>
-            <textarea type="text" name="keywords" placeholder="гкл,гвл,гклв" {% if this_material.keywords %}value="{{this_material.keywords}}"{% endif %}></textarea>
+            <textarea type="text" name="keywords" placeholder="гкл,гвл,гклв">{{material.keywords}}</textarea>
           </div>
         </div>
       </div>

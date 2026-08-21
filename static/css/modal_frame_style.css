@@ -245,8 +245,8 @@
 }
 
 
-.modal-content #contacts-list .contact-list-item,
-.modal-content #employees-list .employee-list-item,
+.modal-content .contact-list-item,
+.modal-content .employee-list-item,
 .modal-content .company-list-item {
 
   display: flex;
@@ -299,4 +299,49 @@
 #measure-list > div {
   height: 30px;
   border-bottom: 1px solid var(--thin-border-color)
+}
+
+.confirm-overlay,
+.alert-overlay {
+  position: fixed;
+  top: 0; left:0; right: 0; bottom: 0;
+
+  background: var(--modal-background-darken);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.confirm-frame,
+.alert-frame {
+  background: var(--background-color);
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 300px;
+  box-shadow: 0 4px 20px var(--card-hover-blur)
+}
+
+.alert-frame {
+  max-width: 50%;
+}
+
+#alert-frame-message {
+  white-space: pre-line;
+}
+
+.confirm-frame-buttons,
+.alert-frame-buttons {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-danger  {
+  background: var(--danger-button-back);
+} 
+
+.modal-content .is-hidden {
+  display: none;
 }

@@ -154,14 +154,17 @@ function reloadModal(modal_frame_id, modal_name, id=null) {
 }
 
 
-function selectMaterials(event, element, container_id=null, input_box_id=null) {
+function selectMaterials(event, element) {
+  event.stopPropagation()
 
-  const container = document.getElementById(container_id)
+  const isNowSelected = element.classList.toggle('selected')
 
-  if (element.classList.contains('selected')) {
-    element.classList.remove('selected')
-  } else {
-    element.classList.add('selected')
+  const node = element.closest('.tree-node')
+  const nodeChildren = node.querySelector('.tree-children')
+
+  if (nodeChildren) {
+    const materials = nodeChildren.querySelectorAll('.material-span')
+    materials.forEach(span => {span.classList.toggle('selected', isNowSelected)})
   }
 }
 
@@ -174,7 +177,6 @@ function saveMaterialsList() {
 
   elements.forEach(val => {
     if (val.classList.contains('selected')) {
-      console.log(val)
       let mat_id = val.getAttribute('id')
       selectedMaterials.push({
         'id': mat_id,
@@ -216,16 +218,6 @@ function checkOtherSelected(container) {
   elements.forEach(val => val.classList.remove('selected'))
 }
 
-// function updateList(fetch_link, container, style=null, is_meeting=null) {
-//   if (style) {
-//     fetch_link = fetch_link + `/?style=${style}&`+ `is_meeting=${is_meeting}`
-//   }
-//   fetch(fetch_link)
-//   .then(response => response.text())
-//   .then(html => {
-//     container.innerHTML = html;
-//   })
-// }
 
 function selectContacts(event, element, container_id=null, input_box_id=null) {
   const container = document.getElementById(container_id)
@@ -437,6 +429,52 @@ async function executeCMD() {
   }
 }
 
+function alertFrame(message) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById('alert-frame-overlay')
+    const messageEl = document.getElementById('alert-frame-message')
+    const okBtn = document.getElementById('alert-frame-ok')
+
+    messageEl.textContent = message
+    overlay.style.display = 'flex'
+
+    function cleanup() {
+      overlay.style.display = 'none'
+      okBtn.removeEventListener('click', onOk)
+      resolve()
+    }
+
+    function onOk() {cleanup()}
+
+    okBtn.addEventListener('click', onOk)
+  })
+}
+
+function confirmFrame(message) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById('confirm-frame-overlay')
+    const messageEl = document.getElementById('confirm-frame-message')
+    const yesBtn = document.getElementById('confirm-frame-yes')
+    const noBtn = document.getElementById('confirm-frame-no')
+
+    messageEl.textContent = message
+    overlay.style.display = 'flex'
+
+    function cleanup(result) {
+      overlay.style.display = 'none'
+      yesBtn.removeEventListener('click', onYes)
+      noBtn.removeEventListener('click', onNo)
+      resolve(result)
+    }
+
+    function onYes() { cleanup(true) }
+    function onNo() { cleanup(false) }
+
+    yesBtn.addEventListener('click', onYes)
+    noBtn.addEventListener('click', onNo)
+  })
+}
+
 function setPage(type, table, id=null) {
 
   const outer = document.getElementById("outer")
@@ -504,8 +542,9 @@ const FILTER_TARGETS = {
   'companies-list':'.card',
   'contacts-list-search': '.card',
   'employees-list-on-create': '.employee-list-item',
-  'contacts-list-on-comp-edit': '.contact-list-item',
-  'companies-list-search': '.company-list-item'
+  'contacts-list-search-item': '.contact-list-item',
+  'companies-list-search': '.company-list-item',
+  'meetings-list-search': '.card'
 }
 
 function filterPageList(event, selector_class) {
@@ -537,6 +576,7 @@ document.addEventListener(
   function(event) {
     let input_box = event.target.id;
     const selectorClass = FILTER_TARGETS[event.target.id]
+    console.log(selectorClass)
     if (selectorClass) {
       debouncedFilter(event, selectorClass)
     }

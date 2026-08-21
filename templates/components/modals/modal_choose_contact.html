@@ -14,8 +14,8 @@
         <option value="Z-a">Я-а</option>
         <option value="">По умолчанию</option>
       </select> {% endcomment %}
-      <input id="contacts-list-on-comp-edit" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
-      <hr>
+      <input id="contacts-list-search-item" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <hr> 
       <div id="contacts-list" class="contacts-list comp_creation">
         {% include 'lists/contacts_list.html' with style='comp_creation' %}
       </div>
