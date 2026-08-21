@@ -475,66 +475,61 @@ function confirmFrame(message) {
   })
 }
 
-function setPage(type, table, id=null) {
+async function postSetPage(url, payload) {
+  const response = await postRequest(url, payload)
+  return response.json()
+}
 
-  const outer = document.getElementById("outer")
+async function setPage(type, table, id=null) {
+
+  let outer = document.getElementById("outer")
   if (outer) {outer.classList.remove('show')}
 
-  csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
-  fetch('/open_page/', {
-    method: 'POST',
-    headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      type: type,
-      table: table,
-      id: id
-    })
+  const data = await postSetPage('/open_page/', {
+    type: type,
+    table: table,
+    id: id
   })
-  .then(response => response.json())
-  .then(data => { 
-      if (!data.success) {return}
-      AppState.currentPage = `${type}-${table}`
-      const menu_cont = document.getElementById('menu-btns')
-      menu_cont.querySelectorAll('button').forEach(val => {
-        if (val.getAttribute('id') == AppState.currentPage) {
-          val.classList.add('active')
-          val.setAttribute('disabled', '')
-        } else {
-          val.removeAttribute('disabled')
-          val.classList.remove('active')
-        }
-      })
 
-      
 
-      document.getElementById('content').innerHTML = data.html
-      
-      const outer = document.getElementById("outer")
-
-      setTimeout(() => {
-        if (outer) {outer.classList.add('show')}
-      }, 10);
-
-      if (type == 'page') {
-        removeAllModals()
-        menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
-          if (val.getAttribute('name') == `${table}-menu-btns`) {
-            val.removeAttribute('disabled')
-            val.classList.remove('hidden')
-          } else {
-            if (!val.classList.contains('hidden')) {
-              val.setAttribute('disabled', '')
-              val.classList.add('hidden')
-            }
-          }
-        })
-      } 
+  if (!data.success) {return}
+  AppState.currentPage = `${type}-${table}`
+  const menu_cont = document.getElementById('menu-btns')
+  menu_cont.querySelectorAll('button').forEach(val => {
+    if (val.getAttribute('id') == AppState.currentPage) {
+      val.classList.add('active')
+      val.setAttribute('disabled', '')
+    } else {
+      val.removeAttribute('disabled')
+      val.classList.remove('active')
     }
-  )
+  })
+
+      
+
+  document.getElementById('content').innerHTML = data.html
+  
+  outer = document.getElementById("outer")
+
+  setTimeout(() => {
+    if (outer) {outer.classList.add('show')}
+  }, 10);
+
+  if (type == 'page') {
+    removeAllModals()
+    menu_cont.querySelectorAll('.sub-menu-btns').forEach(val => {
+      if (val.getAttribute('name') == `${table}-menu-btns`) {
+        val.removeAttribute('disabled')
+        val.classList.remove('hidden')
+      } else {
+        if (!val.classList.contains('hidden')) {
+          val.setAttribute('disabled', '')
+          val.classList.add('hidden')
+        }
+      }
+    })
+  } 
 }
 
 const FILTER_TARGETS = {

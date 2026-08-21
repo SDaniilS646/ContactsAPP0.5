@@ -31,7 +31,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page="login"), name='logout'),
 
     path('', clearPage),
-    path('', include('apps.crm.urls')),
+    path('crm/', include('apps.crm.urls')),
+    path('sender/', include('apps.sender.urls')),
 
     # path('companies/', include('apps.companies.urls'), name='companies'),
     # path('contacts/', include('apps.contacts.urls')),
@@ -42,5 +43,5 @@ urlpatterns = [
     # path('sender/', include('apps.sender.urls')),
 
     path('open_page/', setPage),
-    path('modal/', loadModal)
+    path('modal/', loadModal),
 ]
