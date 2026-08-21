@@ -3,7 +3,7 @@ from django.utils import timezone
 from .model_services.company_service import CompanyService
 from .model_services.contact_service import ContactService
 from .model_services.employees_service import EmployeeService
-from .model_services.material_service import MaterialService
+from .model_services.material_service import MaterialService, MeasureService
 from .model_services.meeting_service import MeetingService
 
 from .model_services.connection_service import ConnectionService
@@ -214,10 +214,26 @@ class AddService:
 class ModalService:
   modal_template = 'components/modals'
   @staticmethod
+  def listMeasure(id):
+    measures = MeasureService.get_measures()
+    measures = measures.order_by('name')
+    return ModalService.modal_template + '/modal_list_measure.html', {'measures': measures}
+
+  @staticmethod
+  def editMeasure(id):
+    measure = MeasureService.get_measure(id)
+    return ModalService.modal_template + '/modal_edit_measure.html', {'measure': measure}
+
+  @staticmethod
   def createMaterial(id):
     material_tree = MaterialService.get_material_tree()
-    measures = MaterialService.get_measures()
+    measures = MeasureService.get_measures()
+    measures = measures.order_by('name')
     return ModalService.modal_template + '/modal_create_material.html', {'material_tree': material_tree, 'measures': measures}
+
+  @staticmethod
+  def createMeasure(id):
+    return ModalService.modal_template + '/modal_create_measure.html', {}
 
   @staticmethod
   def createContact(id):
