@@ -1,14 +1,9 @@
 from django.http import JsonResponse, HttpResponseBase, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 
-
-
-from backend.web_parser.config import SEARCH_PROVIDER, LOADER, EXTRACTOR
 from backend.xl_sender.sender_create import create_sendfile
-
-from urllib.parse import urlparse
 
 import json
 
@@ -16,11 +11,6 @@ from datetime import datetime
 import shlex
 
 from apps.crm.services.page_service import PageService, DetailService, AddService, ModalService
-from apps.crm.services.model_services.contact_service import ContactService
-from apps.crm.services.model_services.material_service import MaterialService
-from apps.crm.services.model_services.employees_service import EmployeeService
-from apps.crm.services.model_services.company_service import CompanyService
-from apps.crm.services.model_services.meeting_service import MeetingService
 from apps.crm.services.common_service import CommonService
 from apps.crm.services.commands_service import Commands
 

@@ -219,32 +219,27 @@ class ModalService:
     return ModalService.modal_template + '/modal_list_measure.html', {'measures': measures}
 
   @staticmethod
-  def editMeasure(id):
-    measure = MeasureService.get_measure(id)
-    return ModalService.modal_template + '/modal_edit_measure.html', {'measure': measure}
-
-  @staticmethod
   def createMaterial(id):
     material_tree = MaterialService.get_material_tree()
     measures = MeasureService.get_measures()
     measures = measures.order_by('name')
-    return ModalService.modal_template + '/modal_create_material.html', {'material_tree': material_tree, 'measures': measures}
+    return ModalService.modal_template + '/create/modal_create_material.html', {'material_tree': material_tree, 'measures': measures}
 
   @staticmethod
   def createMeasure(id):
-    return ModalService.modal_template + '/modal_create_measure.html', {}
+    return ModalService.modal_template + '/create/modal_create_measure.html', {}
 
   @staticmethod
   def createContact(id):
-    return ModalService.modal_template + '/modal_create_contact.html', {}
+    return ModalService.modal_template + '/create/modal_create_contact.html', {}
 
   @staticmethod
   def createEmployee(id):
-    return ModalService.modal_template + '/modal_create_employee.html', {}
+    return ModalService.modal_template + '/create/modal_create_employee.html', {}
 
   @staticmethod
   def chooseMaterial(company_id):
-    template = ModalService.modal_template + '/modal_choose_material.html'
+    template = ModalService.modal_template + '/choose/modal_choose_material.html'
     if not company_id:
       material_tree = MaterialService.get_material_tree()
       return template, {'material_tree': material_tree}
@@ -259,7 +254,7 @@ class ModalService:
 
   @staticmethod
   def chooseCompany(meeting_id):
-    template = ModalService.modal_template + '/modal_choose_company.html'
+    template = ModalService.modal_template + '/choose/modal_choose_company.html'
 
     if not meeting_id:
       companies = CompanyService.get_companies()
@@ -267,7 +262,7 @@ class ModalService:
 
   @staticmethod
   def chooseContact(company_id):
-    template = ModalService.modal_template + '/modal_choose_contact.html'
+    template = ModalService.modal_template + '/choose/modal_choose_contact.html'
     all_contacts = ContactService.get_contacts()
 
     contacts_list = [
@@ -310,21 +305,21 @@ class ModalService:
   @staticmethod
   def chooseEmployee(id):
     employees = EmployeeService.get_employees()
-    return ModalService.modal_template + '/modal_choose_employees.html', {'employees': employees}
+    return ModalService.modal_template + '/choose/modal_choose_employees.html', {'employees': employees}
 
   @staticmethod
   def editCompany(id):
     company = CompanyService.get_company(id)
-    return ModalService.modal_template + '/modal_edit_company.html', {'company':company}
+    return ModalService.modal_template + '/edit/modal_edit_company.html', {'company':company}
 
   @staticmethod
   def editContact(id):
     contact = ContactService.get_contact(id)
-    return ModalService.modal_template + '/modal_edit_contact.html', {'contact':contact}
+    return ModalService.modal_template + '/edit/modal_edit_contact.html', {'contact':contact}
 
   @staticmethod
   def editMaterial(material_id):
-    template = ModalService.modal_template + '/modal_edit_material.html'
+    template = ModalService.modal_template + '/edit/modal_edit_material.html'
     material = MaterialService.get_material(material_id)
     
     materials = MaterialService.get_materials()
@@ -351,6 +346,11 @@ class ModalService:
     }
 
   @staticmethod
+  def editMeasure(id):
+    measure = MeasureService.get_measure(id)
+    return ModalService.modal_template + '/edit/modal_edit_measure.html', {'measure': measure}
+
+  @staticmethod
   def editEmployee(id):
     employee = EmployeeService.get_employee(id)
-    return ModalService.modal_template + '/modal_edit_employee.html', {'employee': employee}
+    return ModalService.modal_template + '/edit/modal_edit_employee.html', {'employee': employee}
