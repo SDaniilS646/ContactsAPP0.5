@@ -117,10 +117,19 @@ class CommonOperations:
     if not table_name or not id:
       return JsonResponse({
         'success': False,
+        'errorType': 'type(e).__name__',
+        'errorDescription': str(e),
         'error': f'no id ({id}) or table name ({table_name})'
       })
-    
-    CommonService.delete_item(table_name, id)
+
+    try:
+      CommonService.delete_item(table_name, id)
+    except Exception as e:
+      return JsonResponse({
+        'success': False,
+        'errorType': type(e).__name__,
+        'errorDescription': str(e)
+      })
 
     return JsonResponse({
       'success': True
@@ -138,9 +147,15 @@ class CommonOperations:
         'success': False,
         'error': f'no id ({id}) or table name ({table_name})'
       })
-
-    CommonService.edit(table_name, id, input_data, user)
-
+    try:
+      CommonService.edit(table_name, id, input_data, user)
+    except Exception as e:
+      return JsonResponse({
+        'success': False,
+        'errorType': type(e).__name__,
+        'errorDescription': str(e)
+      })
+    
     return JsonResponse({
       'success': True
     })
@@ -149,9 +164,17 @@ class CommonOperations:
     input_data = json.loads(request.body)
     table_name = input_data.get('table')
     user = request.user
-    
-    new_id = CommonService.add(table_name, input_data, user)
 
+    try:
+      new_id = CommonService.add(table_name, input_data, user)
+    except Exception as e:
+      print(e)
+      return JsonResponse({
+        'success': False,
+        'errorType': type(e).__name__,
+        'errorDescription': str(e)
+      })
+    
     return JsonResponse({
       'success': True,
       'new_id':new_id
@@ -162,9 +185,15 @@ class CommonOperations:
     print(input_data)
 
     user = request.user
-
-    ConnectionService.delete_connection(input_data, user)
-
+    try:
+      ConnectionService.delete_connection(input_data, user)
+    except Exception as e:
+      return JsonResponse({
+        'success': False,
+        'errorType': type(e).__name__,
+        'errorDescription': str(e)
+      })
+    
     return JsonResponse({
       'success': True
     })

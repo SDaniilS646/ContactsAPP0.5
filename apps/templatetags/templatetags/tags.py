@@ -41,9 +41,9 @@ def material_node_tag(style, material, parent=None):
   selected = cfg.get('selected')
   selected = 'selected' if selected and selected(material, parent) else ''
 
-  css_class = f'{css_style} {selected}'
+  css_class = f'material-span {css_style} {selected}'
 
-  measure = f' - {material['measure']}' if material['measure'] else ''
+  measure = f' — {material['measure']}' if material['measure'] else ''
 
   return format_html(
     '<{tag} id="{id}" class="{cls}" onclick="{onclick}">{name}{measure}</{tag}>', 

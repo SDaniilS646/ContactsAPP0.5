@@ -44,9 +44,7 @@ async function post_meeting_create() {
   const container = document.getElementById('company-creation')
   const subject = container.querySelector('[name="subject"]')
   if (subject.value.trim() === '') {
-    const subjectLabel = container.querySelector('[name="subject-label"]')
-    subjectLabel.textContent = "УКАЖИТЕ ТЕМУ ВСТРЕЧИ"
-    subjectLabel.style.color = 'red'
+    alertFrame(`УКАЖИТЕ ТЕМУ ВСТРЕЧИ`)
     return
   }
 
@@ -67,9 +65,11 @@ async function post_meeting_create() {
       setPage('page', 'meetings')
     } else {
       console.log(data.error || 'meeting create error')
+      alertFrame(`Ошибка: \n— ${data.errorType}`)
     }
   } catch {
     console.error('Failed to create meeting:', error)
+    alertFrame(`Ошибка: \n— ${error}`)
   }
 }
 
@@ -78,8 +78,7 @@ async function post_company_create() {
   const comp_name = container.querySelector('[name="company_name"]')
   const companyLabel = container.querySelector('[name="company_name_label"]')
   if (comp_name.value == '') {
-    companyLabel.textContent = "УКАЖИТЕ НАЗВАНИЕ КОМПАНИИ"
-    companyLabel.style.color = 'red'
+    alertFrame(`УКАЖИТЕ НАЗВАНИЕ КОМПАНИИ`)
     return
   }
 
@@ -108,13 +107,16 @@ async function post_company_create() {
       setPage('page', 'companies')
     } else {
       if (data.result === 'Exists') {
-        companyLabel.textContent = "Компания с таким названием или почтой уже существует"
+        console.log('Failed to create company:', error)
+        alertFrame(`Компания с таким названием или почтой уже существует`)
       } else {
-        companyLabel.textContent = 'Не удалось создать компанию'
+        console.log('Failed to create company:', error)
+        alertFrame(`Не удалось создать компанию`)
       }
     }
   } catch (error) {
     console.log('Failed to create company:', error)
+    alertFrame(`Ошибка: \n— ${error}`)
   }
   
 }
@@ -123,9 +125,7 @@ async function post_company_edit() {
   const container = document.getElementById('edit_company_modal_frame') 
   const comp_name = container.querySelector('[name="company_name"]')
   if (comp_name.value == '') {
-    const companyLabel = container.querySelector('[name="company_name_label"]')
-    companyLabel.textContent = "УКАЖИТЕ НАЗВАНИЕ КОМПАНИИ"
-    companyLabel.style.color = 'red'
+    alertFrame(`УКАЖИТЕ НАЗВАНИЕ КОМПАНИИ`)
     return
   }
 
@@ -153,6 +153,9 @@ async function post_company_edit() {
   if (data.success) {
     removeModal('edit_company_modal_frame')
     reloadModal('companies-details-modal-frame', 'detailsCompany', comp_id)
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -162,10 +165,10 @@ async function post_contact_create(comp_id=null) {
   const cont_last_name = container.querySelector('[name="last_name"]')
   if (cont_first_name.value.trim() == '' && cont_last_name.value.trim() == '') {
     if (cont_first_name.value == '') {
-      container.querySelector('[name="first_name_label"]').textContent = "ВВЕДИТЕ ИМЯ"
+      alertFrame(`ВВЕДИТЕ ИМЯ`)
     }
     if (cont_last_name.value == '') {
-      container.querySelector('[name="last_name_label"]').textContent = "ВВЕДИТЕ ФАМИЛИЮ"
+      alertFrame(`ВВЕДИТЕ ФАМИЛИЮ`)
     }
     return
   }
@@ -186,6 +189,9 @@ async function post_contact_create(comp_id=null) {
     }
     removeModal('create_contact_modal_frame')
     reloadModal('choose_contact_modal_frame', 'chooseContact', comp_id)
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -195,10 +201,10 @@ async function post_contact_edit() {
   const cont_last_name = container.querySelector('[name="last_name"]')
   if (cont_first_name.value == '' && cont_last_name.value == '') {
     if (cont_first_name.value == '') {
-      container.querySelector('[name="first_name_label"]').textContent = "ВВЕДИТЕ ИМЯ"
+      alertFrame(`ВВЕДИТЕ ИМЯ`)
     }
     if (cont_last_name.value == '') {
-      container.querySelector('[name="last_name_label"]').textContent = "ВВЕДИТЕ ФАМИЛИЮ"
+      alertFrame(`ВВЕДИТЕ ФАМИЛИЮ`)
     }
     return
   }
@@ -219,6 +225,9 @@ async function post_contact_edit() {
   if (data.success) {   
     removeModal('edit_contact_modal_frame')
     reloadModal('contacts-details-modal-frame', 'detailsContact', contactId)
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -228,10 +237,10 @@ async function post_employee_create() {
   const emp_last_name = container.querySelector('[name="last_name"]')
   if (emp_first_name.value == '' && emp_last_name.value == '') {
     if (emp_first_name.value == '') {
-      container.querySelector('[name="first_name_label"]').textContent = "ВВЕДИТЕ ИМЯ"
+      alertFrame(`ВВЕДИТЕ ИМЯ`)
     }
     if (emp_last_name.value == '') {
-      container.querySelector('[name="last_name_label"]').textContent = "ВВЕДИТЕ ФАМИЛИЮ"
+      alertFrame(`ВВЕДИТЕ ФАМИЛИЮ`)
     }
     return
   }
@@ -249,9 +258,11 @@ async function post_employee_create() {
     if (AppState.currentPage === 'page-employees') {
       setPage('page', 'employees')
     }
-    
     removeModal('create_employee_modal_frame')
     reloadModal('choose_employee_modal_frame', 'chooseEmployee')
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -261,10 +272,10 @@ async function post_employee_edit() {
   const emp_last_name = container.querySelector('[name="last_name"]')
   if (emp_first_name.value == '' && emp_last_name.value == '') {
     if (emp_first_name.value == '') {
-      container.querySelector('[name="first_name_label"]').textContent = "ВВЕДИТЕ ИМЯ"
+      alertFrame(`ВВЕДИТЕ ИМЯ`)
     }
     if (emp_last_name.value == '') {
-      container.querySelector('[name="last_name_label"]').textContent = "ВВЕДИТЕ ФАМИЛИЮ"
+      alertFrame(`ВВЕДИТЕ ФАМИЛИЮ`)
     }
     return
   }
@@ -282,6 +293,9 @@ async function post_employee_edit() {
   if (data.success) {
     removeModal('edit_employee_modal_frame')
     setPage('page', 'employees')
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -291,9 +305,7 @@ async function post_measure_create() {
   const measure_title = container.querySelector('[name="measure_full_name"]')
 
   if (measure_name.value == '') {
-    const measure_name_label = container.querySelector('[name="measure_name_label"]')
-    measure_name_label.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
-    measure_name_label.style.color = 'red'
+    alertFrame('ВВЕДИТЕ НАИМЕНОВАНИЕ')
     return
   }
 
@@ -308,6 +320,9 @@ async function post_measure_create() {
     // }
     removeModal('create_measure_modal_frame')
     reloadModal('list_measure_modal_frame', 'listMeasure')
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -317,9 +332,7 @@ async function post_measure_edit(id) {
   const measure_title = container.querySelector('[name="measure_full_name"]')
 
   if (measure_name.value == '') {
-    const measure_name_label = container.querySelector('[name="measure_name_label"]')
-    measure_name_label.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
-    measure_name_label.style.color = 'red'
+    alertFrame("ВВЕДИТЕ НАИМЕНОВАНИЕ")
     return
   }
 
@@ -330,11 +343,11 @@ async function post_measure_edit(id) {
     title:  measure_title.value
   })
   if (data.success) {
-    // if (AppState.currentPage === 'page-materials') {
-    //   setPage('page', 'materials')
-    // }
     removeModal('edit_measure_modal_frame')
     reloadModal('list_measure_modal_frame', 'listMeasure')
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -343,9 +356,7 @@ async function post_material_create(comp_id=null) {
   const mat_name = container.querySelector('[name="material_name"]')
 
   if (mat_name.value == '') {
-    const materialLabel = container.querySelector('[name="material_name_label"]')
-    materialLabel.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
-    materialLabel.style.color = 'red'
+    alertFrame("ВВЕДИТЕ НАИМЕНОВАНИЕ")
     return
   }
 
@@ -363,6 +374,9 @@ async function post_material_create(comp_id=null) {
     }
     removeModal('create_material_modal_frame')
     reloadModal('choose_material_modal_frame', 'chooseMaterial', comp_id)
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
@@ -370,9 +384,7 @@ async function post_material_edit(all_children) {
   const container = document.getElementById('edit_material_modal_frame')
   const mat_name = container.querySelector('[name="material_name"]')
   if (mat_name.value.trim() === '') {
-    const materialLabel = container.querySelector('[name="material_name_label"]')
-    materialLabel.value = "ВВЕДИТЕ НАИМЕНОВАНИЕ"
-    materialLabel.style.color = 'red'
+    alertFrame("ВВЕДИТЕ НАИМЕНОВАНИЕ")
     return
   }
 
@@ -380,12 +392,12 @@ async function post_material_edit(all_children) {
   const this_mat_id = container.querySelector('[name="id"]').value
 
   if (all_children.includes(Number(new_parent_id))) {
-    alert('Родительский элемент не может быть ниже')
+    alertFrame('Родительский элемент не может быть ниже себя')
     return
   }
 
   if (this_mat_id === new_parent_id) {
-    alert('Родительский элемент не может быть самим собой')
+    alertFrame('Родительский элемент не может быть самим собой')
     return
   }
 
@@ -394,34 +406,40 @@ async function post_material_edit(all_children) {
     id: this_mat_id,
     material_name: mat_name.value,
     keywords: container.querySelector('[name="keywords"]').value,
-    parent_id: new_parent_id == '' ? null : new_parent_id
+    parent_id: new_parent_id == '' ? null : new_parent_id,
+    measure_id: container.querySelector('[name="measureList"]').value
   })
 
   if (data.success) {
     setPage('page', 'materials')
     removeModal('edit_material_modal_frame')
     reloadModal('materials-details-modal-frame', 'detailsMaterial', this_mat_id)
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
   }
 }
 
 async function post_delItem(table, id) {
-  if (!confirm('Удалить?')) {
+  const confirmed = await confirmFrame('Удалить?')
+  if (!confirmed) {
     return
   }
 
   const data = await postJson(`/delete/`, {table:table, id: id})
   if (data.success) {
-    const cur_pg = AppState.currentPage.split('-')
-    print(cur_pg)
-    setPage(cur_pg[0], cur_pg[1])
+    const currentPage = AppState.currentPage.split('-')
+    const currentFrame = AppState.activeModal
+    setPage(currentPage[0], currentPage[1])
   } else {
-    console.log(data.error)
+    console.log(`table: ${table}; id: ${id}\n${data.errorDescription}`)
+    alertFrame(`Ошибка: \n— ${data.errorType}`)
   }
 }
 
 async function post_delConnection(table1, id1, table2, id2, page=null) {
-
-  if (!confirm('Удалить?')) {
+  const confirmed = await confirmFrame('Удалить?')
+  if (!confirmed) {
     return
   }
   const data = await postJson('/delete_connection/', {
@@ -434,7 +452,10 @@ async function post_delConnection(table1, id1, table2, id2, page=null) {
       AppState.activeModal.at(-1).modal_name,
       AppState.activeModal.at(-1).id,
     )
-  } 
+  } else {
+    console.log(data.errorDescription)
+    alertFrame(`Ошибка: \n${data.errorType}`)
+  }
 }
 
 async function post_ContactsList(comp_id) {
