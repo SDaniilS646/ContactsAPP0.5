@@ -51,7 +51,7 @@ async function post_meeting_create() {
   const meetingDateInput = container.querySelector('[name="meeting-date"]')
 
   try {
-    const data = await postJson('/add/', {
+    const data = await postJson('/crm/add/', {
       table: 'meetings',
       subject: subject.value,
       comment: container.querySelector('[name="comment"]').value,
@@ -90,7 +90,7 @@ async function post_company_create() {
   rating = Math.min(Math.max(rating, 0), 5)
 
   try {
-    const data = await postJson('/add/', {
+    const data = await postJson('/crm/add/', {
       table: 'companies',
       company_name: comp_name.value,
       inn: container.querySelector('[name="inn"]').value,
@@ -138,7 +138,7 @@ async function post_company_edit() {
 
   const comp_id = container.querySelector('[name="id"]').value
 
-  const data = await postJson('/edit/', {
+  const data = await postJson('/crm/edit/', {
     table: 'companies',
     id: comp_id,
     company_name: comp_name.value,
@@ -173,7 +173,7 @@ async function post_contact_create(comp_id=null) {
     return
   }
 
-  const data = await postJson('/add/', {
+  const data = await postJson('/crm/add/', {
     table: 'contacts',
     first_name: cont_first_name.value,
     last_name: cont_last_name.value,
@@ -211,7 +211,7 @@ async function post_contact_edit() {
 
   const contactId = container.querySelector('[name="id"]').value
 
-  const data = await postJson('/edit/', {
+  const data = await postJson('/crm/edit/', {
     table: 'contacts',
     id: contactId,
     first_name: cont_first_name.value,
@@ -245,7 +245,7 @@ async function post_employee_create() {
     return
   }
 
-  const data = await postJson('/add/', {
+  const data = await postJson('/crm/add/', {
     table: 'employees',
     first_name: emp_first_name.value,
     last_name: emp_last_name.value,
@@ -280,7 +280,7 @@ async function post_employee_edit() {
     return
   }
 
-  const data = await postJson('/edit/', {
+  const data = await postJson('/crm/edit/', {
     table: 'employees',
     id: container.querySelector('[name="id"]').value,
     first_name: emp_first_name.value,
@@ -309,7 +309,7 @@ async function post_measure_create() {
     return
   }
 
-  const data = await postJson('/add/', {
+  const data = await postJson('/crm/add/', {
     table: 'measures',
     name: measure_name.value,
     title:  measure_title.value
@@ -336,7 +336,7 @@ async function post_measure_edit(id) {
     return
   }
 
-  const data = await postJson('/edit/', {
+  const data = await postJson('/crm/edit/', {
     id: id,
     table: 'measures',
     name: measure_name.value,
@@ -360,7 +360,7 @@ async function post_material_create(comp_id=null) {
     return
   }
 
-  const data = await postJson('/add/', {
+  const data = await postJson('/crm/add/', {
     table: 'materials',
     material_name: mat_name.value,
     keywords: container.querySelector('[name="keywords"]').value,
@@ -401,7 +401,7 @@ async function post_material_edit(all_children) {
     return
   }
 
-  const data = await postJson('/edit/', {
+  const data = await postJson('/crm/edit/', {
     table: 'materials',
     id: this_mat_id,
     material_name: mat_name.value,
@@ -426,7 +426,7 @@ async function post_delItem(table, id) {
     return
   }
 
-  const data = await postJson(`/delete/`, {table:table, id: id})
+  const data = await postJson(`/crm/delete/`, {table:table, id: id})
   if (data.success) {
     const currentPage = AppState.currentPage.split('-')
     const currentFrame = AppState.activeModal
@@ -442,7 +442,7 @@ async function post_delConnection(table1, id1, table2, id2, page=null) {
   if (!confirmed) {
     return
   }
-  const data = await postJson('/delete_connection/', {
+  const data = await postJson('/crm/delete_connection/', {
     table1, id1, table2, id2
   })
 
@@ -459,7 +459,7 @@ async function post_delConnection(table1, id1, table2, id2, page=null) {
 }
 
 async function post_ContactsList(comp_id) {
-  const data = await postJson('/edit_connections/', {
+  const data = await postJson('/crm/edit_connections/', {
       table1: 'companies',
       id1: comp_id,
       table2: 'contacts',
@@ -473,7 +473,7 @@ async function post_ContactsList(comp_id) {
 }
 
 async function post_MaterialsList(comp_id) {
-  const data = await postJson('/edit_connections/', {
+  const data = await postJson('/crm/edit_connections/', {
     table1: 'companies',
     id1: comp_id,
     table2: 'materials',
@@ -600,7 +600,7 @@ async function post_create_parse_company() {
   try {
     for (const checkbox of checkboxes) {
       try {
-        const data = await postJson('/add/', buildCompanyPayload(checkbox))
+        const data = await postJson('/crm/add/', buildCompanyPayload(checkbox))
       if (data.success) {
           addedCompanies++
           

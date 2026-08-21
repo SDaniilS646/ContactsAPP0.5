@@ -74,7 +74,6 @@ def clearPage(request):
 
 def setPage(request):
   page_data = json.loads(request.body)
-
   if page_data['type'] == 'page':
     html, vars = PAGES[page_data['table']]()
   elif page_data['type'] == 'add':
