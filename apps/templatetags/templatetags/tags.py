@@ -43,11 +43,14 @@ def material_node_tag(style, material, parent=None):
 
   css_class = f'{css_style} {selected}'
 
+  measure = f' - {material['measure']}' if material['measure'] else ''
+
   return format_html(
-    '<{tag} id="{id}" class="{cls}" onclick="{onclick}">{name}</{tag}>', 
+    '<{tag} id="{id}" class="{cls}" onclick="{onclick}">{name}{measure}</{tag}>', 
     tag=mark_safe(cfg['tag']), 
     id=mat_id,
     cls=css_class,
     onclick=mark_safe(cfg['onclick'].format(id=mat_id)),
-    name=mark_safe(material['material_name'])
+    name=mark_safe(material['material_name']),
+    measure=mark_safe(measure)
   )

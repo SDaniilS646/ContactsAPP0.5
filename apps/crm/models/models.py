@@ -57,6 +57,7 @@ class Employee(AuditedModel, PersonNameModel, ContactsModel):
 
 class Measure(models.Model):
   name = models.CharField(max_length=10, blank=True)
+  title = models.CharField(max_length=50, blank=True)
   class Meta:
       db_table = 'measures'
   
@@ -70,21 +71,7 @@ class Material(AuditedModel):
       related_name='children', verbose_name='Родительский материал', on_delete=models.PROTECT
   ) # Возможна замена на category FK + новая модель category (пока под вопросом)
   measure = models.ForeignKey(Measure, blank=True, null=True, on_delete=models.SET_NULL)
-
-  keywords = models.TextField(blank=True)  # This field type is a guess.
-
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-
+  keywords = models.TextField(blank=True)
 
   class Meta:
       db_table = 'materials'
