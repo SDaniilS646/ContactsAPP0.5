@@ -1,0 +1,52 @@
+from django.db import models
+from django.conf import settings
+
+class TrainingExample(models.Model):
+  STATUS_CHOICES = [
+    ('pending', 'Ожидает разметки'),
+    ('labeled', 'Размечено'),
+    ('reviewed', 'Проверено')
+  ]
+
+  text = models.TextField()
+  # input_data = models.JSONField()
+  label = models.CharField(max_length=100, null=True, blank=True)
+  status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
+  uncertainity_score = models.FloatField(null=True, blank=True)
+  predicted_label = models.CharField(max_length=100, null=True, blank=True)
+
+  created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='training_created', on_delete=models.SET_NULL)
+  labeled_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='training_labeled', on_delete=models.SET_NULL)
+  created_at = models.DateTimeField(blank=True, null=True)
+  labeled_at = models.DateTimeField(blank=True, null=True)
+
+  used_in_model_version = models.ForeignKey(
+    'ModelVersion', null=True, related_name='training_examples', on_delete=models.SET_NULL
+  )
+
+  class Meta:
+    db_table = 'training_example'
+
+  def __str__(self):
+    return f'Example #{self.id} — {self.status} ({self.label or 'без метки'})'
+
+class ModelVersion(models.Model):
+  version = models.PositiveIntegerField(unique=True)
+
+  file_path = models.CharField(max_length=500)
+
+  trained_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+  trained_at = models.DateTimeField(blank=True, null=True)
+
+  Training_examples_count  = models.PositiveIntegerField()
+  metrics = models.JSONField(default=dict)
+
+  is_active = models.BooleanField(default=False)
+
+  class Meta:
+    db_table = 'model_version'
+
+  def __str__(self):
+    active_marker = ' [АКТИВНА]' if self.is_active else ''
+    return f'Модель v{self.version}{active_marker}'

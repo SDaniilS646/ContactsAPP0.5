@@ -1,4 +1,3 @@
-import json
 from django.http import JsonResponse
 
 import openpyxl
@@ -18,3 +17,7 @@ def sender(request):
   return JsonResponse({
       'success': True
     })
+
+
+def createModel():
+  pass

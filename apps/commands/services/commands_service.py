@@ -6,11 +6,15 @@ from django.db import connection
 from apps.crm.models.models import Company, Contact, Material, Meeting, Employee
 from apps.crm.models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
+from apps.sender.models import TrainingExample
+from apps.sender.sender_services import work_classifier
+
 from pathlib import Path
 
 import csv
 import io
 import zipfile
+import json
 from datetime import datetime
 
 MODELS = {
@@ -29,6 +33,34 @@ class Commands:
   @staticmethod
   def checkrole(user):
     return user.is_superuser
+
+  @staticmethod
+  def import_training_model(args):
+    pending_file_path = Path(__file__).parent.parent.parent.parent / 'backend' / 'xl_sender' / 'ml_backend' / 'labeled_works.json'
+
+    TrainingExample.objects.all().delete()
+
+    with open(pending_file_path, 'r', encoding='utf-8') as file:
+      data = json.load(file)
+
+    for item in data:
+      TrainingExample.objects.create(
+        text = item.get('name'),
+        label = item.get('category'),
+        predicted_label = item.get('predicted category'),
+        uncertainity_score = float(item['probability'].replace('%', '').strip()) / 100 if item.get('probability') else None,
+        status = 'pending' if item.get('predicted category') else 'labeled'
+      )
+    
+    return True
+
+  @staticmethod
+  def train_model(args):
+
+    work_classifier()
+    print('finished')
+
+    return True
   
   @staticmethod
   def getalldata(args):

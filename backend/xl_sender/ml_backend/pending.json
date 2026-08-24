@@ -1,0 +1,786 @@
+[
+  {
+    "id": 11,
+    "name": "Устройство разделительного слоя",
+    "predicted category": "фасады",
+    "probability": "18.42%",
+    "status": "pending"
+  },
+  {
+    "id": 12,
+    "name": "Армирование круглых колонн d=200мм, Карм.=400кг/м3",
+    "predicted category": "армирование",
+    "probability": "23.41%",
+    "status": "pending"
+  },
+  {
+    "id": 13,
+    "name": "Бетонирование круглых колонн d=200мм",
+    "predicted category": "бетонирование",
+    "probability": "37.82%",
+    "status": "pending"
+  },
+  {
+    "id": 14,
+    "name": "Устройство теплоизоляции",
+    "predicted category": "утепление",
+    "probability": "48.03%",
+    "status": "pending"
+  },
+  {
+    "id": 15,
+    "name": "Устройство ц.п. стяжки h80мм",
+    "predicted category": "стяжка",
+    "probability": "31.05%",
+    "status": "pending"
+  },
+  {
+    "id": 16,
+    "name": "Огрунтовка пола ",
+    "predicted category": "грунтовка",
+    "probability": "45.44%",
+    "status": "pending"
+  },
+  {
+    "id": 17,
+    "name": "Устройство шумо- и гидроизоляции пола с заведением на стены на высоту 300 мм",
+    "predicted category": "гидроизоляция",
+    "probability": "25.78%",
+    "status": "pending"
+  },
+  {
+    "id": 18,
+    "name": "Укладка керамогранита на пол 300х300х8мм",
+    "predicted category": "плитка",
+    "probability": "46.87%",
+    "status": "pending"
+  },
+  {
+    "id": 19,
+    "name": "Укладка керамогранита на пол 1200х1200х10мм",
+    "predicted category": "плитка",
+    "probability": "46.87%",
+    "status": "pending"
+  },
+  {
+    "id": 20,
+    "name": "Огрунтовка перекрытия",
+    "predicted category": "грунтовка",
+    "probability": "38.98%",
+    "status": "pending"
+  },
+  {
+    "id": 21,
+    "name": "Устройство ц.п. стяжки h50мм",
+    "predicted category": "стяжка",
+    "probability": "30.38%",
+    "status": "pending"
+  },
+  {
+    "id": 22,
+    "name": "Устройство обмазочной гидроизоляции",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 23,
+    "name": "Разработка грунта котлована механизированным способом (98,25%), с погрузкой в автотранспорт. Группа грунтов: 2.",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 24,
+    "name": "Разработка грунта котлована механизированным способом (98,25%), в отвал. Группа грунтов: 2.",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 25,
+    "name": "Доработка грунта котлована вручную (1,75%)",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 26,
+    "name": "Вывоз грунта и утилизация за пределы площадки автотранспортом",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 27,
+    "name": "Обратная засыпка механизированным способом (80%) – местным грунтом с уплотнением до Ксом=0,95",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 28,
+    "name": "Обратная засыпка ручная 20%  местным нерастительным грунтом ",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 29,
+    "name": "Устройство песчаной подготовки толщ. 100 мм с уплотнением: Купл.=0,95",
+    "predicted category": "гидроизоляция",
+    "probability": "16.69%",
+    "status": "pending"
+  },
+  {
+    "id": 30,
+    "name": "Вывоз грунта за пределы площадки автотранспортом",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 31,
+    "name": "Обратная засыпка котлована механизированным способом (80%) местным нерастительным грунтом с послойным уплотнением до Ксом.=0,95 ",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 32,
+    "name": "Обратная засыпка механизированным способом (80%) – местным грунтом с уплотнением до Ксом=0,92",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 33,
+    "name": "Обратная засыпка ручная (20%)  местным нерастительным грунтом ",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 34,
+    "name": "Разработка грунта котлована механизированным способом (98,25%), с погрузкой в автотранспорт.",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 35,
+    "name": "Доработка грунта котлована вручную (1,75%), в отвал",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 36,
+    "name": "Обратная засыпка механизированным способом (80%) – местным грунтом с уплотнением: Купл.=0,95",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 37,
+    "name": "Обратная засыпка ручная (20%) ",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 38,
+    "name": "Устройство засыпки из ПГС  с уплотнением: Купл.=0,95",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 39,
+    "name": "Обратная засыпка ручная 20%",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 40,
+    "name": "Обратная засыпка грунта ручная (20%) ",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 41,
+    "name": "Устройство песчаного основания под фундаменты толщ. 600 мм с уплотнением: Купл.=0,95",
+    "predicted category": "гидроизоляция",
+    "probability": "16.69%",
+    "status": "pending"
+  },
+  {
+    "id": 42,
+    "name": "Устройство бетонной подготовки толщ. 100 мм",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 43,
+    "name": "Устройство ФПм толщина 500мм",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 44,
+    "name": "Армирование ФПм",
+    "predicted category": "армирование",
+    "probability": "49.02%",
+    "status": "pending"
+  },
+  {
+    "id": 45,
+    "name": "Устройство Фм толщина 500мм",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 46,
+    "name": "Армирование Фм",
+    "predicted category": "армирование",
+    "probability": "49.02%",
+    "status": "pending"
+  },
+  {
+    "id": 47,
+    "name": "Устройство Цб толщина 300мм",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 48,
+    "name": "Устройство монолитных столбиков ",
+    "predicted category": "утепление",
+    "probability": "16.15%",
+    "status": "pending"
+  },
+  {
+    "id": 49,
+    "name": "Армирование монолитных столбиков",
+    "predicted category": "армирование",
+    "probability": "38.61%",
+    "status": "pending"
+  },
+  {
+    "id": 50,
+    "name": "Устройство монолитных стен толщ. 200 мм",
+    "predicted category": "армирование",
+    "probability": "16.44%",
+    "status": "pending"
+  },
+  {
+    "id": 51,
+    "name": "Армирование монолитных стен",
+    "predicted category": "армирование",
+    "probability": "40.32%",
+    "status": "pending"
+  },
+  {
+    "id": 52,
+    "name": "Устройство монолитных колонн",
+    "predicted category": "армирование",
+    "probability": "19.01%",
+    "status": "pending"
+  },
+  {
+    "id": 53,
+    "name": "Армирование монолитных колонн",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 54,
+    "name": "Устройство бетонной подготовки толщ. 70 мм",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 55,
+    "name": "Устройство ж/б каналов",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 56,
+    "name": "Армирование ж/б каналов",
+    "predicted category": "армирование",
+    "probability": "49.02%",
+    "status": "pending"
+  },
+  {
+    "id": 57,
+    "name": "Изготовление и установка ЗД деталей (для крышек)",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 58,
+    "name": "Изготовление и установка крышек для люков каналов (11 шт)",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 59,
+    "name": "Монтаж сборных плит перекрытия каналов",
+    "predicted category": "фасады",
+    "probability": "24.63%",
+    "status": "pending"
+  },
+  {
+    "id": 60,
+    "name": "Устройство плиты пола  толщина 150мм",
+    "predicted category": "стяжка",
+    "probability": "17.70%",
+    "status": "pending"
+  },
+  {
+    "id": 61,
+    "name": "Армирование плиты пола",
+    "predicted category": "армирование",
+    "probability": "30.56%",
+    "status": "pending"
+  },
+  {
+    "id": 62,
+    "name": "Устройство горизонтальной гидроизоляции \"Стармекс Сил\" - 1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 63,
+    "name": "Устройство профилированной мембраны PLANTER Geo (стены ниже ур. земли)",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 64,
+    "name": "Устройство оклеечной вертикальной гидроизоляции Техноэласт ЭПП - 2 слоя",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 65,
+    "name": "Устройство огрунтовки вертикальных ж/б поверхностей  стеновых панелей ",
+    "predicted category": "фасады",
+    "probability": "18.70%",
+    "status": "pending"
+  },
+  {
+    "id": 66,
+    "name": "Устройство обмазочной вертикальной гидроизоляции \"Стармекс Сил\" фундаментов, цокольных балок, колонн и подпольных каналов- 1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "20.32%",
+    "status": "pending"
+  },
+  {
+    "id": 67,
+    "name": "Устройство гидрошпонки ",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 68,
+    "name": "Устройство галтели 20-40 Стармекс PM3 или аналог",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 69,
+    "name": "Устройство засыпки ПГС с уплотнением Купл.=0,95 толщ. 200 мм",
+    "predicted category": "гидроизоляция",
+    "probability": "16.69%",
+    "status": "pending"
+  },
+  {
+    "id": 70,
+    "name": "Устройство теплоизоляции ",
+    "predicted category": "утепление",
+    "probability": "48.03%",
+    "status": "pending"
+  },
+  {
+    "id": 71,
+    "name": "Устройство бетонной армированной стяжки толщ 100-170 мм",
+    "predicted category": "стяжка",
+    "probability": "24.30%",
+    "status": "pending"
+  },
+  {
+    "id": 72,
+    "name": "Устройство ФП толщина 500мм",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 73,
+    "name": "Армирование ФП",
+    "predicted category": "армирование",
+    "probability": "49.02%",
+    "status": "pending"
+  },
+  {
+    "id": 74,
+    "name": "Армирование Цб",
+    "predicted category": "армирование",
+    "probability": "49.02%",
+    "status": "pending"
+  },
+  {
+    "id": 75,
+    "name": "Устройство монолитной колонны К-1 400х400мм  на отм. -3,250 (14 шт.); -2,850 (13шт.)",
+    "predicted category": "плитка",
+    "probability": "16.85%",
+    "status": "pending"
+  },
+  {
+    "id": 76,
+    "name": "Армирование монолитных колонн К-1",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 77,
+    "name": "Устройство монолитной колонны К-2 Ø500 мм  на отм. -2,850 (2 шт.) ",
+    "predicted category": "гидроизоляция",
+    "probability": "16.70%",
+    "status": "pending"
+  },
+  {
+    "id": 78,
+    "name": "Армирование монолитных колонн К-2",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 79,
+    "name": "Устройство монолитной колонны К-3 720x400мм на отм. -2,850 (2 шт.)",
+    "predicted category": "плитка",
+    "probability": "16.85%",
+    "status": "pending"
+  },
+  {
+    "id": 80,
+    "name": "Армирование монолитных колонн К-3",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 81,
+    "name": "Устройство монолитной колонны К-4 550x400мм на отм. -2,850 (1 шт.)",
+    "predicted category": "плитка",
+    "probability": "16.85%",
+    "status": "pending"
+  },
+  {
+    "id": 82,
+    "name": "Армирование монолитных колонн К-4",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 83,
+    "name": "Устройство монолитной колонны К-5 500x800 мм на отм. -3,250 (8 шт.); -2,850 (1шт.)",
+    "predicted category": "гидроизоляция",
+    "probability": "16.70%",
+    "status": "pending"
+  },
+  {
+    "id": 84,
+    "name": "Армирование монолитных колонн К-5",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 85,
+    "name": "Устройство монолитной колонны К-6  400x600мм на отм. -2,850 (2шт.)",
+    "predicted category": "плитка",
+    "probability": "16.85%",
+    "status": "pending"
+  },
+  {
+    "id": 86,
+    "name": "Армирование монолитных колонн К-6",
+    "predicted category": "армирование",
+    "probability": "41.28%",
+    "status": "pending"
+  },
+  {
+    "id": 87,
+    "name": "Устройство плит пола ППм1, ППм2  толщина 150мм",
+    "predicted category": "стяжка",
+    "probability": "17.70%",
+    "status": "pending"
+  },
+  {
+    "id": 88,
+    "name": "Армирование плит пола ППм1, ППм2",
+    "predicted category": "армирование",
+    "probability": "30.56%",
+    "status": "pending"
+  },
+  {
+    "id": 89,
+    "name": "Устройство плиты пола ППм3 толщина 250мм",
+    "predicted category": "стяжка",
+    "probability": "17.70%",
+    "status": "pending"
+  },
+  {
+    "id": 90,
+    "name": "Армирование плиты пола ППм3",
+    "predicted category": "армирование",
+    "probability": "30.56%",
+    "status": "pending"
+  },
+  {
+    "id": 91,
+    "name": "Устройство плиты перекрытия  толщина 250мм",
+    "predicted category": "грунтовка",
+    "probability": "16.03%",
+    "status": "pending"
+  },
+  {
+    "id": 92,
+    "name": "Армирование плиты перекрытия",
+    "predicted category": "армирование",
+    "probability": "28.35%",
+    "status": "pending"
+  },
+  {
+    "id": 93,
+    "name": "Устройство горизонтальной гидроизоляции фундаментной плиты и плит пола \"Стармекс сил\" (или аналог)  1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "21.70%",
+    "status": "pending"
+  },
+  {
+    "id": 94,
+    "name": "Устройство вертикальной (оклеечной)??? гидроизоляции фундаментной плиты \"Стармекс сил\" (или аналог)  2 слоя",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 95,
+    "name": "Устройство профилированной мембраны \"PLANTER Standard\" или аналог",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 96,
+    "name": "Устройство горизонтальной гидроизоляции фундаментов, цокольных балок, каналов \"Стармекс сил\" (или аналог)  1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 97,
+    "name": "Устройство обмазочной гидроизоляции вертикальных поверхностей фундамента, цокольных балок, каналов  горячим битумом за 2 раза",
+    "predicted category": "гидроизоляция",
+    "probability": "28.17%",
+    "status": "pending"
+  },
+  {
+    "id": 98,
+    "name": "Устройство огрунтовки вертикальных ж/б поверхностей стен  ",
+    "predicted category": "утепление",
+    "probability": "20.75%",
+    "status": "pending"
+  },
+  {
+    "id": 99,
+    "name": "Устройство оклеечной вертикальной гидроизоляции стен Техноэласт ЭПП - 2 слоя",
+    "predicted category": "гидроизоляция",
+    "probability": "19.67%",
+    "status": "pending"
+  },
+  {
+    "id": 100,
+    "name": "Устройство телоизоляции толщ. 80 мм",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 101,
+    "name": "Устройство вертикальной обмазочной гидроизоляции колонн   горячим битумом за 2 раза",
+    "predicted category": "гидроизоляция",
+    "probability": "19.92%",
+    "status": "pending"
+  },
+  {
+    "id": 102,
+    "name": "Устройство узлов примыкания ",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 103,
+    "name": "Устройство бетонной армированной стяжки толщ 80 мм",
+    "predicted category": "стяжка",
+    "probability": "24.30%",
+    "status": "pending"
+  },
+  {
+    "id": 104,
+    "name": "Устройство песчаной подготовки толщ. 300 мм с уплотнением: Купл.=0,95",
+    "predicted category": "гидроизоляция",
+    "probability": "17.69%",
+    "status": "pending"
+  },
+  {
+    "id": 105,
+    "name": "Изготовление и установка крышек для люков каналов (10 шт)",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 106,
+    "name": "Армирование плит пола",
+    "predicted category": "армирование",
+    "probability": "30.56%",
+    "status": "pending"
+  },
+  {
+    "id": 107,
+    "name": "Устройство профилированной мембраны PLANTER Geo (стены подвала)",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 108,
+    "name": "Устройство огрунтовки вертикальных ж/б поверхностей ФП и  стеновых панелей ",
+    "predicted category": "фасады",
+    "probability": "17.18%",
+    "status": "pending"
+  },
+  {
+    "id": 109,
+    "name": "Устройство обмазочной вертикальной гидроизоляции \"Стармекс Сил\"  цокольных балок и колонн 1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "20.32%",
+    "status": "pending"
+  },
+  {
+    "id": 110,
+    "name": "Изготовление и установка крышек для люков каналов (5 шт)",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 111,
+    "name": "Устройство вертикальной гидроизоляции Стармекс Сил (или аналог) - 1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 112,
+    "name": "Устройство песчаной подготовки толщ. 100 мм",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 113,
+    "name": "Изготовление и установка крышек для люков каналов (7 шт)",
+    "predicted category": "гидроизоляция",
+    "probability": "14.64%",
+    "status": "pending"
+  },
+  {
+    "id": 114,
+    "name": "Устройство горизонтальной гидроизоляции фундаментов, цокольных балок, плиты пола, каналов \"Стармекс Сил\" - 1 слой",
+    "predicted category": "гидроизоляция",
+    "probability": "21.59%",
+    "status": "pending"
+  },
+  {
+    "id": 115,
+    "name": "Устройство обмазочной гидроизоляции вертикальных поверхностей фундамента, цокольных балок, каналов, столбиков  горячим битумом за 2 раза",
+    "predicted category": "гидроизоляция",
+    "probability": "28.17%",
+    "status": "pending"
+  },
+  {
+    "id": 116,
+    "name": "Устройство Фм толщина 300мм",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 117,
+    "name": "Установка химических анкеров",
+    "predicted category": "фасады",
+    "probability": "14.09%",
+    "status": "pending"
+  },
+  {
+    "id": 118,
+    "name": "Устройство Цб ",
+    "predicted category": "утепление",
+    "probability": "24.45%",
+    "status": "pending"
+  },
+  {
+    "id": 119,
+    "name": "Устройство набетонки толщ. 100 мм",
+    "predicted category": "утепление",
+    "probability": "16.51%",
+    "status": "pending"
+  },
+  {
+    "id": 120,
+    "name": "Устройство горизонтальной гидроизоляции \"Стармекс Сил\" - 1 слой (фунд)",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 121,
+    "name": "Устройство оклеечной вертикальной гидроизоляции Техноэласт ЭПП - 2 слоя (фунд)",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  },
+  {
+    "id": 122,
+    "name": "Устройство обмазочной вертикальной гидроизоляции \"Стармекс Сил\" цокольных балок - 1 слой(цок)",
+    "predicted category": "гидроизоляция",
+    "probability": "24.90%",
+    "status": "pending"
+  }
+]

@@ -587,3 +587,10 @@ MATERIAL TREE
 .is-hidden {
   display: none;
 }
+
+#excel-upload-block {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}

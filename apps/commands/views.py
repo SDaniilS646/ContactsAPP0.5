@@ -1,0 +1,80 @@
+from .services.commands_service import Commands
+
+from django.http import JsonResponse, HttpResponseBase
+import shlex
+import json
+
+COMMANDS = {
+  'help': Commands.HelpCommand,
+  'all_users': Commands.getUsers,
+  'create_user': Commands.createUser,
+  'reset_password': Commands.resetPassword,
+  'delete_user': Commands.deleteUser,
+  'load_csv': Commands.getalldata,
+  'check_con': Commands.checkConnections,
+  'models': Commands.getModels,
+  'sql': Commands.sqlQuery,
+  'import_pending_json': Commands.import_training_model,
+  'train_model': Commands.train_model
+}
+
+class CommandOperations:
+  def executeCMD(request):
+    if not Commands.checkrole(request.user):
+      return JsonResponse({
+        'success': False,
+        'res': 'Нет доступа'
+      }, status=403)
+
+    if request.method != 'POST':
+      return JsonResponse({
+        'success': False,
+        'res': 'Метод не поддерживается'
+      }, status=405)
+    
+    if request.content_type == 'application/json':
+      full_cmd = json.loads(request.body)['command']
+    else:
+      full_cmd = request.POST['command']
+
+    try:
+      full_cmd = shlex.split(full_cmd)
+    except ValueError as e:
+      return JsonResponse({
+        'success': False,
+        'res': f'Ошибка разбора команды: {e}'
+      }, status=400)
+    
+    if not full_cmd:
+      return JsonResponse({
+        'success': False,
+        'res': 'Пустая команда'
+      }, status=400)
+    
+    cmd = full_cmd[0]
+    args = full_cmd[1:]
+
+    handler = COMMANDS.get(cmd)
+    if not handler:
+      return JsonResponse({
+        'success': False,
+        'res': f'Неизвестная команда: {cmd}'
+      }, status=400)
+
+    try:
+      res = handler(args)
+    except Exception as e:
+      return JsonResponse({
+        'success': False,
+        'res': f'Ошибка выполнения команнды: {e}'
+      }, status=500)
+
+
+    if isinstance(res, HttpResponseBase):
+      return res
+    
+    return JsonResponse({
+      'success': True,
+      'res': res
+    })
+
