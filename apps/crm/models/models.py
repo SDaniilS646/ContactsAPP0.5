@@ -3,24 +3,7 @@ from django.db import models
 from .mixins import AuditedModel, PersonNameModel, ContactsModel
 
 class Contact(AuditedModel, PersonNameModel, ContactsModel):
-  # first_name = models.CharField(max_length=255, blank=True)
-  # last_name = models.CharField(max_length=255, blank=True)
-  # patronymic = models.CharField(max_length=255, blank=True)
-  # phone = models.CharField(max_length=50, blank=True)
-  # mail = models.CharField(max_length=255, blank=True)
   comment = models.TextField(blank=True)
-
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   class Meta:
       db_table = 'contacts'
@@ -29,24 +12,7 @@ class Contact(AuditedModel, PersonNameModel, ContactsModel):
       return self.last_name or f'Контакт #{self.pk}'
 
 class Employee(AuditedModel, PersonNameModel, ContactsModel):
-  # first_name = models.CharField(max_length=255, blank=True)
-  # last_name = models.CharField(max_length=255, blank=True)
-  # patronymic = models.CharField(max_length=255, blank=True)
   position = models.CharField(max_length=255, blank=True)
-  # phone = models.CharField(max_length=50, blank=True)
-  # mail = models.CharField(max_length=255, blank=True)
-
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   class Meta:
       db_table = 'employees'
@@ -83,21 +49,8 @@ class Company(AuditedModel, ContactsModel):
   inn = models.CharField(max_length=20, blank=True, null=True, unique=True)
   site = models.CharField(max_length=255, blank=True)
   rating = models.IntegerField(blank=True, null=True)
-  # mail = models.CharField(max_length=255, blank=True)
-  # phone = models.CharField(max_length=50, blank=True)
-  comment = models.TextField(blank=True)
 
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-  
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
+  comment = models.TextField(blank=True)
 
   contacts = models.ManyToManyField(
       Contact,
@@ -126,17 +79,6 @@ class Meeting(AuditedModel):
   
   meeting_date = models.DateTimeField(blank=True, null=True)
 
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   contacts = models.ManyToManyField(
       Contact,

@@ -1,12 +1,12 @@
 from django.utils import timezone
 
-from .model_services.company_service import CompanyService
-from .model_services.contact_service import ContactService
-from .model_services.employees_service import EmployeeService
-from .model_services.material_service import MaterialService, MeasureService
-from .model_services.meeting_service import MeetingService
+from apps.crm.services.model_services.company_service import CompanyService
+from apps.crm.services.model_services.contact_service import ContactService
+from apps.crm.services.model_services.employees_service import EmployeeService
+from apps.crm.services.model_services.material_service import MaterialService, MeasureService
+from apps.crm.services.model_services.meeting_service import MeetingService
 
-from .model_services.connection_service import ConnectionService
+from apps.crm.services.model_services.connection_service import ConnectionService
 
 
 

@@ -54,18 +54,6 @@ class CompanyMaterial(AuditedModel):
   )
   is_main = models.BooleanField(default=False)
 
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #         settings.AUTH_USER_MODEL, null=True, blank=True,
-  #         related_name='+', on_delete=models.SET_NULL
-  #     )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-
   class Meta:
       unique_together = ('company', 'material')
       db_table = 'company_material'
@@ -80,18 +68,6 @@ class MeetingContact(AuditedModel):
       related_name='meeting_contacts'
   )
 
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #         settings.AUTH_USER_MODEL, null=True, blank=True,
-  #         related_name='+', on_delete=models.SET_NULL
-  #     )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-
   class Meta:
       unique_together = ('meeting', 'contact')
       db_table = 'meeting_contact'
@@ -105,17 +81,6 @@ class MeetingEmployee(AuditedModel):
       Employee, on_delete=models.CASCADE,
       related_name='meeting_employees'
   )
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #         settings.AUTH_USER_MODEL, null=True, blank=True,
-  #         related_name='+', on_delete=models.SET_NULL
-  #     )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   class Meta:
       unique_together = ('meeting', 'employee')
@@ -130,17 +95,6 @@ class MeetingCompany(AuditedModel):
       Company, on_delete=models.CASCADE, 
       related_name='meeting_companies'
   )
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #         settings.AUTH_USER_MODEL, null=True, blank=True,
-  #         related_name='+', on_delete=models.SET_NULL
-  #     )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   class Meta:
       unique_together = ('meeting', 'company')

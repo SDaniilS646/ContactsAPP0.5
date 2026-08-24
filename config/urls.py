@@ -19,9 +19,10 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from django.contrib.auth import views as auth_views
 
-from apps.crm.views import setPage, clearPage, loadModal
+from apps.pages.views import setPage, clearPage, loadModal
 
-# from apps.connections.views import setPage, clearPage, loadModal
+from apps.commands.views import CommandOperations
+
 
 
 urlpatterns = [
@@ -34,14 +35,7 @@ urlpatterns = [
     path('crm/', include('apps.crm.urls')),
     path('sender/', include('apps.sender.urls')),
 
-    # path('companies/', include('apps.companies.urls'), name='companies'),
-    # path('contacts/', include('apps.contacts.urls')),
-    # path('materials/', include('apps.materials.urls')),
-    # path('meetings/', include('apps.meetings.urls')),
-    # path('employees/', include('apps.employees.urls')),
-    # path('commands/', include('apps.commands.urls')),
-    # path('sender/', include('apps.sender.urls')),
-
     path('open_page/', setPage),
     path('modal/', loadModal),
+    path('executeCMD/', CommandOperations.executeCMD),
 ]

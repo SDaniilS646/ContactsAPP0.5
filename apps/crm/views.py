@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseBase, HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
@@ -8,94 +8,16 @@ from backend.xl_sender.sender_create import create_sendfile
 import json
 
 from datetime import datetime
-import shlex
 
-from apps.crm.services.page_service import PageService, DetailService, AddService, ModalService
+
+from apps.pages.services.page_service import PageService, DetailService, AddService, ModalService
 from apps.crm.services.common_service import CommonService
-from apps.crm.services.commands_service import Commands
 
 from apps.crm.services.export_service import ExportService
 from apps.crm.services.parser_service import WebParser
 
 from apps.crm.services.model_services.connection_service import ConnectionService
 
-PAGES = {
-  'companies': PageService.companies_page,
-  'materials': PageService.materials_page,
-  'contacts': PageService.contacts_page,
-  'meetings': PageService.meetings_page,
-  'employees': PageService.employees_page,
-  'cmd': PageService.cmd_page,
-  'parser': PageService.parser_page,
-  'sender': PageService.sender_page
-}
-
-ADD = {
-  'companies': AddService.addCompanyPage,
-  'meetings': AddService.addMeetingPage
-}
-
-MODALS = {
-  'createMaterial': ModalService.createMaterial,
-  'createContact': ModalService.createContact,
-  'createMeasure': ModalService.createMeasure,
-  'createEmployee': ModalService.createEmployee,
-  'chooseMaterial': ModalService.chooseMaterial,
-  'chooseContact': ModalService.chooseContact,
-  'chooseEmployee': ModalService.chooseEmployee,
-  'editCompany': ModalService.editCompany,
-  'editContact': ModalService.editContact,
-  'editMaterial': ModalService.editMaterial,
-  'editEmployee': ModalService.editEmployee,
-  'detailsCompany': DetailService.companiesDetail,
-  'detailsContact': DetailService.contactsDetail,
-  'detailsMaterial': DetailService.materialsDetail,
-  'detailsMeeting': DetailService.meetingsDetail,
-  'chooseCompany': ModalService.chooseCompany,
-  'listMeasure': ModalService.listMeasure,
-  'editMeasure': ModalService.editMeasure
-}
-
-COMMANDS = {
-  'help': Commands.HelpCommand,
-  'all_users': Commands.getUsers,
-  'create_user': Commands.createUser,
-  'reset_password': Commands.resetPassword,
-  'delete_user': Commands.deleteUser,
-  'load_csv': Commands.getalldata,
-  'check_con': Commands.checkConnections,
-  'models': Commands.getModels,
-  'sql': Commands.sqlQuery
-}
-
-@login_required
-def clearPage(request):
-  return render(request, 'base.html')
-
-def setPage(request):
-  page_data = json.loads(request.body)
-  if page_data['type'] == 'page':
-    html, vars = PAGES[page_data['table']]()
-  elif page_data['type'] == 'add':
-    html, vars = ADD[page_data['table']]()
-  else:
-    return JsonResponse({'success': False})
-
-  return JsonResponse({
-    'success': True,
-    'result': 'Exists',
-    'html': render_to_string(
-      html, vars, request=request)
-  })
-
-def loadModal(request):
-  page_data = json.loads(request.body)
-  
-  html, vars = MODALS[page_data['modal_name']](page_data['id'])
-
-  return JsonResponse({
-    'html': render_to_string(html, vars, request=request)
-  })
 
 class CommonOperations:
   def delete(request):
@@ -253,85 +175,3 @@ class SpecialOperations:
       'results':results
     })
 
-class CommandOperations:
-  def executeCMD(request):
-    if not Commands.checkrole(request.user):
-      return JsonResponse({
-        'success': False,
-        'res': 'Нет доступа'
-      }, status=403)
-
-    if request.method != 'POST':
-      return JsonResponse({
-        'success': False,
-        'res': 'Метод не поддерживается'
-      }, status=405)
-    
-    if request.content_type == 'application/json':
-      full_cmd = json.loads(request.body)['command']
-    else:
-      full_cmd = request.POST['command']
-
-    try:
-      full_cmd = shlex.split(full_cmd)
-    except ValueError as e:
-      return JsonResponse({
-        'success': False,
-        'res': f'Ошибка разбора команды: {e}'
-      }, status=400)
-    
-    if not full_cmd:
-      return JsonResponse({
-        'success': False,
-        'res': 'Пустая команда'
-      }, status=400)
-    
-    cmd = full_cmd[0]
-    args = full_cmd[1:]
-
-    handler = COMMANDS.get(cmd)
-    if not handler:
-      return JsonResponse({
-        'success': False,
-        'res': f'Неизвестная команда: {cmd}'
-      }, status=400)
-
-    try:
-      res = handler(args)
-    except Exception as e:
-      return JsonResponse({
-        'success': False,
-        'res': f'Ошибка выполнения команнды: {e}'
-      }, status=500)
-
-
-    if isinstance(res, HttpResponseBase):
-      return res
-    
-    return JsonResponse({
-      'success': True,
-      'res': res
-    })
-
-
-    input_data = json.loads(request.body)
-
-    company_materials = input_data['company_materials']
-
-    ConnectionService.delete_all_material_connections(input_data['id'])
-
-    if company_materials:
-      for material in company_materials:
-        ConnectionService.edit_company_material(
-          {
-            'comp_id': input_data['id'],
-            'mat_id': material,
-            'user': request.user
-          }
-        )
-
-    CommonService.item_update('companies', input_data['id'], request.user)
-
-    return JsonResponse({
-      'success': True
-    })
