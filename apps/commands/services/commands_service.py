@@ -57,10 +57,9 @@ class Commands:
   @staticmethod
   def train_model(args):
 
-    work_classifier()
-    print('finished')
+    training_results = work_classifier()
 
-    return True
+    return training_results
   
   @staticmethod
   def getalldata(args):

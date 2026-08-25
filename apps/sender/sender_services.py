@@ -25,15 +25,25 @@ def work_classifier():
   printLabel("Step 2: Splitting Data")
   x_train, x_test, y_train, y_test = split_dataset(x, y)
 
-  return
+  printLabel("Step 3: Vectorizing Texts")
+  x_train_vec, x_test_vec, vectorizer = create_vectorizer(x_train, x_test)
+
+  printLabel("Step 4: Training Model")
+  model = train_model(x_train_vec, y_train)
+
+  printLabel("Step 5: Model quality analysis")
+  training_results = evaluate_model(model, x_test_vec, y_test)
+
+
+  return training_results
 
 def load_labeled_data(label_data_path):
     
-  data = TrainingExample.objects.all()
+  data = TrainingExample.objects.filter(status__in=['labeled', 'reviewed'])
   works = []
 
   for work in data:
-    if work.status == 'labeled':
+    if work.text is not None and work.text is not None:
       works.append({
         'name': work.text,
         'category': work.label
@@ -100,7 +110,7 @@ def evaluate_model(model, x_test_vectorized, y_test):
   printLabel("Detailed classification report:")
   print(classification_report(y_test, y_pred))
 
-  return y_pred
+  return str(classification_report(y_test, y_pred))
 
 def save_model(model, vectorizer, model_path='model.joblib', vectorizer_path='vectorizer.joblib'):
   joblib.dump(model, model_path)
