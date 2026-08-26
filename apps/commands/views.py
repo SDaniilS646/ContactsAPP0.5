@@ -64,6 +64,7 @@ class CommandOperations:
     try:
       res = handler(args)
     except Exception as e:
+      print(e)
       return JsonResponse({
         'success': False,
         'res': f'Ошибка выполнения команнды: {e}'

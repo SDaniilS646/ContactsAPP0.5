@@ -18,6 +18,7 @@ async function postRequest(url, payload) {
       body: JSON.stringify(payload),
     })
   } catch (networkError) {
+    console.log('smthing broken')
     throw new Error(`Network error while requesting ${url}: ${networkError.message}`)
   }
 
