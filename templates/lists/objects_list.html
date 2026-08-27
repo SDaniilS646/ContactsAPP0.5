@@ -1,0 +1,7 @@
+{% for object in objects %}
+  <div class="card">
+    <span class="title" title="{{meeting.subject}}">
+      <a onclick="removeAllModals(); openModal('objects-details-modal-frame', 'detailsObjects', {{object.id}})">{{object.name}}</a>
+    </span>
+  </div>
+{% endfor %}

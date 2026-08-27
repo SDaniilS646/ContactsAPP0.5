@@ -34,8 +34,14 @@
   <div name="employees-menu-btns" class="sub-menu-btns hidden">
       <button onclick="openModal('create_employee_modal_frame', 'createEmployee')">Добавить сотрудника</button>
   </div>
+
+  <button onclick="setPage('page', 'objects')">Объекты</button>
+  <div name="objects-menu-btns" class="sub-menu-btns hidden">
+      <button onclick="openModal('create_object_modal_frame', 'createObject')">Добавить объект</button>
+  </div>
+
   {% if user.is_superuser %}
-    <button id="page-sender" name="sender-btn" onclick="setPage('page', 'sender')" style="color:red;">SENDER indev</button>
+    <button id="page-sender" name="sender-btn" onclick="setPage('page', 'sender')">SENDER indev</button>
   {% endif %}
 
 </div>

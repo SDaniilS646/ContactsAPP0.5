@@ -5,6 +5,7 @@ from apps.crm.services.model_services.contact_service import ContactService
 from apps.crm.services.model_services.employees_service import EmployeeService
 from apps.crm.services.model_services.material_service import MaterialService, MeasureService
 from apps.crm.services.model_services.meeting_service import MeetingService
+from apps.crm.services.model_services.object_service import ObjectService
 
 from apps.crm.services.model_services.connection_service import ConnectionService
 
@@ -96,6 +97,11 @@ class PageService:
 
 
     return 'meetings/meetings_page.html', {'meetings':loaded_meetings}
+
+  @staticmethod
+  def objects_page():
+    objects = ObjectService.get_objects()
+    return 'objects/objects_page.html', {'objects': objects}
 
   @staticmethod
   def cmd_page():
@@ -236,6 +242,12 @@ class ModalService:
   @staticmethod
   def createEmployee(id):
     return ModalService.modal_template + '/create/modal_create_employee.html', {}
+
+
+  @staticmethod
+  def createObject(id):
+    return ModalService.modal_template + '/create/modal_create_object.html', {}
+
 
   @staticmethod
   def chooseMaterial(company_id):

@@ -105,7 +105,6 @@ MENU
 
 /* .menu .sub-menu-btns, */
 .menu .tabs-btns {
-
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
@@ -116,6 +115,10 @@ MENU
   align-items: center;
 
   gap: 10px;
+}
+
+.menu .tabs-btns button {
+  min-height: 40px;
 }
 
 .menu #cmd-btn {
@@ -593,4 +596,13 @@ MATERIAL TREE
   flex-direction: column;
 
   gap: 10px;
+}
+
+input, textarea {
+  border-radius: 3px;
+  border: 1px solid var(--standard-border-color);
+}
+
+:focus {
+  border-color: rgba(0, 0, 255, 0.5);
 }

@@ -1,6 +1,9 @@
 from django.http import JsonResponse
 
 import openpyxl
+import json
+
+from apps.sender.sender_services import work_classifier, test_model
 
 def sender(request):
   uploaded_files = request.FILES.getlist('files')
@@ -18,6 +21,10 @@ def sender(request):
       'success': True
     })
 
-
-def createModel():
-  pass
+def categorize(request):
+  input_data = json.loads(request.body)
+  output = test_model([input_data['input']])
+  return JsonResponse({
+    'success': True,
+    'output': output 
+  })

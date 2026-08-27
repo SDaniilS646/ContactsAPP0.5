@@ -44,6 +44,14 @@ class Material(AuditedModel):
   def __str__(self):
       return self.name or f'Материал #{self.pk}'
 
+class Object(AuditedModel):
+    name = models.CharField(max_length=255, blank=True, verbose_name='Название')
+
+    class Meta:
+        db_table = 'objects'
+    def __str__(self):
+        return self.name or f'Объект #{self.pk}'
+
 class Company(AuditedModel, ContactsModel):
   name = models.CharField(max_length=255, blank=True)
   inn = models.CharField(max_length=20, blank=True, null=True, unique=True)

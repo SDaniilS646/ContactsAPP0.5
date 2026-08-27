@@ -4,8 +4,10 @@ from .model_services.material_service import MaterialService, MeasureService
 from .model_services.contact_service import ContactService
 from .model_services.meeting_service import MeetingService
 from .model_services.employees_service import EmployeeService
+from .model_services.object_service import ObjectService
 
-from ..models.models import Company, Contact, Material, Meeting, Employee, Measure
+
+from ..models.models import Company, Contact, Material, Meeting, Employee, Measure, Object
 
 from django.utils import timezone
 
@@ -17,7 +19,8 @@ TABLE_MODELS = {
   'materials':  Material,
   'meetings': Meeting,
   'employees': Employee,
-  'measures':  Measure
+  'measures':  Measure,
+  'objects': Object
 }
 
 TABLE_SERVICES = {
@@ -26,7 +29,8 @@ TABLE_SERVICES = {
   'materials':  MaterialService,
   'meetings': MeetingService,
   'employees': EmployeeService,
-  'measures': MeasureService
+  'measures': MeasureService,
+  'objects': ObjectService
 }
 
 def model_get(table):

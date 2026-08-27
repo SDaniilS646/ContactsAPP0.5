@@ -15,17 +15,48 @@ sys.path.append(str(this_file_path.parent))
 
 from .helpers import printLabel, read_json, long_text, update_json, append_json, delete_from_json, get_values_from_json
 
-from .models import TrainingExample
+from .models import TrainingExample, ModelVersion, ModelFile
 
 import io
 import joblib
 
 from django.conf import settings
 from django.core.files.base import ContentFile
-
+from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 
 from collections import Counter
+
+
+def get_version(model_type):
+  active_version = ModelVersion.objects.filter(model_type=model_type).order_by('-version').first()
+  return active_version
+
+def create_version(model_type, metrics=None, training_examples_count=0, trained_by=None):
+  latest_version = ModelVersion.objects.filter(model_type=model_type).order_by('-version').first()
+  new_version_number = (latest_version.version or 0) + 1
+
+  return set_new_version(model_type, new_version_number, metrics, training_examples_count, trained_by)
+
+def set_new_version(model_type, new_version, metrics=None, training_examples_count=0, trained_by=None):
+  return ModelVersion.objects.create(
+    version = new_version,
+    model_type = model_type,
+    trained_at = timezone.now(),
+    trained_by = trained_by,
+    Training_examples_count = training_examples_count,
+    metrics = metrics,
+    is_active = False,
+  )
+
+def set_model_file(latest_version, file, file_path, created_by=None):
+  ModelFile.objects.create(
+    model_version = latest_version,
+    file = file,
+    file_path = file_path,
+    created_at = timezone.now(),
+    created_by = created_by
+  )
 
 def work_classifier():
 
@@ -44,12 +75,20 @@ def work_classifier():
 
   model = train_model(x_train_vec, y_train)
 
-  training_results = evaluate_model(model, x_test_vec, y_test, y)
+  training_results, metrics = evaluate_model(model, x_test_vec, y_test, y)
   text_output = text_output + f'\n{training_results}'
 
-  storage = FileSystemStorage(location=str(settings.ML_MODELS_DIR))
+  model_name = 'work_classifier'
+  model_version = create_version(model_name, metrics, len(x), None)
+
+  current_dir = settings.ML_MODELS_DIR / model_name / f'v{model_version.version}'
+
+  storage = FileSystemStorage(location=str(current_dir))
   
   text_output = text_output + save_model(model, vectorizer, storage)
+  set_model_file(model_version, 'vectorizer', f'{model_name}/v{model_version.version}/vectorizer.joblib')
+  set_model_file(model_version, 'model', f'{model_name}/v{model_version.version}/model.joblib')
+
 
   return text_output
 
@@ -149,6 +188,7 @@ def evaluate_model(model, x_test_vectorized, y_test, y_full):
   accuracy = accuracy_score(y_test, y_pred)
 
   report_text = classification_report(y_test, y_pred, zero_division=0)
+  report_dict = classification_report(y_test, y_pred, zero_division=0, output_dict=True)
 
   distribution_report = analyze_class_distibution(y_full, y_test, y_pred)
 
@@ -157,7 +197,12 @@ def evaluate_model(model, x_test_vectorized, y_test, y_full):
   output += report_text
   output += distribution_report
 
-  return output
+  metrics = {
+    'accuracy': accuracy,
+    'report': report_dict
+  }
+
+  return output, metrics
 
 def save_model(model, vectorizer, storage):
   model_buffer = io.BytesIO()
@@ -169,17 +214,27 @@ def save_model(model, vectorizer, storage):
   vectorizer_buffer.seek(0)
 
   model_path = storage.save('model.joblib', ContentFile(model_buffer.read()))
-  vectorizer_path = storage.save('vector.joblib', ContentFile(vectorizer_buffer.read()))
+  vectorizer_path = storage.save('vectorizer.joblib', ContentFile(vectorizer_buffer.read()))
 
-  temp_ouput = f"\n\nModel saved in {model_path}"
-  temp_ouput = temp_ouput + f"\nVectorizer saved in {vectorizer_path}"
+  temp_ouput = f"\n\nModel saved in {storage.base_location}/{model_path}"
+  temp_ouput = temp_ouput + f"\nVectorizer saved in {storage.base_location}/{vectorizer_path}"
   return  temp_ouput
 
+def load_model(model_version, files=[]):
 
-def load_model(model_path='model.joblib', vectorizer_path='vectorizer.joblib'):
-  model = joblib.load(model_path)
-  vectorizer = joblib.load(vectorizer_path)
-  return model, vectorizer
+  if len(files) == 0:
+    return {}
+
+  storage = FileSystemStorage(location=str(settings.ML_MODELS_DIR))
+
+  output = {}
+  for file_type in files:
+    model_file = ModelFile.objects.filter(model_version=model_version, file=file_type).first()
+    if model_file is None:
+      raise ValueError(f'Файл типа "{file_type}" не найден для версии {model_version}')
+    with storage.open(model_file.file_path, 'rb') as f:
+      output[file_type] = joblib.load(f)
+  return output
 
 def predict_category(model, vectorizer, new_texts):
   texts_vectorized = vectorizer.transform(new_texts)
@@ -188,49 +243,29 @@ def predict_category(model, vectorizer, new_texts):
 
   return predictions, probabilities
 
-def test_model(user_work, need_return=False):
-  printLabel("TESTING...")
-  new_examples = user_work
+def test_model(user_works):
+  loaded = load_model(get_version('work_classifier'), ['model', 'vectorizer'])
+  model = loaded['model']
+  vectorizer = loaded['vectorizer']
 
-  loaded_model, loaded_vectorizer = load_model(project_path / 'data' / 'models' / 'model.joblib', project_path / 'data' / 'vectors' / 'vectorizer.joblib')
+  predictions, probabilities = predict_category(model, vectorizer, user_works)
+  output = ''
+  for example, pred, probs in zip(user_works,predictions, probabilities):
+    output += f'\nЗапрос: {example};'
+    output += f'\nПредсказание: {pred};'
+    output += f'\nВероятность: {max(probs):.2%}'
+    output += '\n'
+    set_pending_data(example, pred, max(probs))
 
-  predictions, probabilities = predict_category(loaded_model, loaded_vectorizer, new_examples)
+  return output
 
-  pending_path = project_path / 'data' / 'pending.json'
-
-  for i, (text, pred, probs) in enumerate(zip(new_examples, predictions, probabilities)):
-    # print(f"Example {i+1}:")
-    print(f"Text: {long_text(text, 100)}")
-    print(f"Predicted category: {pred}")
-
-    print(f"Probability: {max(probs):.2%}")
-
-    # classes = loaded_model.classes_
-    # top_3_idx = np.argsort(probs)[-3:][::-1]
-    # print("Top-3:")
-    # for idx in top_3_idx:
-    #   print(f"  - {classes[idx]}: {probs[idx]:.2%}")
-    
-    if max(probs) < 0.5:
-      pending_works = get_values_from_json(pending_path, 'name')
-
-      if text in pending_works:
-        print("⚠️ Already pending")
-      else:
-        pending_data = {
-          'id': 0,
-          'name': text,
-          'predicted category': pred,
-          'probability': f"{max(probs):.2%}",
-          'status': 'need labeling'
-        }
-        append_json(pending_data, pending_path, True)
-    if need_return:
-      return pred
-
-
-def save_results_in_json():
-
-  json_path = project_path / 'data' / 'pending.json'
-  append_json({"name": "test"}, json_path, True)
-
+def set_pending_data(text, predicted_label=None, probability=None, created_by=None):
+  TrainingExample.objects.create(
+    text=text,
+    predicted_label=predicted_label,
+    uncertainity_score=probability,
+    status='pending' if probability < 0.9 else 'labeled',
+    label=None if probability < 0.9 else predicted_label,
+    created_at=timezone.now(),
+    created_by=created_by
+  )
