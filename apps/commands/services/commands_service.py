@@ -7,7 +7,7 @@ from apps.crm.models.models import Company, Contact, Material, Meeting, Employee
 from apps.crm.models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
 from apps.sender.models import TrainingExample
-from apps.sender.sender_services import work_classifier
+from apps.sender.sender_services import work_classifier, test_model
 
 from pathlib import Path
 
@@ -60,6 +60,12 @@ class Commands:
     training_results = work_classifier()
 
     return training_results
+
+  @staticmethod
+  def test_model(args):
+    testing_results = test_model(args)
+
+    return testing_results
   
   @staticmethod
   def getalldata(args):

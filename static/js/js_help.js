@@ -571,7 +571,6 @@ document.addEventListener(
   function(event) {
     let input_box = event.target.id;
     const selectorClass = FILTER_TARGETS[event.target.id]
-    console.log(selectorClass)
     if (selectorClass) {
       debouncedFilter(event, selectorClass)
     }

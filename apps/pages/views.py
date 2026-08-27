@@ -14,7 +14,8 @@ PAGES = {
   'employees': PageService.employees_page,
   'cmd': PageService.cmd_page,
   'parser': PageService.parser_page,
-  'sender': PageService.sender_page
+  'sender': PageService.sender_page, 
+  'objects': PageService.objects_page
 }
 
 ADD = {
@@ -27,6 +28,7 @@ MODALS = {
   'createContact': ModalService.createContact,
   'createMeasure': ModalService.createMeasure,
   'createEmployee': ModalService.createEmployee,
+  'createObject': ModalService.createObject,
   'chooseMaterial': ModalService.chooseMaterial,
   'chooseContact': ModalService.chooseContact,
   'chooseEmployee': ModalService.chooseEmployee,

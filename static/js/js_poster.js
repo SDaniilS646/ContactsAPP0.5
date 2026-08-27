@@ -41,6 +41,32 @@ async function postFile(url, payload=null) {
   return response.blob()
 }
 
+async function post_object_create() {
+  const container = document.getElementById('object-creation')
+  const object_name = container.querySelector('[name="object_name"]')
+
+  if (object_name.value.trim() === '') {
+    alertFrame(`УКАЖИТЕ НАЗВАНИЕ ОБЪЕКТА`)
+    return
+  }
+
+  try {
+    const data = await postJson('/crm/add/', {
+      table: 'objects',
+      name: object_name.value
+    })
+    if (data.success) {
+      setPage('page', 'objects')
+    } else {
+      console.log(data.error || 'object create error')
+      alertFrame(`Ошибка: \n— ${data.errorType}`)
+    }
+  } catch {
+    console.error('Failed to create meeting:', error)
+    alertFrame(`Ошибка: \n— ${error}`)
+  }
+}
+
 async function post_meeting_create() {
   const container = document.getElementById('company-creation')
   const subject = container.querySelector('[name="subject"]')

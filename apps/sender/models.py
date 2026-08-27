@@ -32,9 +32,8 @@ class TrainingExample(models.Model):
     return f'Example #{self.id} — {self.status} ({self.label or 'без метки'})'
 
 class ModelVersion(models.Model):
-  version = models.PositiveIntegerField(unique=True)
-
-  file_path = models.CharField(max_length=500)
+  version = models.PositiveIntegerField()
+  model_type = models.CharField(max_length=100)
 
   trained_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
   trained_at = models.DateTimeField(blank=True, null=True)
@@ -50,3 +49,17 @@ class ModelVersion(models.Model):
   def __str__(self):
     active_marker = ' [АКТИВНА]' if self.is_active else ''
     return f'Модель v{self.version}{active_marker}'
+
+class ModelFile(models.Model):
+  model_version = models.ForeignKey(ModelVersion, related_name='files', on_delete=models.CASCADE)
+  file = models.CharField(max_length=50)
+  file_path = models.CharField(max_length=500)
+
+  created_at = models.DateTimeField(blank=True, null=True)
+  created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL
+    )
+
+  class Meta:
+    db_table = 'model_file'

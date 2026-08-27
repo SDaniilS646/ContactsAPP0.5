@@ -1,10 +1,8 @@
-{% comment %} {% extends 'base.html' %} {% block content %} {% endcomment %}
-  <div id="outer" class="outer">
-    <div class="page-menu">
-      <input id="meetings-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
-    </div>
-    <div id="meetings-list" class="cards-list cards">
-      {% include 'lists/meetings_list.html' %}
-    </div>
+<div id="outer" class="outer">
+  <div class="page-menu">
+    <input id="meetings-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
   </div>
-{% comment %} {% endblock %} {% endcomment %}
+  <div id="meetings-list" class="cards-list cards">
+    {% include 'lists/meetings_list.html' %}
+  </div>
+</div>

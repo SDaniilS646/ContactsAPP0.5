@@ -4,5 +4,10 @@ async function getCategory() {
 
   const label = document.getElementById("category")
 
-  label.textContent = input.value
+
+  const data = await postJson('/sender/categorize/', {input: input.value})
+
+  if (data.success) {
+    label.textContent = data.output
+  }
 } 

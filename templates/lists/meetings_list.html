@@ -1,5 +1,5 @@
 {% for meeting in meetings %}
-  <div class="card {% if company.is_old %}old{% endif %}">
+  <div class="card">
     <span class="title" title="{{meeting.subject}}">
       <a onclick="removeAllModals(); openModal('meetings-details-modal-frame', 'detailsMeeting', {{meeting.id}})">{{meeting.subject}}</a>
     </span>

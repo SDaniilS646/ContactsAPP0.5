@@ -1,13 +1,8 @@
 from django.db import models
 from django.conf import settings
 
-from .models import Company, Contact, Material, Meeting, Employee
+from .models import Company, Contact, Material, Meeting, Employee, Object
 from .mixins import AuditedModel, PersonNameModel, ContactsModel
-# from apps.contacts.models import Contact
-# from apps.materials.models import Material
-# from apps.meetings.models import Meeting
-# from apps.employees.models import Employee
-
 
 
 class CompanyContact(AuditedModel, ContactsModel):
@@ -22,20 +17,6 @@ class CompanyContact(AuditedModel, ContactsModel):
       related_name='company_contacts'
   )
   position = models.CharField(max_length=255, blank=True, null=True)
-  # mail = models.CharField(max_length=255, blank=True)
-  # phone = models.CharField(max_length=50, blank=True)
-
-  # created_at = models.DateTimeField(blank=True, null=True)
-  # updated_at = models.DateTimeField(blank=True, null=True)
-
-  # created_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
-  # updated_by = models.ForeignKey(
-  #     settings.AUTH_USER_MODEL, null=True, blank=True,
-  #     related_name='+', on_delete=models.SET_NULL
-  # )
 
   class Meta:
       unique_together = ('company', 'contact')
@@ -99,3 +80,22 @@ class MeetingCompany(AuditedModel):
   class Meta:
       unique_together = ('meeting', 'company')
       db_table = 'meeting_company'
+
+class BrendList(AuditedModel):
+    object = models.ForeignKey(
+      Object, on_delete=models.CASCADE, 
+      related_name='brend_list'
+    )
+    company = models.ForeignKey(
+      Company, on_delete=models.CASCADE, 
+      related_name='brend_list'
+    )
+    material = models.ForeignKey(
+      Material, on_delete=models.CASCADE, 
+      related_name='brend_list'
+    )
+    section = models.CharField(max_length=255, blank=True, verbose_name='раздел')
+
+    class Meta:
+        unique_together = ('object', 'company')
+        db_table = 'brend_list'
