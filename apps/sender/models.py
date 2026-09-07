@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class TrainingExample(models.Model):
   STATUS_CHOICES = [
     ('pending', 'Ожидает разметки'),

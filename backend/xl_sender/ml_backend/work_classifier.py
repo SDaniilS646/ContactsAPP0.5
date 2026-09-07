@@ -142,7 +142,7 @@ def full_model_update():
 def test_model(user_work, need_return=False):
   printLabel("TESTING...")
   new_examples = user_work
-
+  print(project_path / 'data' / 'models' / 'model.joblib')
   loaded_model, loaded_vectorizer = load_model(project_path / 'data' / 'models' / 'model.joblib', project_path / 'data' / 'vectors' / 'vectorizer.joblib')
 
   predictions, probabilities = predict_category(loaded_model, loaded_vectorizer, new_examples)

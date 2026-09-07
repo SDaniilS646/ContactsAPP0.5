@@ -29,7 +29,11 @@ from collections import Counter
 
 
 def get_version(model_type):
-  active_version = ModelVersion.objects.filter(model_type=model_type).order_by('-version').first()
+  active_version = ModelVersion.objects.filter(model_type=model_type, is_active=True).first()
+  
+  if not active_version:
+    active_version = ModelVersion.objects.filter(model_type=model_type).order_by('-version').first()
+
   return active_version
 
 def create_version(model_type, metrics=None, training_examples_count=0, trained_by=None):
@@ -260,6 +264,8 @@ def test_model(user_works):
   return output
 
 def set_pending_data(text, predicted_label=None, probability=None, created_by=None):
+  if len(TrainingExample.objects.filter(text=text)) > 0:
+    return
   TrainingExample.objects.create(
     text=text,
     predicted_label=predicted_label,

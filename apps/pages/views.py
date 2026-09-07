@@ -36,13 +36,15 @@ MODALS = {
   'editContact': ModalService.editContact,
   'editMaterial': ModalService.editMaterial,
   'editEmployee': ModalService.editEmployee,
+  'editMeasure': ModalService.editMeasure,
   'detailsCompany': DetailService.companiesDetail,
   'detailsContact': DetailService.contactsDetail,
   'detailsMaterial': DetailService.materialsDetail,
   'detailsMeeting': DetailService.meetingsDetail,
+  'detailsObjects': DetailService.objectsDetail,
   'chooseCompany': ModalService.chooseCompany,
   'listMeasure': ModalService.listMeasure,
-  'editMeasure': ModalService.editMeasure
+  'activeLearningCaterories': ModalService.alCategories
 }
 
 

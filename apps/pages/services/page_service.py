@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db.models import F
 
 from apps.crm.services.model_services.company_service import CompanyService
 from apps.crm.services.model_services.contact_service import ContactService
@@ -9,12 +10,17 @@ from apps.crm.services.model_services.object_service import ObjectService
 
 from apps.crm.services.model_services.connection_service import ConnectionService
 
+from apps.sender.sender_services import get_version
+
+from apps.sender.models import TrainingExample
+
 
 
 class PageService:
   @staticmethod
   def sender_page():
-    return 'sender/sender_page.html', {}
+    model_version = f'work_classifier {get_version("work_classifier")}'
+    return 'sender/sender_page.html', {'model_version': model_version}
   
   @staticmethod
   def contacts_page():
@@ -145,6 +151,13 @@ class DetailService:
       }
 
   @staticmethod
+  def objectsDetail(id):
+    object = ObjectService.get_object(id)
+
+
+    return 'objects/detail.html', {'object': object}
+
+  @staticmethod
   def contactsDetail(id):
     contact = ContactService.get_contact(id)
     comp_cont = ConnectionService.get_company_contact('contact', id)
@@ -243,11 +256,9 @@ class ModalService:
   def createEmployee(id):
     return ModalService.modal_template + '/create/modal_create_employee.html', {}
 
-
   @staticmethod
   def createObject(id):
     return ModalService.modal_template + '/create/modal_create_object.html', {}
-
 
   @staticmethod
   def chooseMaterial(company_id):
@@ -366,3 +377,17 @@ class ModalService:
   def editEmployee(id):
     employee = EmployeeService.get_employee(id)
     return ModalService.modal_template + '/edit/modal_edit_employee.html', {'employee': employee}
+
+  @staticmethod
+  def alCategories(id):
+    
+    pending = TrainingExample.objects.filter(status='pending').annotate(
+      percentage=F("uncertainity_score") * 100
+    )
+
+    categories = TrainingExample.objects.filter(label__isnull=False, status__in=['labeled', 'reviewed'])
+    unique_categories = list(set([cat.label for cat in categories]))
+
+    pending_count = len(pending)
+
+    return ModalService.modal_template + '/ml/modal_categories_al.html', {'pending': pending, 'categories':unique_categories, 'pending_count': pending_count}

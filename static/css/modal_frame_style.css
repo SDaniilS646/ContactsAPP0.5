@@ -189,7 +189,8 @@
 }
 
 .modal-content #contacts-list,
-.modal-content #companies-list {
+.modal-content #companies-list,
+.modal-content #pending-list {
   overflow-y: auto;
 }
 
@@ -247,7 +248,8 @@
 
 .modal-content .contact-list-item,
 .modal-content .employee-list-item,
-.modal-content .company-list-item {
+.modal-content .company-list-item,
+.modal-content .pending-list-item {
 
   display: flex;
   flex-direction: column;

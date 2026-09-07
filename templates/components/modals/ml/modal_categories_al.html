@@ -1,0 +1,32 @@
+<div id="categories_active_learning_modal_frame" class="modal" style="z-index:2;">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_remove_btn.html' with frame_id='categories_active_learning_modal_frame' %}
+      <h3>Неразмеченных данных: {{pending_count}}</h3>
+    </div>
+
+    <div class="main-frame">
+      <hr>
+      <div id="pending-list">
+        {% for data in pending %}
+          <div id="{{data.id}}" class="pending-list-item">
+            <span>Запрос: {{data.text}}</span>
+            <span>Предсказанная категория: {{data.predicted_label | default:"—"}}</span>
+            <span>Уверенность: {{data.percentage | floatformat:2}}%</span>
+            <span>Категория:</span>
+            <input type="text" list="categories">
+              <datalist id="categories">
+                {% for category in categories %}
+                  <option value = "{{category}}">
+                {% endfor %}
+              </datalist>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="footer">
+      <button onclick="labelData()">Сохранить</button>
+    </div>
+  </div>
+</div>

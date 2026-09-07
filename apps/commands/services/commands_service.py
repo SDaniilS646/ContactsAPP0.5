@@ -6,7 +6,7 @@ from django.db import connection
 from apps.crm.models.models import Company, Contact, Material, Meeting, Employee
 from apps.crm.models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee
 
-from apps.sender.models import TrainingExample
+from apps.sender.models import TrainingExample, ModelVersion
 from apps.sender.sender_services import work_classifier, test_model
 
 from pathlib import Path
@@ -30,6 +30,44 @@ MODELS = {
 }
 
 class Commands:
+  @staticmethod
+  def model_list(args):
+    result = []
+    models = ModelVersion.objects.all()
+    for model in models:
+      metrics = model.metrics.get('report')
+      if metrics:
+        metrics = metrics.get('accuracy')
+      result.append(f'{model.model_type} v{model.version}: {model.Training_examples_count} examples; accuracy: {metrics}')
+    return '\n'.join(result)
+
+  @staticmethod
+  def model_activate(args):
+    from django.db import transaction
+    model_name = args[0] if len(args) > 0 else None
+    model_version = args[1] if len(args) > 1 else None
+    models = ModelVersion.objects.filter(model_type = model_name).order_by('version')
+    if not models:
+      unique_models = list(set([model.model_type for model in ModelVersion.objects.all()]))
+      return f'❌ Unknown model. Choose model from list:\n\n{"\n".join(unique_models)}'
+    
+    model_versions = [model.version for model in models]
+    model_versions = list(set(model_versions))
+    if not model_version:
+      models.update(is_active=False)
+      chosen_model = models.filter(version = model_versions[-1]).update(is_active=True)
+      return f'⚠️ No model signed. Activated last created model: v{model_versions[-1]}'
+
+    with transaction.atomic():
+      models.update(is_active=False)
+      try:
+        chosen_model = models.filter(version = model_version).update(is_active=True)
+        output = f'✅ Model activated. Model version: {chosen_model}'
+      except:
+        output = '❌ Version type error'
+    
+    return output
+  
   @staticmethod
   def checkrole(user):
     return user.is_superuser
