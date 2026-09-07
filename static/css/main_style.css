@@ -90,6 +90,7 @@ MENU
 
   gap: 20px;
   
+  width: 120px;
 
   border-right: 1px solid var(--thin-border-color);
 }
@@ -108,17 +109,33 @@ MENU
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
+
+ 
 
   display: flex;
   flex-direction: column;
 
+  width: 100%;
+
   align-items: center;
+
+  /* background-color: blue; */
 
   gap: 10px;
 }
 
+.menu .tabs-btns::-webkit-scrollbar {
+  width: 8px;
+}
+
+.menu .tabs-btns::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .menu .tabs-btns button {
   min-height: 40px;
+   margin-right: -8px;
 }
 
 .menu #cmd-btn {

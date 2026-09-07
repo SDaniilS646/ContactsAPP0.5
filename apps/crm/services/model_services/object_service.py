@@ -6,6 +6,10 @@ class ObjectService:
     return Object.objects.all()
 
   @staticmethod
+  def get_object(id):
+    return Object.objects.filter(id=id).first()
+
+  @staticmethod
   def create(input_data, user):
     new_id = Object.objects.create(
       name = input_data['name']

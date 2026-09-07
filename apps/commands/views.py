@@ -16,7 +16,9 @@ COMMANDS = {
   'sql': Commands.sqlQuery,
   'import_pending_json': Commands.import_training_model,
   'train_model': Commands.train_model,
-  'test_model': Commands.test_model
+  'test_model': Commands.test_model,
+  'model_list': Commands.model_list,
+  'model_activate': Commands.model_activate
 }
 
 class CommandOperations:

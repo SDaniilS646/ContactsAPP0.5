@@ -85,7 +85,6 @@ function getCsrfToken() {
 
 async function openModal(modal_frame_id, modal_name=null, id=null) {
 
-  const modal_cont = document.getElementById('modals-content')
   const existingFrame = document.getElementById(modal_frame_id)
 
   if (existingFrame) {
@@ -373,6 +372,9 @@ async function executeCMD() {
   
   const mainContainer = document.getElementById("commands-block")
   const cmdInput = mainContainer.querySelector('input')
+  const output = mainContainer.querySelector('textarea')
+  output.value += output.value == '' ? `` : '\n\n' + `${'='.repeat(10)}`
+  output.value += output.value == '' ? `command: ${cmdInput.value}` : '\n\n' + `command: ${cmdInput.value}`
 
   const cmd = cmdInput.value
   if (cmd == '') {return}
@@ -411,14 +413,14 @@ async function executeCMD() {
     }, 5000)
 
     const result = 'loaded archive'
-    const output = mainContainer.querySelector('textarea')
+    // const output = mainContainer.querySelector('textarea')
     const outputValue = output.value
     output.value = outputValue == '' ? result : outputValue + '\n\n' + result
     cmdInput.value = ''
     return
   }
 
-  const output = mainContainer.querySelector('textarea')
+  // const output = mainContainer.querySelector('textarea')
   try {
     const data = await postJson(url, {command: cmd})
     const result = data.res
@@ -522,10 +524,12 @@ async function setPage(type, table, id=null) {
       if (val.getAttribute('name') == `${table}-menu-btns`) {
         val.removeAttribute('disabled')
         val.classList.remove('hidden')
+        val.removeAttribute('tabindex')
       } else {
         if (!val.classList.contains('hidden')) {
           val.setAttribute('disabled', '')
           val.classList.add('hidden')
+          val.setAttribute('tabindex', '-1')
         }
       }
     })
@@ -576,3 +580,4 @@ document.addEventListener(
     }
   }
 )
+
