@@ -9,6 +9,8 @@ from apps.crm.models.connections import CompanyContact, CompanyMaterial, Meeting
 from apps.sender.models import TrainingExample, ModelVersion
 from apps.sender.sender_services import work_classifier, test_model
 
+from backend.ai.ai_service import AiService
+
 from pathlib import Path
 
 import csv
@@ -16,6 +18,8 @@ import io
 import zipfile
 import json
 from datetime import datetime
+
+from openai import OpenAI
 
 MODELS = {
   'companies': Company,
@@ -30,6 +34,13 @@ MODELS = {
 }
 
 class Commands:
+
+  @staticmethod
+  def ai_cmd(args):
+    response = AiService.execute_ai_query(user_query=' '.join(args))
+    answer = response.choices[0].message.content
+    return f'AI answer: {answer}'
+
   @staticmethod
   def model_list(args):
     result = []

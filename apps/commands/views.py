@@ -18,7 +18,8 @@ COMMANDS = {
   'train_model': Commands.train_model,
   'test_model': Commands.test_model,
   'model_list': Commands.model_list,
-  'model_activate': Commands.model_activate
+  'model_activate': Commands.model_activate,
+  'ai': Commands.ai_cmd
 }
 
 class CommandOperations:
