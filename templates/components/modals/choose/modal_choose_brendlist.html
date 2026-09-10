@@ -1,0 +1,30 @@
+<div id="choose_brendlist_modal_frame" class="modal" style="z-index: 1">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_close_btn.html' with frame_id='choose_brendlist_modal_frame' %}
+      <h3>Бренд лист</h3> 
+    </div>
+    
+    <div class="main-frame">
+      <input id="companies-list-search" type="text" name="search" value="{{search}}" placeholder="Поиск.." />
+      <hr>
+      <div id="companies-list" class="companies-list meet_creation">
+        {% for company in companies %}
+          <div id="{{company.id}}" class="company-list-item {{company.selected}}" name="company-list-item">
+            <span>{{company.name}}</span>
+            <div class="brend_materials_list">
+              {% for material in company.materials %}
+                <span id="{{company.id}}_{{material.id}}" name="brend_material_list_item" class="brend_material_list_item {{material.selected}}" onclick="selectBrendMaterial(event, this)">{{material.name}}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <hr>
+    <div class="footer">
+      <button onclick="saveBrendList({{object.id}})">Сохранить</button>
+      {% comment %} <button onclick="openModal('create_comapany_modal_frame', 'createCompany')">Создать новый</button> {% endcomment %}
+    </div>
+  </div>
+</div>

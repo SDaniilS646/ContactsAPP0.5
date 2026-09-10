@@ -128,6 +128,13 @@ class CommonOperations:
       'success': True
     })
 
+  def create_brend_list(request):
+    input_data = json.loads(request.body)
+    ConnectionService.create_brend_list(input_data, request.user)
+    return JsonResponse({
+      'success': True
+    })
+
 class SpecialOperations:
   def create_Excel_Output(request):
     try:

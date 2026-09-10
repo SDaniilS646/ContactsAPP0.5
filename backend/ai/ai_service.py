@@ -13,6 +13,7 @@ class AiService:
         api_key=os.getenv('LLM_API_KEY')
       )
     return cls._client
+  
   @classmethod
   def execute_ai_query(cls, user_query=None, system_query=None, response_format=None, model=None):
     messages = []

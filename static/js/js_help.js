@@ -2,6 +2,7 @@ let selectedMaterials = []
 let selectedContacts = []
 let selectedEmployees = []
 let selectedCompanies = []
+let selectedBrendMaterials = []
 
 let currentZIndex = 1000;
 
@@ -217,36 +218,69 @@ function checkOtherSelected(container) {
   elements.forEach(val => val.classList.remove('selected'))
 }
 
+function selectItem(element) {
+  element.classList.toggle('selected')
+}
 
 function selectContacts(event, element, container_id=null, input_box_id=null) {
-  const container = document.getElementById(container_id)
-
-  if (element.classList.contains('selected')) {
-    element.classList.remove('selected')
-  } else {
-    element.classList.add('selected')
-  }
+  selectItem(element)
 }
 
 function selectCompanies(event, element, container_id=null) {
-  const container = document.getElementById(container_id)
-
-  if (element.classList.contains('selected')) {
-    element.classList.remove('selected')
-  } else {
-    element.classList.add('selected')
-  }
+  selectItem(element)
 }
 
 function selectEmployees(event, element, container_id=null, input_box_id=null) {
-  const container = document.getElementById(container_id)
+  selectItem(element)
+}
 
-  if (element.classList.contains('selected')) {
-    element.classList.remove('selected')
-  } else {
-    element.classList.add('selected')
+function selectBrendMaterial(event, element) {
+  selectItem(element)
+  const brendMaterials = element.parentElement.querySelectorAll('span')
+  const brend = element.parentElement.parentElement
+  let temp = false
+  brendMaterials.forEach(span => {
+    if (span.classList.contains('selected')) {
+      brend.classList.add('selected-parent'); temp = true;
+    }; 
+  })
+  if (temp == false) {
+    brend.classList.remove('selected-parent')
   }
 }
+
+async function saveBrendList(objectId) {
+  const container = document.getElementById('companies-list')
+  const brends = container.querySelectorAll('[name="company-list-item"]')
+  selectedBrendMaterials = []
+  brends.forEach(element => {
+    if (element.classList.contains('selected-parent')) {
+      let materials = []
+      element.querySelectorAll('span').forEach(material => {
+        if (material.classList.contains('selected')) {
+          materials.push(material.id.split('_')[1])
+        }
+      })
+      selectedBrendMaterials.push({
+        id: element.id,
+        materials: materials
+      })
+    }
+  })
+  
+  const data = await postJson('/crm/set_brend_list/', {
+    id: objectId,
+    brends: selectedBrendMaterials
+  })
+  console.log(data)
+}
+
+document.addEventListener('change', function(event) {
+  if (event.target.id !== 'section-select') {
+    return
+  }
+
+})
 
 function saveContactsList() {
 

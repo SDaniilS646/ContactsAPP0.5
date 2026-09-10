@@ -378,6 +378,36 @@ async function post_measure_edit(id) {
   }
 }
 
+
+async function post_object_edit(id) {
+  const container = document.getElementById('object-creation')
+  const object_name = container.querySelector('[name="object_name"]')
+
+  if (object_name.value.trim() === '') {
+    alertFrame(`УКАЖИТЕ НАЗВАНИЕ ОБЪЕКТА`)
+    return
+  }
+
+  try {
+    const data = await postJson('/crm/edit/', {
+      id: id,
+      table: 'objects',
+      name: object_name.value
+    })
+    if (data.success) {
+      //'objects-details-modal-frame', 'detailsObjects'
+      removeModal('edit_object_modal_frame')
+      reloadModal('objects-details-modal-frame', 'detailsObjects', id)
+    } else {
+      console.log(data.error || 'object create error')
+      alertFrame(`Ошибка: \n— ${data.errorType}`)
+    }
+  } catch {
+    console.error('Failed to create meeting:', error)
+    alertFrame(`Ошибка: \n— ${error}`)
+  }
+}
+
 async function post_material_create(comp_id=null) {
   const container = document.getElementById('create_material_modal_frame')
   const mat_name = container.querySelector('[name="material_name"]')
@@ -529,7 +559,7 @@ async function start_parsing() {
   lockMenu()
 
   try {
-    const data = await postJson('/parse_company/', {
+    const data = await postJson('/crm/parse_company/', {
       request_txt: requestText
     })
 

@@ -35,11 +35,12 @@ class MaterialService:
   
   @staticmethod
   def create(input_data, user):
+    print(input_data)
     new_id = Material.objects.create(
       name = input_data['material_name'],
       parent = MaterialService.get_material(mat_id=input_data['parent_id']),
       keywords = input_data['keywords'],
-      measure = MeasureService.get_measure(id=input_data['measure_id'])
+      measure = None if input_data['measure_id']=='' else MeasureService.get_measure(id=input_data['measure_id'])
     ).id
     return new_id
 
@@ -95,14 +96,20 @@ class MaterialService:
   @staticmethod
   def get_children(mat_id):
     return Material.objects.filter(parent=mat_id)
-  
+
+  def get_section(material):
+    while material.parent:
+      material = material.parent
+    return material
+
+
   @staticmethod
   def edit(item, input_data):
     item.update(
       name = input_data['material_name'],
       parent = input_data['parent_id'],
       keywords = input_data['keywords'],
-      measure = MeasureService.get_measure(id=input_data['measure_id'])
+      measure = None if input_data['measure_id']=='' else MeasureService.get_measure(id=input_data['measure_id'])
     )
     return
   
