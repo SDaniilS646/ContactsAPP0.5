@@ -37,12 +37,14 @@ MODALS = {
   'editMaterial': ModalService.editMaterial,
   'editEmployee': ModalService.editEmployee,
   'editMeasure': ModalService.editMeasure,
+  'editObject': ModalService.editObject,
   'detailsCompany': DetailService.companiesDetail,
   'detailsContact': DetailService.contactsDetail,
   'detailsMaterial': DetailService.materialsDetail,
   'detailsMeeting': DetailService.meetingsDetail,
   'detailsObjects': DetailService.objectsDetail,
   'chooseCompany': ModalService.chooseCompany,
+  'chooseBrendList': ModalService.chooseBrendList,
   'listMeasure': ModalService.listMeasure,
   'activeLearningCaterories': ModalService.alCategories
 }
@@ -71,8 +73,9 @@ def setPage(request):
 
 def loadModal(request):
   page_data = json.loads(request.body)
-  
+
   html, vars = MODALS[page_data['modal_name']](page_data['id'])
+
 
   return JsonResponse({
     'html': render_to_string(html, vars, request=request)

@@ -152,10 +152,30 @@ class DetailService:
 
   @staticmethod
   def objectsDetail(id):
+    
     object = ObjectService.get_object(id)
+    brend_list = ConnectionService.get_brend_list(id)
+    sections = [brend.section for brend in brend_list]
+    sections = list(set(sections))
 
 
-    return 'objects/detail.html', {'object': object}
+    frame = []
+
+    frame = [{'name':section, 'categories': []} for section in sections]
+
+    for section in frame:
+      categories = [item.material.parent.name for item in brend_list if item.section == section['name']]
+      categories = set(categories)
+      section['categories'] = [{
+        'name': category, 
+        'materials':[{
+          'name': item.material.name,
+          'brends':[brend.company.name for brend in brend_list if brend.section==section['name'] and brend.material.name==item.material.name]
+          } for item in brend_list if item.material.parent.name==category
+        ]} for category in categories
+      ]
+
+    return 'objects/detail.html', {'object': object, 'sections': sections, 'frame':frame}
 
   @staticmethod
   def contactsDetail(id):
@@ -330,6 +350,34 @@ class ModalService:
     employees = EmployeeService.get_employees()
     return ModalService.modal_template + '/choose/modal_choose_employees.html', {'employees': employees}
 
+
+  @staticmethod
+  def chooseBrendList(id):
+    total_companies = CompanyService.get_companies()
+    object = ObjectService.get_object(id)
+    selected = ConnectionService.get_brend_list(id)
+
+    selected_brends = []
+    selected_materials = []
+    for brend in selected:
+      selected_brends.append(brend.company.id)
+      selected_materials.append(f'{brend.company.id}_{brend.material.id}')
+
+    companies = []
+    for company in total_companies:
+      materials = company.materials.all()
+      companies.append({
+        'id': company.id,
+        'name': company.name,
+        'materials': [{
+          'id':material.id,
+          'name':material.name,
+          'selected':'selected' if f'{company.id}_{material.id}' in selected_materials else ''} for material in materials
+        ],
+        'selected': 'selected-parent' if company.id in selected_brends else ''
+      })
+    return ModalService.modal_template + '/choose/modal_choose_brendlist.html', {'companies': companies, 'object': object}
+  
   @staticmethod
   def editCompany(id):
     company = CompanyService.get_company(id)
@@ -377,6 +425,12 @@ class ModalService:
   def editEmployee(id):
     employee = EmployeeService.get_employee(id)
     return ModalService.modal_template + '/edit/modal_edit_employee.html', {'employee': employee}
+
+  @staticmethod
+  def editObject(id):
+    object = ObjectService.get_object(id)
+    return ModalService.modal_template + '/edit/modal_edit_object.html', {'object': object}
+
 
   @staticmethod
   def alCategories(id):

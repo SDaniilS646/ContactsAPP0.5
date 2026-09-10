@@ -69,7 +69,14 @@ a:active {
 
 .selected {
   border-radius: 3px;
-  background-color: var(--tree-item-selected);
+  background-color: var(--item-selected);
+
+  transition: 0.2s;
+}
+
+.selected-parent {
+  border-radius: 3px;
+  background-color: var(--parent-item-selected);
 
   transition: 0.2s;
 }

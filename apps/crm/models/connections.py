@@ -97,5 +97,5 @@ class BrendList(AuditedModel):
     section = models.CharField(max_length=255, blank=True, verbose_name='раздел')
 
     class Meta:
-        unique_together = ('object', 'company')
+        unique_together = ('object', 'company', 'material')
         db_table = 'brend_list'

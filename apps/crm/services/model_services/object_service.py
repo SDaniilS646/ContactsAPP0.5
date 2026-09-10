@@ -15,3 +15,11 @@ class ObjectService:
       name = input_data['name']
     ).id
     return new_id
+
+  @staticmethod
+  def edit(item, input_data):
+    print(item)
+    item.update(
+      name = input_data['name']
+    )
+    return

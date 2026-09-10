@@ -1,5 +1,10 @@
-from ...models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany
+from ...models.connections import CompanyContact, CompanyMaterial, MeetingContact, MeetingEmployee, MeetingCompany, BrendList
+from .company_service import CompanyService
+from .material_service import MaterialService 
+from .object_service import ObjectService
 from ..common_service import CommonService, TABLE_MODELS, TABLE_SERVICES
+
+from django.utils import timezone
 
 
 CONNECTIONS = {
@@ -11,7 +16,7 @@ CONNECTIONS = {
   },
   ('meetings', 'companies'): {'model': MeetingCompany, 'field1':'meeting_id', 'field2':'company_id'},
   ('meetings', 'contacts'): {'model': MeetingContact, 'field1':'meeting_id', 'field2':'contact_id'},
-  ('meetings', 'employees'): {'model': MeetingEmployee, 'field1':'meeting_id', 'field2':'employee_id'},
+  ('meetings', 'employees'): {'model': MeetingEmployee, 'field1':'meeting_id', 'field2':'employee_id'}
 }
 
 class ConnectionService:
@@ -46,11 +51,40 @@ class ConnectionService:
 
     input_extras = input_data.get('extra', {})
     defaults = dict(input_extras)
-    print(defaults)
 
     new_id = model.objects.update_or_create(**{config['field1']: id1, config['field2']: id2}, defaults=defaults)
     
     return
+
+  @staticmethod
+  def create_brend_list(input_data, user):
+    object_id = input_data['id']
+    object = ObjectService.get_object(object_id)
+    brends = input_data['brends']
+    model = BrendList
+    for brend in brends:
+      brend_id = brend['id']
+      materials = brend['materials']
+      brend = CompanyService.get_company(brend_id)
+      for material_id in materials:
+        material = MaterialService.get_material(material_id)
+        if model.objects.filter(material=material, object=object, company=brend):
+          continue
+        section = MaterialService.get_section(material)
+        model.objects.update_or_create(**{
+          'object':object,
+          'company':brend,
+          'material': material,
+          'section': section.name,
+          'created_by': user,
+          'created_at': timezone.now()
+        })
+    return 
+
+  @staticmethod
+  def get_brend_list(object_id):
+    brend_list = BrendList.objects.filter(object=object_id)
+    return brend_list
   
   @staticmethod
   def get_company_contact(column, id, id_2=None):

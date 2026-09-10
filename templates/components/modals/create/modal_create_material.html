@@ -8,7 +8,6 @@
     <div class="main-frame">
       <hr>
       <div id="material-creation">
-        {% comment %} {% csrf_token %} {% endcomment %}
         <div id="creation_material_tree" class="tree">
           {% include 'lists/materials_list.html' with style='material_creation' %}
         </div>
@@ -22,6 +21,7 @@
             <input type="text" name="material_name">
 
             <select name="measureList" id="measure-select" >
+              <option value="" title="">...</option>
               {% for measure in measures %}
                 <option value="{{measure.id}}" title="{{measure.title}}">{{measure.name}}</option>
               {% endfor %}
