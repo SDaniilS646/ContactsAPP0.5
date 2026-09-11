@@ -19,29 +19,41 @@
       <div class="addition-info">
         <div class="menu-btns">
           <button onclick="openModal('choose_brendlist_modal_frame', 'chooseBrendList', {{object.id}})" class="spec-btn">edit</button>
-          <button onclick="openModal('choose_brendlist_modal_frame', 'chooseBrendList', {{object.id}})" class="spec-btn">load</button>
+          <button onclick="exportBrendList({{object.id}}, '{{object.name}}')" class="spec-btn">load</button>
         </div>
         <div class="modal-header">
           <h3>Бренд-лист</h3>
           <select name="sectionList" id="section-select" data-brends="{{frame}}">
             <option value="" title="">...</option>
             {% for section in sections %}
-              <option value="{{section}}" title="{{section}}">{{section}}</option>
+              <option value="{{section.value}}" title="{{section.name}}">{{section.name}}</option>
             {% endfor %}
           </select>
         </div>
         <div id="brend-list-frame" class="brend-list-frame">
           {% for section in frame %}
-            <span>{{section.name}}</span>
-            {% for category in section.categories %}
-              {{category.name}}
-              {% for material in category.materials %}
-                {{material.name}}
-                {% for brend in material.brends %}
-                  {{brend}}
+            <div id="{{section.value}}" name="brend-list-section"  hidden>
+              <div class="brend-list-section">
+              {% for category in section.categories %}
+                <span>{{category.name}}</span>
+                <div name="brend-list-category" class="brend-list-category">
+                {% for material in category.materials %}
+                  <div name="brend-list-material" class="brend-list-material-name"> 
+                    <span>{{material.name}}</span>
+                  </div>
+                  <div name="brend-list-brends" class="brend-list-brend-name">
+                    {% for brend in material.brends %}
+                      <div>
+                        <button class="del-conn spec-btn" onclick="postDeleteBrendFromBrendList({{object.id}}, '{{section.name}}', {{category.id}}, {{material.id}}, {{brend.id}})">X</button>
+                        <span>{{brend.name}}</span>
+                      </div>
+                    {% endfor %}
+                  </div>
                 {% endfor %}
+                </div>
               {% endfor %}
-            {% endfor %}
+              </div>
+            </div>
           {% endfor %}
         </div>
       </div>

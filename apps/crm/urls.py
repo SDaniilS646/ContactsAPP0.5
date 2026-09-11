@@ -5,6 +5,8 @@ urlpatterns = [
   path('edit_connections/', CommonOperations.edit_connections),
 
   path('set_brend_list/', CommonOperations.create_brend_list),
+  path('delete_brend_list_item/', CommonOperations.delete_from_brend_list),
+  path('export_brend_list_excel/', SpecialOperations.export_brendlist_excel),
 
   path('add/', CommonOperations.create),
 

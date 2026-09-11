@@ -82,6 +82,18 @@ class ConnectionService:
     return 
 
   @staticmethod
+  def delete_from_brend_list(input_data):
+    model = BrendList
+
+    model.objects.filter(
+      section=input_data['section'],
+      company=input_data['brend'],
+      material=input_data['material'],
+      object=input_data['object']
+    ).delete()
+    return
+
+  @staticmethod
   def get_brend_list(object_id):
     brend_list = BrendList.objects.filter(object=object_id)
     return brend_list

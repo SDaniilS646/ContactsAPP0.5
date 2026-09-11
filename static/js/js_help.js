@@ -272,14 +272,39 @@ async function saveBrendList(objectId) {
     id: objectId,
     brends: selectedBrendMaterials
   })
-  console.log(data)
+  if (data.success) {
+    removeModal('choose_brendlist_modal_frame')
+    reloadModal('objects-details-modal-frame', 'detailsObjects', objectId)
+  }
+}
+
+async function exportBrendList(objectId, objectName) {
+  try {
+    const blob = await postFile('/crm/export_brend_list_excel/', {object_id: objectId})
+    const url = window.URL.createObjectURL(blob)
+
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${getTimestamp()}_БрендЛист_${objectName}.xlsx`
+
+    link.click()
+
+    window.URL.revokeObjectURL(url)
+  } catch {
+    return
+  }
 }
 
 document.addEventListener('change', function(event) {
   if (event.target.id !== 'section-select') {
     return
   }
-
+  const value = event.target.value
+  const brendListContainer = document.getElementById('brend-list-frame')
+  const divs = brendListContainer.querySelectorAll('[name="brend-list-section"]')
+  divs.forEach(div => div.hidden = true)
+  const container = brendListContainer.querySelector(`#${value}`)
+  container.hidden = false
 })
 
 function saveContactsList() {

@@ -408,6 +408,32 @@ async function post_object_edit(id) {
   }
 }
 
+async function postDeleteBrendFromBrendList(objectId, sectionName, categoryId, materialId, brendId) {
+  console.log(`object ${objectId}`)
+  console.log(`section ${sectionName}`)
+  console.log(`category ${categoryId}`)
+  console.log(`material ${materialId}`)
+  console.log(`brend ${brendId}`)
+  console.log()
+
+  const confirmed = await confirmFrame('Удалить?')
+  if (!confirmed) {
+    return
+  }
+
+  const data = await postJson(`/crm/delete_brend_list_item/`, {
+    object:objectId,
+    section:sectionName,
+    category:categoryId,
+    material:materialId,
+    brend:brendId
+  })
+
+  if (data.success) {
+    reloadModal('objects-details-modal-frame', 'detailsObjects', objectId)
+  }
+}
+
 async function post_material_create(comp_id=null) {
   const container = document.getElementById('create_material_modal_frame')
   const mat_name = container.querySelector('[name="material_name"]')
@@ -732,7 +758,7 @@ async function postCreateExcelOutput() {
   }
 
   try {
-    const blob = await postFile('/create_Excel_Output/', {company_ids: cardsIds})
+    const blob = await postFile('/crm/create_Excel_Output/', {company_ids: cardsIds})
     
     const url = window.URL.createObjectURL(blob)
 
