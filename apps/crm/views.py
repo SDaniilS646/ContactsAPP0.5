@@ -135,7 +135,28 @@ class CommonOperations:
       'success': True
     })
 
+  def delete_from_brend_list(request):
+    input_data = json.loads(request.body)
+    ConnectionService.delete_from_brend_list(input_data)
+    return JsonResponse({
+      'success': True
+    }) 
+
 class SpecialOperations:
+  def export_brendlist_excel(request):
+    payload = json.loads(request.body)
+    output = ExportService.get_object_brend_list(payload['object_id'])
+
+    response = HttpResponse(
+      output.getvalue(),
+      content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = (
+      'attachment; filename="brend_list.xlsx"'
+    )
+    return response
+
+  
   def create_Excel_Output(request):
     try:
       payload = json.loads(request.body)

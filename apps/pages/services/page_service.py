@@ -155,25 +155,70 @@ class DetailService:
     
     object = ObjectService.get_object(id)
     brend_list = ConnectionService.get_brend_list(id)
+
+
     sections = [brend.section for brend in brend_list]
     sections = list(set(sections))
 
+    sections = [{'name':section, 'value':section.replace(' ', '_')} for section in sections]
 
-    frame = []
+    frame = [
+      {
+        'name':section['name'],
+        'value':section['value'],
+        'categories': []
+      }
+      for section in sections
+    ]
 
-    frame = [{'name':section, 'categories': []} for section in sections]
+    for item in brend_list:
+      item.section = item.section.replace(' ', '_')
 
     for section in frame:
-      categories = [item.material.parent.name for item in brend_list if item.section == section['name']]
-      categories = set(categories)
-      section['categories'] = [{
-        'name': category, 
-        'materials':[{
-          'name': item.material.name,
-          'brends':[brend.company.name for brend in brend_list if brend.section==section['name'] and brend.material.name==item.material.name]
-          } for item in brend_list if item.material.parent.name==category
-        ]} for category in categories
+      categories = []
+
+      temp_categories = [
+        {
+          'name': item.material.parent.name,
+          'id': item.material.parent.id
+        }
+        for item in brend_list
+        if item.section == section['value']
       ]
+
+      for category in temp_categories:
+        if category not in categories:
+          categories.append(category)
+
+      section['categories'] = [
+        {
+          'id': category['id'],
+          'name': category['name'],
+          'materials': [
+            {
+              'id': material.id,
+              'name': material.name,
+              'brends':  [
+                {
+                  'name': brend.company.name,
+                  'id': brend.company.id
+                }
+                for brend in brend_list
+                if brend.section == section['value']
+                and brend.material.id == material.id
+              ]
+            }
+            for material in {
+              item.material.id: item.material
+              for item in brend_list
+              if item.section == section['value']
+              and item.material.parent.id == category['id']
+            }.values()
+          ]
+        }
+        for category in categories
+      ]
+
 
     return 'objects/detail.html', {'object': object, 'sections': sections, 'frame':frame}
 

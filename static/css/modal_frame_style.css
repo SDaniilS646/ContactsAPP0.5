@@ -347,3 +347,31 @@
 .modal-content .is-hidden {
   display: none;
 }
+
+.brend-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+}
+
+.brend-list-category {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+
+  justify-self: center;
+
+}
+
+.brend-list-material-name,
+.brend-list-brend-name {
+border: 1px solid black;
+padding: 2px;
+
+display: flex;
+flex-direction: column;
+
+min-height: 50px;
+
+}
