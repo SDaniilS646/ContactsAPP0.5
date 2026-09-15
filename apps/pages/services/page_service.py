@@ -315,7 +315,8 @@ class ModalService:
 
   @staticmethod
   def createContact(id):
-    return ModalService.modal_template + '/create/modal_create_contact.html', {}
+
+    return ModalService.modal_template + '/create/modal_create_contact.html', {'company_id':id if id else ''}
 
   @staticmethod
   def createEmployee(id):
@@ -411,16 +412,20 @@ class ModalService:
     companies = []
     for company in total_companies:
       materials = company.materials.all()
-      companies.append({
+      temp = {
         'id': company.id,
         'name': company.name,
         'materials': [{
           'id':material.id,
           'name':material.name,
+          'parent': material.parent.name if material.parent else None,
+          'section': MaterialService.get_section(material).name if MaterialService.get_section(material) else None,
           'selected':'selected' if f'{company.id}_{material.id}' in selected_materials else ''} for material in materials
         ],
         'selected': 'selected-parent' if company.id in selected_brends else ''
-      })
+      }
+
+      companies.append(temp)
     return ModalService.modal_template + '/choose/modal_choose_brendlist.html', {'companies': companies, 'object': object}
   
   @staticmethod

@@ -6,6 +6,29 @@ let selectedBrendMaterials = []
 
 let currentZIndex = 1000;
 
+async function executeAi(inputId=null, outputId=null, context=null) {
+  const input = document.getElementById(inputId)
+  const output = document.getElementById(outputId)
+  const userRequest = input.value
+  if (userRequest.trim() === '') {
+    alertFrame('Введите запрос')
+    return
+  }
+  const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context})
+  if (data.success) {
+    output.innerHTML += `<span>Запрос: ${data.output['user_request']}</span>`
+    output.innerHTML += `<span>Промт: ${data.output['promt_template']}</span>`
+    console.log(data.output)
+    const outputList = data.output['output']
+    console.log(outputList)
+    if (output && outputList.length > 0) {
+      outputList.forEach(item => 
+        output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
+      )
+    }
+  }
+}
+
 function lockMenu() {
   const menuContainer = document.getElementById('menu-btns')
   const menuBtns = menuContainer.querySelectorAll('button')
@@ -236,11 +259,11 @@ function selectEmployees(event, element, container_id=null, input_box_id=null) {
 
 function selectBrendMaterial(event, element) {
   selectItem(element)
-  const brendMaterials = element.parentElement.querySelectorAll('span')
+  const brendMaterials = element.parentElement.querySelectorAll('[name="brend_material_list_item"]')
   const brend = element.parentElement.parentElement
   let temp = false
-  brendMaterials.forEach(span => {
-    if (span.classList.contains('selected')) {
+  brendMaterials.forEach(div => {
+    if (div.classList.contains('selected')) {
       brend.classList.add('selected-parent'); temp = true;
     }; 
   })
@@ -256,7 +279,7 @@ async function saveBrendList(objectId) {
   brends.forEach(element => {
     if (element.classList.contains('selected-parent')) {
       let materials = []
-      element.querySelectorAll('span').forEach(material => {
+      element.querySelectorAll('[name="brend_material_list_item"]').forEach(material => {
         if (material.classList.contains('selected')) {
           materials.push(material.id.split('_')[1])
         }

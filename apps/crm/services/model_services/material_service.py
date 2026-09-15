@@ -98,6 +98,8 @@ class MaterialService:
     return Material.objects.filter(parent=mat_id)
 
   def get_section(material):
+    if not material.parent:
+      return None
     while material.parent:
       material = material.parent
     return material

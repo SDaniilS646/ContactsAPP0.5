@@ -7,7 +7,7 @@
   --active-page-btn-back: linear-gradient(to bottom, rgb(255, 255, 255, 0) 0%, rgb(49, 49, 49, 0.2) 70%);
   --content-outer-back: linear-gradient(to bottom, white 15%, rgb(240, 240, 240));
   --item-selected: rgba(255, 212, 131, 0.5);
-  --parent-item-selected: rgba(255, 230, 183, 0.5);
+  --parent-item-selected: rgba(220, 220, 220, 0.1);
   --sub-menu-btn-back-color: rgba(185, 218, 255, 0.4);
 
   --danger-button-back: rgba(255,0,0,0.1);

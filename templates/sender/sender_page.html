@@ -4,13 +4,16 @@
     <label>{{model_version}}</label>
   </div>
   <div id="excel-upload-block">
-    <div>
-      <input type="file" id="excel-file-input" accept=".xlsx,.xls,.xlsm" multiple>
-      <button type="button" id="upload-excel-btn" onclick="checkFileLoaded()">UPLOAD</button>
-    </div>
+    {% comment %} <div>
+      <input type="file" id="vor-file-input" accept=".xlsx,.xls,.xlsm" multiple>
+      <button type="button" id="upload-excel-btn" onclick="uploadVor()">UPLOAD</button>
+    </div> {% endcomment %}
     <div>
       <input type="text" id="work-name-input">
-      <button type="button" id="get-work-category" onclick="getCategory()">Categorize</button>
+      <button type="button" id="get-work-category" onclick="executeAi('work-name-input', 'sender-main-frame')">Categorize</button>
+    </div>
+    <div id="sender-main-frame" style="display:flex;flex-direction:column;gap:5px;">
+      
     </div>
     <label id="category"></label>
   </div>

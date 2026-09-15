@@ -215,6 +215,9 @@ async function post_contact_create(comp_id=null) {
       setPage('page', 'contacts')
     }
     removeModal('create_contact_modal_frame')
+    if (comp_id ==='') {
+      comp_id = null;
+    }
     reloadModal('choose_contact_modal_frame', 'chooseContact', comp_id)
   } else {
     console.log(data.errorDescription)

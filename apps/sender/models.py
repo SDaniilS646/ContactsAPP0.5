@@ -2,6 +2,26 @@ from django.db import models
 from django.conf import settings
 
 
+class TempVorData(models.Model):
+  user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='temp_data_created', on_delete=models.SET_NULL)
+  section = models.TextField()
+  work = models.TextField()
+  material = models.TextField()
+  measure = models.TextField()
+  amount = models.TextField()
+  type = models.TextField()
+  category  = models.TextField()
+  filename = models.TextField()
+  filedir = models.TextField()
+  file_row = models.IntegerField()
+
+  created_at = models.DateTimeField(blank=True, null=True)
+
+  class Meta:
+    db_table = 'temp_vor'
+
+
+
 class TrainingExample(models.Model):
   STATUS_CHOICES = [
     ('pending', 'Ожидает разметки'),

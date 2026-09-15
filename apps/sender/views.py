@@ -4,10 +4,20 @@ from django.utils import timezone
 import openpyxl
 import json
 
-from apps.sender.sender_services import work_classifier, test_model
+from apps.sender.sender_services import work_classifier, test_model, find_contact
 from apps.sender.models import TrainingExample
 
 from backend.ai.ai_service import AiService
+
+def execute_ai(request):
+  input_data = json.loads(request.body)
+
+  output = find_contact(input_data)
+
+  return JsonResponse({
+      'success': True,
+      'output': output
+    })
 
 def sender(request):
   uploaded_files = request.FILES.getlist('files')

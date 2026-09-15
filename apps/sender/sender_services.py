@@ -26,6 +26,54 @@ from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 
 from collections import Counter
+from backend.ai.ai_service import AiService
+
+from apps.crm.services.model_services.company_service import CompanyService
+from apps.crm.services.model_services.material_service import MaterialService
+
+def find_contact(input_data):
+  companies = CompanyService.get_companies()
+  company_materials = []
+  for company in companies:
+    company_materials.append(
+      {
+        'id': company.id,
+        'name': company.name,
+        'materials': [material.id for material in company.materials.all()]
+      }
+    )
+  total_materials = MaterialService.get_materials()
+  materials = []
+  for material in total_materials:
+    materials.append(
+      {
+        'id': material.id,
+        'name': material.name,
+        'parent': material.parent.name if material.parent else None
+      }
+    )
+
+  payload = {
+    'material_request': input_data['user_request'],
+    'candidates': materials, 
+    'companies': company_materials
+  }
+  user_query = json.dumps(payload, ensure_ascii=False)
+  system_query = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request>. Ответ предстваь в формате списка словарей <[{"id":material_id, "name":material_name, "parent":material_parent}]>'
+  # system_query = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request> и найди компании работающие с этим материалом, сопоставив <candidates.material.id> с <companies.materials>. Ответ предстваь в формате списка словарей <[{"id":company_id, "name":company_name, "material_id":material_id, "material_name":material_name, "parent":material_parent}]>'
+  # system_query = 'Подбери компании, из списка <candidates> по <candidates.materials.name>, которым можно направить запрос на материал из <material_request>. Учитывай категорию материала <candidates.materials.parent>. Ответ предоставь в формате списка словарей <[{"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}, {"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}]>. Если подходящая компания не найдена, верни пустой список: []'
+  response = AiService.execute_ai_query(user_query=user_query, system_query=system_query)
+  print(f'output - {response}')
+  temp = [item['id'] for item in json.loads(response)]
+  print(f'temp - {temp}')
+  response_list = [{'id':item['id'], 'name':item['name']} for item in company_materials if any(mat in temp for mat in item['materials'])]
+  print(response_list)
+  result = {
+    'user_request': input_data['user_request'],
+    'promt_template': system_query,
+    'output': response_list
+  }
+  return result
 
 
 def get_version(model_type):
