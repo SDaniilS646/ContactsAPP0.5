@@ -23,8 +23,6 @@ class AiService:
 
     messages.append({"role": "user", "content": user_query})
 
-
-
     kwargs = {
       'model':model or os.getenv('LLM_MODEL_NAME'),
       'messages':messages,

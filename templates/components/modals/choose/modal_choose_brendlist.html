@@ -1,7 +1,7 @@
 <div id="choose_brendlist_modal_frame" class="modal" style="z-index: 1">
   <div class="modal-content">
     <div class="header">
-      {% include 'components/modal_close_btn.html' with frame_id='choose_brendlist_modal_frame' %}
+      {% include 'components/modal_remove_btn.html' with frame_id='choose_brendlist_modal_frame' %}
       <h3>Бренд лист</h3> 
     </div>
     
@@ -14,7 +14,11 @@
             <span>{{company.name}}</span>
             <div class="brend_materials_list">
               {% for material in company.materials %}
-                <span id="{{company.id}}_{{material.id}}" name="brend_material_list_item" class="brend_material_list_item {{material.selected}}" onclick="selectBrendMaterial(event, this)">{{material.name}}</span>
+                <div id="{{company.id}}_{{material.id}}" name="brend_material_list_item" class="brend_material_list_item {{material.selected}}" onclick="selectBrendMaterial(event, this)">
+                  {% if material.section %}<span>{{material.section}}:</span>{% endif %}
+                  {% if material.parent %}<span>{{material.parent}} — </span>{% endif %}
+                  <span>{{material.name}}</span>
+                </div>
               {% endfor %}
             </div>
           </div>

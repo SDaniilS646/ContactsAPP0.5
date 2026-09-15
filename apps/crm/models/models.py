@@ -111,3 +111,25 @@ class Meeting(AuditedModel):
 
   def __str__(self):
       return self.subject or f'Встреча #{self.pk}'
+
+# class Brend(AuditedModel):
+#     name = models.CharField(max_length=255, blank=True)
+#     rating = models.IntegerField(blank=True, null=True)
+#     site = models.CharField(max_length=255, blank=True)
+#     comment = models.TextField(blank=True)
+
+#     country = models.CharField(max_length=50, blank=True)
+
+#     materials = models.ManyToManyField(
+#         Material,
+#         through='BrendsMaterial',
+#         related_name='brends'
+#     )
+
+#     class Meta:
+#         db_table = 'brends'
+#         verbose_name = 'Бренд'
+#         verbose_name_plural = 'Бренды'
+
+#     def __str__(self):
+#         return self.name or f'Бренд #{self.pk}'
