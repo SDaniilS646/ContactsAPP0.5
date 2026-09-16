@@ -31,6 +31,116 @@ from backend.ai.ai_service import AiService
 from apps.crm.services.model_services.company_service import CompanyService
 from apps.crm.services.model_services.material_service import MaterialService
 
+prompt1 = """Ты — ассистент по подбору строительных материалов
+    Тебе дан JSON:
+    {
+      "candidates": [
+        {"id": 22, "name": "Общестрой", "parent_id": null, "parent": null, "material_path": "Общестрой"},
+        {"id": 26, "name": "Бетоны и растворы", "parent_id": 22, "parent": "Общестрой", "material_path": "Общестрой / Бетоны и растворы"},
+        {"id": 27, "name": "Бетон", "parent_id": 26, "parent": "Бетоны и растворы", "material_path": "Общестрой / Бетоны и растворы / Бетон"}
+      ],
+      "material_request": "Бетон В40"
+    }
+
+    Поля:
+    - "candidates" — плоский список всех материалов (дерево через parent_id).
+    - "material_request" — текстовый запрос пользователя.
+
+    Задача: выбери материалы из "candidates", наиболее соответствующие "material_request".
+
+    Правила:
+    - Если запрос про категорию ("бетоны"), включай и саму категорию, и всех её потомков.
+    - Если запрос про конкретный материал ("бетон В40"), включай только его.
+    - Если запрос неоднозначен, включай наиболее вероятные варианты.
+
+    Отвечай ТОЛЬКО валидным JSON-объектом без markdown и пояснений:
+
+    {"status": "ok", "data": [{"id": 26, "name": "Бетоны и растворы", "parent_id": 22, "parent": "Общестрой"}], "error": null}
+
+    Если ничего не подходит: {"status": "ok", "data": [], "error": null}
+
+    Если ошибка: {"status": "error", "data": [], "error": "описание"}
+
+    Пример:
+
+    Вход: {"candidates": [{"id": 22, "name": "Общестрой", "parent_id": null, "parent": null}, {"id": 26, "name": "Бетоны и растворы", "parent_id": 22, "parent": "Общестрой"}, {"id": 27, "name": "Бетон", "parent_id": 26, "parent": "Бетоны и растворы"}, {"id": 28, "name": "Бетон В40", "parent_id": 27, "parent": "Бетон"}], "material_request": "Бетон В40"}
+
+    Выход: {"status": "ok", "data": [{"id": 2, "name": "Бетоны", "parent_id": 1, "parent": "Общестрой"}, {"id": 28, "name": "Бетон В40", "parent_id": 2, "parent": "Бетоны"}], "error": null}
+
+    """
+
+prompt2 = """Ты — ассистент по подбору строительных материалов.
+Тебе дан JSON:
+{
+  "candidates": [
+    {"id": 13, "name": "Инженерные системы", "material_path": "Инженерные системы"},
+    {"id": 14, "name": "Отопление и теплоснабжение", "material_path": "Инженерные системы / Отопление и теплоснабжение"},
+    {"id": 18, "name": "Водоснабжение", "material_path": "Инженерные системы / Водоснабжение"},
+    {"id": 16, "name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"},
+    {"id": 19, "name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}
+  ],
+  "material_request": "Насос для водоснабжения"
+}
+Задача: выбери материалы из "candidates", соответствующие "material_request".
+
+КРИТИЧЕСКИ ВАЖНО:
+- В дереве могут быть материалы с ОДИНАКОВЫМ "name" в разных ветках.
+- Учитывай ВЕСЬ "material_path", а не только "name".
+- Если запрос про категорию ("водоснабжение"), включай саму категорию и всех её потомков.
+
+Отвечай ТОЛЬКО валидным JSON без markdown:
+{"status": "ok", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}], "error": null}
+Если ничего не подходит: {"status": "ok", "selected_materials": [], "error": null}
+Если ошибка: {"status": "error", "selected_materials": [], "error": "описание"}
+
+ПРАВИЛА ПО КОЛИЧЕСТВУ МАТЕРИАЛОВ:
+- В "selected_materials" может быть ЛЮБОЕ количество элементов: 0, 1, 2, 5, 20 — сколько угодно.
+- НЕ ограничивайся одним материалом. Если под запрос подходит несколько — верни ВСЕ.
+- Если под запрос не подходит ни один материал — верни пустой массив: "selected_materials": [].
+- НИКОГДА не используй "..." или "и так далее" внутри массива. Перечисляй все элементы полностью.
+- НЕ добавляй в массив материалы, которые не подходят, "для полноты".
+
+
+
+Пример 1 (подходит один материал):
+Вход: material_request = "Насос для водоснабжения"
+
+Выход: {"status": "ok", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}], "error": null}
+
+Пример 2 (подходит несколько материалов):
+Вход: material_request = "Бетон"
+
+Выход: {"status": "ok", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}, {"name": "Бетон В30", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В30"}, {"name": "Бетон В25", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В25"}], "error": null}
+
+Пример 3 (подходит несколько материалов в разных ветках):
+Вход: material_request = "Насос"
+
+Выход: {"status": "ok", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}], "error": null}
+
+Пример 4 (ничего не подходит):
+Вход: material_request = "квартира в центре"
+Выход: {"status": "ok", "selected_materials": [], "error": null}
+
+"""
+prompt3 = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request>. Ответ предстваь в формате списка словарей <[{"id":material_id, "name":material_name, "parent":material_parent}]>'
+
+prompt4 = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request> и найди компании работающие с этим материалом, сопоставив <candidates.material.id> с <companies.materials>. Ответ предстваь в формате списка словарей <[{"id":company_id, "name":company_name, "material_id":material_id, "material_name":material_name, "parent":material_parent}]>'
+
+prompt5 = 'Подбери компании, из списка <candidates> по <candidates.materials.name>, которым можно направить запрос на материал из <material_request>. Учитывай категорию материала <candidates.materials.parent>. Ответ предоставь в формате списка словарей <[{"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}, {"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}]>. Если подходящая компания не найдена, верни пустой список: []'
+import re
+
+def parse_qwen_response(raw: str) -> dict:
+    raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip())
+    match = re.search(r"\{.*\}", raw, re.DOTALL)
+    if not match:
+      return {"status": "error", "selected_materials": [], "error": "no json found"}
+
+    try:
+      return json.loads(match.group(0))
+
+    except json.JSONDecodeError as e:
+      return {"status": "error", "selected_materials": [], "error": str(e)}
+
 def find_contact(input_data):
   companies = CompanyService.get_companies()
   company_materials = []
@@ -49,7 +159,9 @@ def find_contact(input_data):
       {
         'id': material.id,
         'name': material.name,
-        'parent': material.parent.name if material.parent else None
+        'parent_id': material.parent_id,
+        'parent': material.parent.name if material.parent else None,
+        'material_path': MaterialService.get_path(material.id)
       }
     )
 
@@ -58,19 +170,39 @@ def find_contact(input_data):
     'candidates': materials, 
     'companies': company_materials
   }
+
   user_query = json.dumps(payload, ensure_ascii=False)
-  system_query = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request>. Ответ предстваь в формате списка словарей <[{"id":material_id, "name":material_name, "parent":material_parent}]>'
-  # system_query = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request> и найди компании работающие с этим материалом, сопоставив <candidates.material.id> с <companies.materials>. Ответ предстваь в формате списка словарей <[{"id":company_id, "name":company_name, "material_id":material_id, "material_name":material_name, "parent":material_parent}]>'
-  # system_query = 'Подбери компании, из списка <candidates> по <candidates.materials.name>, которым можно направить запрос на материал из <material_request>. Учитывай категорию материала <candidates.materials.parent>. Ответ предоставь в формате списка словарей <[{"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}, {"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}]>. Если подходящая компания не найдена, верни пустой список: []'
+  system_query = prompt2
+
   response = AiService.execute_ai_query(user_query=user_query, system_query=system_query)
-  print(f'output - {response}')
-  temp = [item['id'] for item in json.loads(response)]
-  print(f'temp - {temp}')
-  response_list = [{'id':item['id'], 'name':item['name']} for item in company_materials if any(mat in temp for mat in item['materials'])]
+  parsed_response = parse_qwen_response(response)
+  print(response)
+  print(parsed_response)
+
+  material_by_name_path = {
+    (m['name'], m.get('material_path')): m
+    for m in payload['candidates']
+  }
+
+  selected_ids = set()
+  for item in parsed_response['selected_materials']:
+    key = (item['name'], item.get('material_path'))
+    mat = material_by_name_path.get(key)
+    if mat:
+      selected_ids.add(mat['id'])
+    else:
+      for m in payload['candidates']:
+        if m['name'] == item['name']:
+          selected_ids.add(m['id'])
+          break
+
+  selected_ids = list(selected_ids)
+
+  response_list = [{'id':item['id'], 'name':item['name']} for item in company_materials if any(mat in selected_ids for mat in item['materials'])]
   print(response_list)
   result = {
     'user_request': input_data['user_request'],
-    'promt_template': system_query,
+    'promt_template': 'prompt2',
     'output': response_list
   }
   return result

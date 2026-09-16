@@ -114,6 +114,16 @@ class MaterialService:
       measure = None if input_data['measure_id']=='' else MeasureService.get_measure(id=input_data['measure_id'])
     )
     return
+
+  @staticmethod
+  def get_path(material_id):
+    parts = []
+    current = MaterialService.get_material(material_id)
+    while current:
+      parts.append(current.name)
+      current = current.parent
+
+    return ' / '.join(reversed(parts))
   
   @staticmethod
   def getAllParents(mat_id):
