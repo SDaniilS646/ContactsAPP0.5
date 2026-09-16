@@ -2,6 +2,8 @@ from openai import OpenAI
 import json
 import os
 
+import time
+
 
 class AiService:
   _client = None
@@ -26,14 +28,50 @@ class AiService:
     kwargs = {
       'model':model or os.getenv('LLM_MODEL_NAME'),
       'messages':messages,
-      'temperature':float(os.getenv('LLM_TEMPERATURE', 0))
+      'temperature':float(os.getenv('LLM_TEMPERATURE', 0)),
+      'stream':True
     }
 
     if response_format:
       kwargs['response_format'] = response_format
 
-    # try:
-    response = cls._get_client().chat.completions.create(**kwargs)
-    return response.choices[0].message.content
-    # except:
-    #   return 'AI response error'
+    print('Qwen в работе: ', end='', flush=True)
+    t_start = time.perf_counter()
+    t_first = None
+    token_count = 0
+    full_response = []
+
+    stream = cls._get_client().chat.completions.create(**kwargs)
+
+    for chunk in stream:
+      if not chunk.choices:
+        continue
+      delta = chunk.choices[0].delta
+
+      reasoning = getattr(delta, 'reasoning_content', None)
+
+      if reasoning:
+        if t_first in None:
+          t_first = time.perf_counter()
+          print(f'[TTFT: {t_first - t_start:2f}c] ', end='', flush=True)
+        print(f'\033[90m{reasoning}\033[0m', end='', flush=True)
+
+      text = delta.content
+      if text:
+        if t_first is None:
+          t_first = time.perf_counter()
+          print(f'[TTFT: {t_first - t_start:.2f}c] ', end='', flush=True)
+        token_count += 1
+        full_response.append(text)
+        print(text, end='', flush=True)
+
+    elapsed = time.perf_counter()- t_start
+    rate = token_count / elapsed if elapsed > 0 else 0
+    print(f'\n[Гтово: {token_count} ток. за {elapsed:.2f}c, {rate:.1f} ток/c]', flush=True)
+
+    
+    return ''.join(full_response)
+
+  @classmethod
+  def execute_ai_query_stream(cls, user_query=None, system_query=None, response_format=None, model=None, verbose=True):
+    pass

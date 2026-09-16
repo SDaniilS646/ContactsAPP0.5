@@ -458,7 +458,8 @@ async function post_material_create(comp_id=null) {
     if (AppState.currentPage === 'page-materials') {
       setPage('page', 'materials')
     }
-    removeModal('create_material_modal_frame')
+    console.log('reloading')
+    reloadModal('create_material_modal_frame', 'createMaterial')
     reloadModal('choose_material_modal_frame', 'chooseMaterial', comp_id)
   } else {
     console.log(data.errorDescription)
