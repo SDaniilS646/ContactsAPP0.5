@@ -100,8 +100,6 @@ prompt2 = """Ты — ассистент по подбору строитель�
 - НИКОГДА не используй "..." или "и так далее" внутри массива. Перечисляй все элементы полностью.
 - НЕ добавляй в массив материалы, которые не подходят, "для полноты".
 
-
-
 Пример 1 (подходит один материал):
 Вход: material_request = "Насос для водоснабжения"
 
@@ -127,6 +125,281 @@ prompt3 = 'Подбери материалы из списка <candidates>, с 
 prompt4 = 'Подбери материалы из списка <candidates>, с учетом иерархии материалов <candidates.parent>, который наиболее соответствуют запросу из <material_request> и найди компании работающие с этим материалом, сопоставив <candidates.material.id> с <companies.materials>. Ответ предстваь в формате списка словарей <[{"id":company_id, "name":company_name, "material_id":material_id, "material_name":material_name, "parent":material_parent}]>'
 
 prompt5 = 'Подбери компании, из списка <candidates> по <candidates.materials.name>, которым можно направить запрос на материал из <material_request>. Учитывай категорию материала <candidates.materials.parent>. Ответ предоставь в формате списка словарей <[{"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}, {"id":company_id, "name":company_name, "confidence":<float от 0 до 1>}]>. Если подходящая компания не найдена, верни пустой список: []'
+
+prompt6 = """Ты — ассистент по подбору строительных материалов.
+Тебе дан JSON:
+{
+  "candidates": [
+    {"id": 13, "name": "Инженерные системы", "material_path": "Инженерные системы"},
+    {"id": 14, "name": "Отопление и теплоснабжение", "material_path": "Инженерные системы / Отопление и теплоснабжение"},
+    {"id": 18, "name": "Водоснабжение", "material_path": "Инженерные системы / Водоснабжение"},
+    {"id": 16, "name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"},
+    {"id": 19, "name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}
+  ],
+  "material_request": ["Насос для водоснабжения"]
+}
+
+Поля:
+- "candidates" — плоский список всех материалов (дерево через material_path).
+- "material_request" — СПИСОК запросов, от 1 до N позиций. Каждый элемент — отдельный запрос.
+
+Задача: для КАЖДОГО запроса из "material_request" подбери соответствующие материалы из "candidates".
+
+КРИТИЧЕСКИ ВАЖНО:
+- В "material_request" может быть 1, 2, 5, 20 запросов — обработай ВСЕ по очереди.
+- Для каждого запроса верни отдельную группу результатов.
+- В дереве могут быть материалы с ОДИНАКОВЫМ "name" в разных ветках.
+- Учитывай ВЕСЬ "material_path", а не только "name".
+- Если запрос про категорию ("водоснабжение"), включай саму категорию и всех её потомков.
+- В поле "request" верни ИСХОДНУЮ формулировку запроса БЕЗ изменений.
+
+Отвечай ТОЛЬКО валидным JSON без markdown:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]}], "error": null}
+
+Если ни для одного запроса ничего не подошло:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": []}], "error": null}
+
+Если ошибка:
+{"status": "error", "results": [], "error": "описание"}
+
+ПРАВИЛА ПО КОЛИЧЕСТВУ МАТЕРИАЛОВ:
+- В "results" ДОЛЖНО быть ровно столько элементов, сколько запросов в "material_request".
+- Даже если для запроса ничего не найдено — всё равно добавь его в "results" с пустым "selected_materials".
+- В "selected_materials" может быть ЛЮБОЕ количество элементов: 0, 1, 2, 5, 20.
+- НЕ ограничивайся одним материалом. Если подходит несколько — верни ВСЕ.
+- НИКОГДА не используй "..." внутри массивов. Перечисляй все элементы полностью.
+- НЕ добавляй материалы, которые не подходят, "для полноты".
+
+Пример 1 (один запрос, один материал):
+Вход: material_request = ["Насос для водоснабжения"]
+Выход: {"status": "ok", "results": [{"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]}], "error": null}
+
+Пример 2 (один запрос, один материал):
+Вход: material_request = ["Бетон В40"]
+Выход: {"status": "ok", "results": [{"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}], "error": null}
+
+Пример 3 (один запрос, несколько материалов):
+Вход: material_request = ["Бетон"]
+Выход: {"status": "ok", "results": [{"request": "Бетон", "selected_materials": [{"name": "Бетон", "material_path": "Общестрой / Бетоны и растворы / Бетон"}, {"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}, {"name": "Бетон В30", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В30"}, {"name": "Бетон В25", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В25"}]}], "error": null}
+
+
+Пример 4 (один запрос, подходит несколько материалов в разных ветках):
+Вход: material_request = "Насос"
+
+Выход: {"status": "ok", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}], "error": null}
+
+Пример 5 (несколько запросов, разные результаты):
+Вход: material_request = ["Насос", "Бетон"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}]},
+  {"request": "Бетон", "selected_materials": [{"request": "Бетон", "selected_materials": [{"name": "Бетон", "material_path": "Общестрой / Бетоны и растворы / Бетон"}, {"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}, {"name": "Бетон В30", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В30"}, {"name": "Бетон В25", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В25"}]}]}
+], "error": null}
+
+Пример 6 (несколько запросов, часть без результатов):
+Вход: material_request = ["Насос для водоснабжения", "квартира в центре"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]},
+  {"request": "квартира в центре", "selected_materials": []}
+], "error": null}
+
+Пример 7 (ничего не подходит ни для одного запроса):
+Вход: material_request = ["квартира в центре", "самолёт"]
+Выход: {"status": "ok", "results": [
+  {"request": "квартира в центре", "selected_materials": []},
+  {"request": "самолёт", "selected_materials": []}
+], "error": null}
+
+"""
+
+prompt7 = """Ты — ассистент по подбору строительных материалов.
+Тебе дан JSON:
+{
+  "candidates": [
+    {"id": 13, "name": "Инженерные системы", "material_path": "Инженерные системы"},
+    {"id": 14, "name": "Отопление и теплоснабжение", "material_path": "Инженерные системы / Отопление и теплоснабжение"},
+    {"id": 18, "name": "Водоснабжение", "material_path": "Инженерные системы / Водоснабжение"},
+    {"id": 16, "name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"},
+    {"id": 19, "name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}
+  ],
+  "material_request": ["Насос для водоснабжения"]
+}
+
+Поля:
+- "candidates" — плоский список всех материалов (дерево через material_path).
+- "material_request" — СПИСОК запросов, от 1 до N позиций.
+
+Задача: для КАЖДОГО запроса из "material_request" подбери соответствующие материалы из "candidates".
+
+КРИТИЧЕСКИ ВАЖНО:
+- В "material_request" может быть 1, 2, 5, 20 запросов — обработай ВСЕ по очереди.
+- Для каждого запроса верни ОТДЕЛЬНУЮ группу результатов в массиве "results".
+- В поле "request" верни ИСХОДНУЮ формулировку запроса БЕЗ изменений — ту же строку, что была во входе.
+- В дереве могут быть материалы с ОДИНАКОВЫМ "name" в разных ветках.
+- Учитывай ВЕСЬ "material_path", а не только "name".
+
+ПРАВИЛА ПОДБОРА:
+- Если запрос совпадает с "name" материала-категории (у него есть потомки) — включай саму категорию и всех её потомков.
+- Если запрос частично совпадает с "name" (например, "Бетон" и материалы "Бетон В40", "Бетон В30") — включай все материалы, чей "material_path" содержит это слово.
+- Если запрос совпадает с конкретным материалом ("Бетон В40") — включай ТОЛЬКО его, без потомков и без родителя.
+
+Отвечай ТОЛЬКО валидным JSON без markdown:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": [{"name": str, "material_path": str}]}], "error": null}
+
+Если ни для одного запроса ничего не подошло:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": []}], "error": null}
+
+Если ошибка:
+{"status": "error", "results": [], "error": "описание"}
+
+ПРАВИЛА ПО КОЛИЧЕСТВУ:
+- В "results" ДОЛЖНО быть ровно столько элементов, сколько запросов в "material_request".
+- Даже если для запроса ничего не найдено — добавь его в "results" с пустым "selected_materials".
+- В "selected_materials" может быть ЛЮБОЕ количество элементов: 0, 1, 2, 5, 20.
+- НИКОГДА не используй "..." внутри массивов.
+- НЕ добавляй материалы, которые не подходят, "для полноты".
+
+Пример 1 (запрос — конкретный материал):
+Вход: material_request = ["Бетон В40"]
+Выход: {"status": "ok", "results": [{"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}], "error": null}
+
+Пример 2 (запрос — категория, включаем категорию и потомков):
+Вход: material_request = ["Бетон"]
+Выход: {"status": "ok", "results": [{"request": "Бетон", "selected_materials": [{"name": "Бетон", "material_path": "Общестрой / Бетоны и растворы / Бетон"}, {"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}, {"name": "Бетон В30", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В30"}, {"name": "Бетон В25", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В25"}]}], "error": null}
+
+Пример 3 (запрос с уточнением — одна ветка):
+Вход: material_request = ["Насос для водоснабжения"]
+Выход: {"status": "ok", "results": [{"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]}], "error": null}
+
+Пример 4 (одинаковые имена в разных ветках — возвращаем оба):
+Вход: material_request = ["Насос"]
+Выход: {"status": "ok", "results": [{"request": "Насос", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}]}], "error": null}
+
+Пример 5 (несколько запросов):
+Вход: material_request = ["Насос для водоснабжения", "Бетон В40"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]},
+  {"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}
+], "error": null}
+
+Пример 6 (часть запросов без результатов):
+Вход: material_request = ["Насос для водоснабжения", "квартира в центре"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]},
+  {"request": "квартира в центре", "selected_materials": []}
+], "error": null}
+
+Пример 7 (ничего не подходит):
+Вход: material_request = ["квартира в центре", "самолёт"]
+Выход: {"status": "ok", "results": [
+  {"request": "квартира в центре", "selected_materials": []},
+  {"request": "самолёт", "selected_materials": []}
+], "error": null}
+"""
+
+prompt8 = """Ты — ассистент по подбору строительных материалов.
+Тебе дан JSON:
+{
+  "candidates": [
+    {"id": 13, "name": "Инженерные системы", "material_path": "Инженерные системы"},
+    {"id": 14, "name": "Отопление и теплоснабжение", "material_path": "Инженерные системы / Отопление и теплоснабжение"},
+    {"id": 18, "name": "Водоснабжение", "material_path": "Инженерные системы / Водоснабжение"},
+    {"id": 16, "name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"},
+    {"id": 19, "name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}
+  ],
+  "material_request": ["Насос для водоснабжения"]
+}
+
+Поля:
+- "candidates" — плоский список всех материалов (дерево через material_path).
+- "material_request" — СПИСОК запросов, от 1 до N позиций.
+
+Задача: для КАЖДОГО запроса из "material_request" подбери соответствующие материалы из "candidates".
+
+КРИТИЧЕСКИ ВАЖНО:
+- В "material_request" может быть 1, 2, 5, 20 запросов — обработай ВСЕ по очереди.
+- Для каждого запроса верни ОТДЕЛЬНУЮ группу результатов в массиве "results".
+- В поле "request" верни ИСХОДНУЮ формулировку запроса БЕЗ изменений — ту же строку, что была во входе.
+- В дереве могут быть материалы с ОДИНАКОВЫМ "name" в разных ветках.
+- Учитывай ВЕСЬ "material_path", а не только "name".
+
+ПРАВИЛА ПОДБОРА:
+- Если запрос совпадает с "name" материала-категории (у него есть потомки) — включай саму категорию и всех её потомков.
+- Если запрос частично совпадает с "name" (например, "Бетон" и материалы "Бетон В40", "Бетон В30") — включай все материалы, чей "material_path" содержит это слово.
+- Если запрос совпадает с конкретным материалом ("Бетон В40") — включай ТОЛЬКО его, без потомков и без родителя.
+
+Отвечай ТОЛЬКО валидным JSON без markdown:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": [{"name": str, "material_path": str}]}], "error": null}
+
+Если ни для одного запроса ничего не подошло:
+{"status": "ok", "results": [{"request": "исходный запрос", "selected_materials": []}], "error": null}
+
+Если ошибка:
+{"status": "error", "results": [], "error": "описание"}
+
+ПРАВИЛА ПО КОЛИЧЕСТВУ:
+- В "results" ДОЛЖНО быть ровно столько элементов, сколько запросов в "material_request".
+- Даже если для запроса ничего не найдено — добавь его в "results" с пустым "selected_materials".
+- В "selected_materials" может быть ЛЮБОЕ количество элементов: 0, 1, 2, 5, 20.
+- НИКОГДА не используй "..." внутри массивов.
+- НЕ добавляй материалы, которые не подходят, "для полноты".
+
+Пример 1 (запрос — конкретный материал):
+Вход: material_request = ["Бетон В40"]
+Выход: {"status": "ok", "results": [{"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}], "error": null}
+
+Пример 2 (запрос — категория, включаем категорию и потомков):
+Вход: material_request = ["Бетон"]
+Выход: {"status": "ok", "results": [{"request": "Бетон", "selected_materials": [{"name": "Бетон", "material_path": "Общестрой / Бетоны и растворы / Бетон"}, {"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}, {"name": "Бетон В30", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В30"}, {"name": "Бетон В25", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В25"}]}], "error": null}
+
+Пример 3 (запрос с уточнением — одна ветка):
+Вход: material_request = ["Насос для водоснабжения"]
+Выход: {"status": "ok", "results": [{"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]}], "error": null}
+
+Пример 4 (одинаковые имена в разных ветках — возвращаем оба):
+Вход: material_request = ["Насос"]
+Выход: {"status": "ok", "results": [{"request": "Насос", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}]}], "error": null}
+
+Пример 5 (несколько запросов):
+Вход: material_request = ["Насос для водоснабжения", "Бетон В40"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]},
+  {"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}
+], "error": null}
+
+Пример 6 (несколько запросов, один с одинаковыми именами в разных ветках):
+Вход: material_request = ["Насос", "Бетон В40"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос", "selected_materials": [{"request": "Насос", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}, {"name": "Насосное оборудование", "material_path": "Инженерные системы / Отопление и теплоснабжение / Насосное оборудование"}]}]},
+  {"request": "Бетон В40", "selected_materials": [{"name": "Бетон В40", "material_path": "Общестрой / Бетоны и растворы / Бетон / Бетон В40"}]}
+], "error": null}
+
+Пример 7 (часть запросов без результатов):
+Вход: material_request = ["Насос для водоснабжения", "квартира в центре"]
+Выход: {"status": "ok", "results": [
+  {"request": "Насос для водоснабжения", "selected_materials": [{"name": "Насосное оборудование", "material_path": "Инженерные системы / Водоснабжение / Насосное оборудование"}]},
+  {"request": "квартира в центре", "selected_materials": []}
+], "error": null}
+
+Пример 8 (ничего не подходит):
+Вход: material_request = ["квартира в центре", "самолёт"]
+Выход: {"status": "ok", "results": [
+  {"request": "квартира в центре", "selected_materials": []},
+  {"request": "самолёт", "selected_materials": []}
+], "error": null}
+
+"""
+
+AI_PROMPTS = {
+  'prompt1': prompt1,
+  'prompt2': prompt2,
+  'prompt3': prompt3,
+  'prompt4': prompt4,
+  'prompt5': prompt5,
+  'prompt6': prompt6,
+  'prompt7': prompt7,
+  'prompt8': prompt8
+}
+
 import re
 
 def parse_qwen_response(raw: str) -> dict:
@@ -142,16 +415,6 @@ def parse_qwen_response(raw: str) -> dict:
       return {"status": "error", "selected_materials": [], "error": str(e)}
 
 def find_contact(input_data):
-  companies = CompanyService.get_companies()
-  company_materials = []
-  for company in companies:
-    company_materials.append(
-      {
-        'id': company.id,
-        'name': company.name,
-        'materials': [material.id for material in company.materials.all()]
-      }
-    )
   total_materials = MaterialService.get_materials()
   materials = []
   for material in total_materials:
@@ -167,42 +430,82 @@ def find_contact(input_data):
 
   payload = {
     'material_request': input_data['user_request'],
-    'candidates': materials, 
-    'companies': company_materials
+    'candidates': materials
   }
 
   user_query = json.dumps(payload, ensure_ascii=False)
-  system_query = prompt2
+
+  active_prompt = 'prompt8'
+  system_query = AI_PROMPTS.get(active_prompt)
 
   response = AiService.execute_ai_query(user_query=user_query, system_query=system_query)
-  parsed_response = parse_qwen_response(response)
-  print(response)
-  print(parsed_response)
+  parsed_response = parse_qwen_response(response)['results']
 
   material_by_name_path = {
     (m['name'], m.get('material_path')): m
     for m in payload['candidates']
   }
 
-  selected_ids = set()
-  for item in parsed_response['selected_materials']:
-    key = (item['name'], item.get('material_path'))
-    mat = material_by_name_path.get(key)
-    if mat:
-      selected_ids.add(mat['id'])
-    else:
-      for m in payload['candidates']:
-        if m['name'] == item['name']:
-          selected_ids.add(m['id'])
-          break
 
-  selected_ids = list(selected_ids)
+  requested_ids = []
 
-  response_list = [{'id':item['id'], 'name':item['name']} for item in company_materials if any(mat in selected_ids for mat in item['materials'])]
+  for request in parsed_response:
+    selected_ids = set()
+    for item in request['selected_materials']:
+      key = (item['name'], item.get('material_path'))
+      mat = material_by_name_path.get(key)
+      if mat:
+        selected_ids.add(mat['id'])
+      else:
+        for m in payload['candidates']:
+          if m['name'] == item['name']:
+            selected_ids.add(m['id'])
+            break
+
+    selected_ids = list(selected_ids)
+    requested_ids.append(
+      {
+        'user_request': request['request'],
+        'selected_ids': selected_ids
+      }
+    )
+
+  companies = CompanyService.get_companies()
+  company_materials = []
+  for company in companies:
+    current_materials = company.materials.all()
+    if len(current_materials) == 0:
+      continue
+    company_materials.append(
+      {
+        'id': company.id,
+        'name': company.name,
+        'materials': [material.id for material in current_materials]
+      }
+    )
+
+  response_list = []
+  for item in requested_ids:
+    temp = {'user_request': item['user_request'], 'brends':[]}
+    print(item)
+    current_ids = item['selected_ids']
+    if len(current_ids) == 0:
+      continue
+    print(f'cur: {current_ids}')
+    for brend in company_materials:
+      if any(id in brend['materials'] for id in current_ids):
+        temp['brends'].append(
+          {
+            'id':brend['id'],
+            'name': brend['name']
+          }
+        )
+    response_list.append(temp)
+  
   print(response_list)
   result = {
     'user_request': input_data['user_request'],
-    'promt_template': 'prompt2',
+    'promt_template': active_prompt,
     'output': response_list
   }
   return result

@@ -14,16 +14,30 @@ async function executeAi(inputId=null, outputId=null, context=null) {
     alertFrame('Введите запрос')
     return
   }
-  const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context})
+
+  
+  const userRequestList = userRequest.split(';').map(item => item.trim())
+
+  const data = await postJson('/sender/ai_request/', {user_request: userRequestList, context: context})
   if (data.success) {
     output.innerHTML += `<span>Запрос: ${data.output['user_request']}</span>`
-    output.innerHTML += `<span>Промт: ${data.output['promt_template']}</span>`
+    output.innerHTML += `<span>Промпт: ${data.output['promt_template']}</span>`
     const outputList = data.output['output']
-    if (output && outputList.length > 0) {
-      outputList.forEach(item => 
+    console.log(outputList)
+    for (const req of outputList) {
+      const brends = req['brends']
+      output.innerHTML += `<span>${req['user_request']}</span>`
+      if (brends.length == 0) {output.innerHTML += `<span>Не найдено</span>`; continue}
+      brends.forEach(item => {
         output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
-      )
+      })
     }
+    // if (output && outputList.length > 0) {
+    //   output.innerHTML += `<span>${outputList}</span>`
+    //   outputList.forEach(item => 
+    //     output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
+    //   )
+    // }
   }
 }
 
