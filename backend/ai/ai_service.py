@@ -17,8 +17,11 @@ class AiService:
     return cls._client
   
   @classmethod
-  def execute_ai_query(cls, user_query=None, system_query=None, response_format=None, model=None):
+  def execute_ai_query(cls, user_query=None, system_query=None, response_format=None, model=None, temperature=0):
     messages = []
+    if not model:
+      print('NO MODEL')
+      return []
 
     if system_query:
       messages.append({"role": "system", "content": system_query})
@@ -26,9 +29,9 @@ class AiService:
     messages.append({"role": "user", "content": user_query})
 
     kwargs = {
-      'model':model or os.getenv('LLM_MODEL_NAME'),
+      'model':model,
       'messages':messages,
-      'temperature':float(os.getenv('LLM_TEMPERATURE', 0)),
+      'temperature':temperature,
       'stream':True
     }
 

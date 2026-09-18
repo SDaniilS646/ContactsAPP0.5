@@ -9,7 +9,11 @@ from apps.crm.models.connections import CompanyContact, CompanyMaterial, Meeting
 from apps.sender.models import TrainingExample, ModelVersion
 from apps.sender.sender_services import work_classifier, test_model
 
+from apps.ai.models import AiTask, AiTaskVersion
+
 from backend.ai.ai_service import AiService
+
+from django.utils import timezone
 
 from pathlib import Path
 
@@ -34,6 +38,87 @@ MODELS = {
 }
 
 class Commands:
+
+  @staticmethod
+  def create_ai_task(args):
+    model_name = args[0]
+    description = args[1].split('_')
+    AiTask.objects.create(
+      name = model_name,
+      description = description,
+      created_at = timezone.now(),
+      created_by=None,
+      updated_at = timezone.now(),
+      updated_by=None
+    )
+
+    return 'model created'
+
+  @staticmethod
+  def get_ai_models(args):
+    tasks = AiTask.objects.all()
+
+    output_list = [{'name':task.name, 'description':task.description} for task in tasks]
+    output = ''
+    for item in output_list:
+      output = f'{output}\n{item['name']} - {item['description']}'
+
+    return output
+
+  @staticmethod
+  def activate_ai_model_version(args):
+    task = AiTask.objects.filter(name=args[0]).first()
+    versions = AiTaskVersion.objects.filter(task=task)
+    version_numbers = [version['version'] for version in versions.values('version')]
+    version = int(args[1]) if len(args) == 2 else max(version_numbers)
+
+    if version not in version_numbers:
+      return f'У модели нет такой версии, доступны: {'; '.join(version_numbers)}'
+
+    versions.update(is_active=False)
+    versions.filter(version=version).update(is_active=True)
+
+    return f'Model {task.name} - v{version} activated'
+  
+
+  @staticmethod
+  def set_ai_task_version(args):
+    task = AiTask.objects.filter(name=args[0]).first()
+
+    prev_versions = AiTaskVersion.objects.filter(task=task)
+
+    if len(prev_versions) == 0:
+      version = 1
+    else:
+      versions = [version['version'] for version in prev_versions.values('version')]
+      version = max(versions) + 1
+
+    prompt=f'prompt{args[1]}'
+
+    model_name = 'qwen2:7b-instruct'
+    temperature = 0
+
+    is_active = True
+
+
+    AiTaskVersion.objects.create(
+      task=task,
+      version=version,
+      system_prompt=prompt,
+      model_name=model_name,
+      lora_adapter_path='',
+      temperature=temperature,
+      max_tokens=2048,
+      response_format=None,
+      is_active=is_active,
+      notes='',
+      created_at = timezone.now(),
+      created_by=None,
+      updated_at = timezone.now(),
+      updated_by=None
+    )
+
+    return 'version created'
 
   @staticmethod
   def ai_cmd(args):

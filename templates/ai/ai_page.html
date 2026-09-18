@@ -1,0 +1,18 @@
+  <div id="outer" class="outer">
+    <div class="page-menu">
+    </div>
+    <div id="models-list" class="simple-list">
+      <h3>LLM</h3>
+      <div>
+        {% for model in model_list %}
+          <span class="title" title="{{model.name}}">
+            <a onclick="removeAllModals(); openModal('model-details-modal-frame', 'detailsModel', {{model.id}})" name="name">{{model.name|default:model.tech_name}}</a>
+          </span>
+        {% endfor %}
+      </div>
+      <h3>ML</h3>
+      <div>
+        <span>Пока в разработке</span>
+      </div>
+    </div>
+  </div>

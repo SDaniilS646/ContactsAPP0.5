@@ -47,6 +47,10 @@
     </div>
   {% endif %}
 
+  {% if user.is_superuser %}
+    <button id="page-aiConfig" name="aiConfig-btn" onclick="setPage('page', 'aiConfig')">AI Config</button>
+  {% endif %}
+
 </div>
 <div id="cmd-btn">
   {% if user.is_superuser %}

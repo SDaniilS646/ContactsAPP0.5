@@ -19,7 +19,11 @@ COMMANDS = {
   'test_model': Commands.test_model,
   'model_list': Commands.model_list,
   'model_activate': Commands.model_activate,
-  'ai': Commands.ai_cmd
+  'ai': Commands.ai_cmd,
+  'create_ai_task': Commands.create_ai_task,
+  'create_ai_version': Commands.set_ai_task_version,
+  'get_ai_models':Commands.get_ai_models,
+  'activate_ai_model_version':Commands.activate_ai_model_version
 }
 
 class CommandOperations:

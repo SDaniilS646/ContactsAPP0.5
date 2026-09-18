@@ -14,6 +14,8 @@ from apps.sender.sender_services import get_version
 
 from apps.sender.models import TrainingExample
 
+from apps.ai.services.ai_services import AiService
+
 
 
 class PageService:
@@ -21,6 +23,11 @@ class PageService:
   def sender_page():
     model_version = f'work_classifier {get_version("work_classifier")}'
     return 'sender/sender_page.html', {'model_version': model_version}
+
+  @staticmethod
+  def ai_config_page():
+    model_list = AiService.get_ai_models()
+    return 'ai/ai_page.html', {'model_list': model_list}
   
   @staticmethod
   def contacts_page():
@@ -284,6 +291,15 @@ class DetailService:
           'companies': companies
         }
 
+  @staticmethod
+  def modelDetail(id):
+    model = AiService.get_ai_model(id)
+    model_versions = AiService.get_ai_versions(model)
+    active_version = model_versions.filter(is_active=True).first().id
+    print(active_version)
+
+    return 'ai/detail.html', {'model':model, 'versions':model_versions, 'active_version':active_version}
+
 class AddService:
 
   @staticmethod
@@ -395,7 +411,6 @@ class ModalService:
   def chooseEmployee(id):
     employees = EmployeeService.get_employees()
     return ModalService.modal_template + '/choose/modal_choose_employees.html', {'employees': employees}
-
 
   @staticmethod
   def chooseBrendList(id):
