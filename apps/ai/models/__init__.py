@@ -1,3 +1,3 @@
 from .mixins import AuditedModel
-from .ai_models import senderAiLog
+from .models import AiTask, AiTaskVersion
 # from .training_models import trainingModel

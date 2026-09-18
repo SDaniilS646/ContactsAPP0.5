@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'apps.templatetags',
     'apps.sender',
     'apps.crm',
+    'apps.ai',
     'django.contrib.postgres',
     'users'
 ]

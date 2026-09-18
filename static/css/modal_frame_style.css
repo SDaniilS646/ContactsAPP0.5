@@ -345,7 +345,7 @@
 } 
 
 .modal-content .is-hidden {
-  display: asdfghjnone;
+  display: hidden;
 }
 
 .brend-list-section {
@@ -361,17 +361,33 @@
   gap: 5px;
 
   justify-self: center;
-
 }
 
 .brend-list-material-name,
 .brend-list-brend-name {
 border: 1px solid black;
 padding: 2px;
-
 display: flex;
 flex-direction: column;
-
 min-height: 50px;
+}
 
+#model-version-information {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#model-version-information .model-version-item  {
+  border-bottom: 1px solid var(--thin-border-color);
+  display:grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  padding: 5px;
+}
+
+#model-version-information .model-version-item textarea {
+  height: 300px;
+  width: 500px;
+  resize: none;
 }

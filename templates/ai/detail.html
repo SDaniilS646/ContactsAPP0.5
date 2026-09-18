@@ -1,0 +1,31 @@
+<div id="model-details-modal-frame" class="modal">
+  <div class="modal-content details">
+    <div class="modal-head">
+      <div class="menu-btns">
+        {% include 'components/modal_remove_btn.html' with frame_id='model-details-modal-frame' %}
+      </div>
+      <div class="modal-header">
+        <h1>{{model.name}}</h1>
+      </div>
+    </div>
+    <div class="modal-main">
+      <div class="details-info">
+        <span>Описание:</span><span>{{model.description | default:"—"}}</span>
+      </div>
+
+      <div class="addition-info">
+        <select name="model-version-select" id="model-version-select">
+          {% for version in versions %}
+            <option value="{{version.id}}" {% if version.id == active_version %}selected{% endif %}>v{{version.version}}</option>
+          {% endfor %}
+        </select>
+        <div id="model-version-information">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <button onclick="">Создать конфиг</button>
+      <button onclick="activateModel('model-version-select')">Активировать версию</button>
+    </div>
+  </div>
+</div>

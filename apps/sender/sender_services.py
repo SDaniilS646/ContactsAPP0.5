@@ -31,6 +31,8 @@ from backend.ai.ai_service import AiService
 from apps.crm.services.model_services.company_service import CompanyService
 from apps.crm.services.model_services.material_service import MaterialService
 
+from apps.ai.models.models import AiTask, AiTaskVersion
+
 prompt1 = """Ты — ассистент по подбору строительных материалов
     Тебе дан JSON:
     {
@@ -416,6 +418,9 @@ def parse_qwen_response(raw: str) -> dict:
 
 def find_contact(input_data):
   total_materials = MaterialService.get_materials()
+  task = AiTask.objects.filter(name='material_match').first()
+  task_config = AiTaskVersion.objects.filter(task=task, is_active=True).first()
+
   materials = []
   for material in total_materials:
     materials.append(
@@ -435,10 +440,9 @@ def find_contact(input_data):
 
   user_query = json.dumps(payload, ensure_ascii=False)
 
-  active_prompt = 'prompt8'
-  system_query = AI_PROMPTS.get(active_prompt)
+  system_query = task_config.system_prompt
 
-  response = AiService.execute_ai_query(user_query=user_query, system_query=system_query)
+  response = AiService.execute_ai_query(user_query=user_query, system_query=system_query, temperature=task_config.temperature, model=task_config.model_name)
   parsed_response = parse_qwen_response(response)['results']
 
   material_by_name_path = {
@@ -486,12 +490,12 @@ def find_contact(input_data):
 
   response_list = []
   for item in requested_ids:
-    temp = {'user_request': item['user_request'], 'brends':[]}
-    print(item)
+    temp = {'user_request': item['user_request'],  'brends':[]}
     current_ids = item['selected_ids']
     if len(current_ids) == 0:
       continue
     print(f'cur: {current_ids}')
+    
     for brend in company_materials:
       if any(id in brend['materials'] for id in current_ids):
         temp['brends'].append(
@@ -501,11 +505,9 @@ def find_contact(input_data):
           }
         )
     response_list.append(temp)
-  
-  print(response_list)
   result = {
     'user_request': input_data['user_request'],
-    'promt_template': active_prompt,
+    'promt_template': f'Модель {task.name} v{task_config.version}',
     'output': response_list
   }
   return result

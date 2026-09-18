@@ -34,6 +34,7 @@ urlpatterns = [
     path('', clearPage),
     path('crm/', include('apps.crm.urls')),
     path('sender/', include('apps.sender.urls')),
+    path('ai/', include('apps.ai.urls')),
 
     path('open_page/', setPage),
     path('modal/', loadModal),

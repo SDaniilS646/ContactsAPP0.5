@@ -156,7 +156,6 @@ class SpecialOperations:
     )
     return response
 
-  
   def create_Excel_Output(request):
     try:
       payload = json.loads(request.body)

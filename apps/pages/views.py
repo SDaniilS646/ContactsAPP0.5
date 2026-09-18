@@ -15,7 +15,8 @@ PAGES = {
   'cmd': PageService.cmd_page,
   'parser': PageService.parser_page,
   'sender': PageService.sender_page, 
-  'objects': PageService.objects_page
+  'objects': PageService.objects_page,
+  'aiConfig': PageService.ai_config_page
 }
 
 ADD = {
@@ -43,6 +44,7 @@ MODALS = {
   'detailsMaterial': DetailService.materialsDetail,
   'detailsMeeting': DetailService.meetingsDetail,
   'detailsObjects': DetailService.objectsDetail,
+  'detailsModel': DetailService.modelDetail,
   'chooseCompany': ModalService.chooseCompany,
   'chooseBrendList': ModalService.chooseBrendList,
   'listMeasure': ModalService.listMeasure,
