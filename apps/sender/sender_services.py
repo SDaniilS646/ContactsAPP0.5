@@ -26,7 +26,7 @@ from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 
 from collections import Counter
-from backend.ai.ai_service import AiService
+from apps.ai.services.ai_services import AiExecutionService, AiService
 
 from apps.crm.services.model_services.company_service import CompanyService
 from apps.crm.services.model_services.material_service import MaterialService
@@ -433,8 +433,11 @@ def find_contact(input_data):
       }
     )
 
+  request_list = input_data['user_request'].split(';')
+  print(request_list)
+
   payload = {
-    'material_request': input_data['user_request'],
+    'material_request': request_list,
     'candidates': materials
   }
 
@@ -442,8 +445,12 @@ def find_contact(input_data):
 
   system_query = task_config.system_prompt
 
-  response = AiService.execute_ai_query(user_query=user_query, system_query=system_query, temperature=task_config.temperature, model=task_config.model_name)
+  response = AiExecutionService.execute_ai_query(user_query=user_query, system_query=system_query, temperature=task_config.temperature, model=task_config)
+  
   parsed_response = parse_qwen_response(response)['results']
+  AiService.save_query_log(request=input_data['user_request'], response=parsed_response, latency=0, task_version=task_config, token_count=0)
+
+
 
   material_by_name_path = {
     (m['name'], m.get('material_path')): m

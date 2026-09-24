@@ -18,7 +18,7 @@ async function executeAi(inputId=null, outputId=null, context=null) {
   
   const userRequestList = userRequest.split(';').map(item => item.trim())
 
-  const data = await postJson('/sender/ai_request/', {user_request: userRequestList, context: context})
+  const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context})
   if (data.success) {
     output.innerHTML += `<span>Запрос: ${data.output['user_request']}</span>`
     output.innerHTML += `<span>Промпт: ${data.output['promt_template']}</span>`

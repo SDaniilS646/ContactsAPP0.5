@@ -20,7 +20,12 @@ class AiOperations:
       'success': True,
       'output': output
     })
-
+  
+  def create_version(request):
+    input_data = json.loads(request.body)
+    AiService.create_version(input_data)
+    return JsonResponse({'success':True})
+  
   def activate_version(request):
     input_data = json.loads(request.body)
     AiService.activate(input_data['id'])

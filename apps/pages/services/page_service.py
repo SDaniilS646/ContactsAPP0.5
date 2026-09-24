@@ -296,7 +296,6 @@ class DetailService:
     model = AiService.get_ai_model(id)
     model_versions = AiService.get_ai_versions(model)
     active_version = model_versions.filter(is_active=True).first().id
-    print(active_version)
 
     return 'ai/detail.html', {'model':model, 'versions':model_versions, 'active_version':active_version}
 
@@ -341,6 +340,12 @@ class ModalService:
   @staticmethod
   def createObject(id):
     return ModalService.modal_template + '/create/modal_create_object.html', {}
+
+  @staticmethod
+  def createModel(id):
+    task = AiService.get_ai_model(id)
+    model = AiService.get_last_version(task)
+    return ModalService.modal_template + '/create/modal_create_aiversion.html', {'model':model}
 
   @staticmethod
   def chooseMaterial(company_id):
