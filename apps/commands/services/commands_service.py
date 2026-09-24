@@ -11,7 +11,7 @@ from apps.sender.sender_services import work_classifier, test_model
 
 from apps.ai.models import AiTask, AiTaskVersion
 
-from backend.ai.ai_service import AiService
+from apps.ai.services.ai_services import AiService
 
 from django.utils import timezone
 

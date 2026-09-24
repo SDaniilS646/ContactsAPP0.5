@@ -53,24 +53,24 @@ class AiTaskVersion(AuditedModel):
 #   class Meta:
 #     db_table = 'ai_example'
 
-# class AiQueryLog(AuditedModel):
-#   task = models.ForeignKey(AiTask, on_delete=models.CASCADE, related_name='logs')
-#   task_version = models.ForeignKey(AiTaskVersion, null=True, on_delete=models.SET_NULL, related_name='logs')
+class AiQueryLog(AuditedModel):
+  # task = models.ForeignKey(AiTask, on_delete=models.CASCADE, related_name='logs')
+  task_version = models.ForeignKey(AiTaskVersion, null=True, on_delete=models.SET_NULL, related_name='logs')
 
-#   request_text = models.TextField()
-#   input_payload = models.JSONField()
+  request_text = models.TextField()
+  # input_payload = models.JSONField()
 
-#   raw_response = models.TextField()
-#   parsed_response = models.JSONField(null=True)
-#   resolution = models.CharField(max_length=32)
-#   latency_ms = models.PositiveIntegerField(null=True)
-#   token_count = models.PositiveIntegerField(nulll=True)
+  raw_response = models.TextField()
+  # parsed_response = models.JSONField(null=True)
+  # resolution = models.CharField(max_length=32)
+  latency_ms = models.PositiveIntegerField(null=True)
+  token_count = models.PositiveIntegerField(null=True)
 
-#   rating = models.CharField(max_length=25)
-#   comment = models.TextField(blank=True)
-#   corrected_response = models.JSONField(null=True, blank=True)
+  # rating = models.CharField(max_length=25)
+  # comment = models.TextField(blank=True)
+  # corrected_response = models.JSONField(null=True, blank=True)
 
-#   class Meta:
-#     db_table = 'ai_query_log'
+  class Meta:
+    db_table = 'ai_query_log'
 
   

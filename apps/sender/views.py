@@ -7,7 +7,7 @@ import json
 from apps.sender.sender_services import work_classifier, test_model, find_contact
 from apps.sender.models import TrainingExample
 
-from backend.ai.ai_service import AiService
+# from backend.ai.ai_service import AiService
 
 def execute_ai(request):
   input_data = json.loads(request.body)
@@ -35,18 +35,18 @@ def sender(request):
       'success': True
     })
 
-def categorize(request):
-  input_data = json.loads(request.body)
-  categories = TrainingExample.objects.filter(label__isnull=False, status__in=['labeled', 'reviewed'])
-  unique_categories = list(set([cat.label for cat in categories]))
-  print(input_data)
-  user_query = json.dumps({'work_name': input_data, 'categories': unique_categories}, ensure_ascii=False)
-  output = AiService.execute_ai_query(system_query='Определи категорию work_name из списка categories. Верни ответ в формате "Работа: <work_name> \\nКатегорий: <category> \\nВероятность: <Уверенность в ответе в процентах>"', user_query=user_query) #test_model([input_data['input']])
-  print(output)
-  return JsonResponse({
-    'success': True,
-    'output': output 
-  })
+# def categorize(request):
+#   input_data = json.loads(request.body)
+#   categories = TrainingExample.objects.filter(label__isnull=False, status__in=['labeled', 'reviewed'])
+#   unique_categories = list(set([cat.label for cat in categories]))
+#   print(input_data)
+#   user_query = json.dumps({'work_name': input_data, 'categories': unique_categories}, ensure_ascii=False)
+#   output = AiService.execute_ai_query(system_query='Определи категорию work_name из списка categories. Верни ответ в формате "Работа: <work_name> \\nКатегорий: <category> \\nВероятность: <Уверенность в ответе в процентах>"', user_query=user_query) #test_model([input_data['input']])
+#   print(output)
+#   return JsonResponse({
+#     'success': True,
+#     'output': output 
+#   })
 
 def label_category(request):
   input_data = json.loads(request.body)

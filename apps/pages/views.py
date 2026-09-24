@@ -30,6 +30,7 @@ MODALS = {
   'createMeasure': ModalService.createMeasure,
   'createEmployee': ModalService.createEmployee,
   'createObject': ModalService.createObject,
+  'createModel': ModalService.createModel,
   'chooseMaterial': ModalService.chooseMaterial,
   'chooseContact': ModalService.chooseContact,
   'chooseEmployee': ModalService.chooseEmployee,
