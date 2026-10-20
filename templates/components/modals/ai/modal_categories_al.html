@@ -1,0 +1,39 @@
+<div id="categories_active_learning_modal_frame" class="modal" style="z-index:2;">
+  <div class="modal-content">
+    <div class="header">
+      {% include 'components/modal_remove_btn.html' with frame_id='categories_active_learning_modal_frame' %}
+      <select id="al-categories-selection">
+        <option>...</option>
+        {% for category in categories %}
+          <option>{{category}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="main-frame">
+      <hr>
+      <div id="pending-list">
+        {% for example in al_list %}
+        {% comment %} {{example.category}} {% endcomment %}
+          <div id="example_{{example.id}}" class="pending-list-item" name="pending-list-item" data-category="{{example.category}}">
+            <span>Запрос: {{example.request}}</span>
+            <span hidden name="material-id">id: {{example.material.id}}</span>
+            <span>Ответ: {{example.material.name | default:"—"}}</span>
+            <span class="material-path">({{example.material.path}})</span>
+            <div name="example-checkboxes" class="example-checkboxes">
+              <button name="al-example-tumbler" class="al-example-tumbler {{example.check}}" onclick="exampleTumblerToggle(event, this)" value="{{example.check}}"><span>●</span></button>
+              <div>
+                <input type="checkbox" id="active" name="active" value="True" {% if example.is_active %}checked{% endif %}>
+                <label>использовать в обучении</label>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="footer">
+      <button onclick="labelData()">Сохранить</button>
+    </div>
+  </div>
+</div>

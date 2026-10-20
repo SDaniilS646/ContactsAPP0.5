@@ -32,6 +32,11 @@ class MaterialService:
   @staticmethod
   def get_materials():
     return Material.objects.all()
+
+  @staticmethod
+  def get_materials_section():
+    return Material.objects.filter(parent=None).all()
+
   
   @staticmethod
   def create(input_data, user):
@@ -144,7 +149,24 @@ class MaterialService:
     return result[::-1]
 
   @staticmethod
-  def getAllChildren(material_id, materials):
+  def get_branch(section_id):
+    section = Material.objects.get(id=section_id)
+    while section.parent is not None:
+      section = section.parent
+
+    result = []
+    stack = [section]
+
+    while stack:
+      item = stack.pop()
+      result.append(item)
+      children = list(item.children.all())
+      stack.extend(reversed(children))
+
+    return result
+
+  @staticmethod
+  def getAllChildren(material_id, materials=None):
     children_by_parent = defaultdict(list)
     for material in materials:
       children_by_parent[material.parent_id].append(material.id)

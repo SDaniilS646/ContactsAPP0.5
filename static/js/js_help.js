@@ -10,6 +10,7 @@ async function executeAi(inputId=null, outputId=null, context=null) {
   const input = document.getElementById(inputId)
   const output = document.getElementById(outputId)
   const userRequest = input.value
+  const section = document.getElementById('senderSectionSelect').value
   if (userRequest.trim() === '') {
     alertFrame('Введите запрос')
     return
@@ -18,7 +19,7 @@ async function executeAi(inputId=null, outputId=null, context=null) {
   
   const userRequestList = userRequest.split(';').map(item => item.trim())
 
-  const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context})
+  const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context, section:section})
   if (data.success) {
     output.innerHTML += `<span>Запрос: ${data.output['user_request']}</span>`
     output.innerHTML += `<span>Промпт: ${data.output['promt_template']}</span>`
@@ -27,6 +28,7 @@ async function executeAi(inputId=null, outputId=null, context=null) {
     for (const req of outputList) {
       const brends = req['brends']
       output.innerHTML += `<span>${req['user_request']}</span>`
+      console.log(brends.length)
       if (brends.length == 0) {output.innerHTML += `<span>Не найдено</span>`; continue}
       brends.forEach(item => {
         output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`

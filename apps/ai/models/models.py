@@ -29,30 +29,6 @@ class AiTaskVersion(AuditedModel):
     ordering = ['-version']
     db_table = 'ai_task_version'
 
-
-# class AiExample(AuditedModel):
-#   task = models.ForeignKey(AiTask, on_delete=models.CASCADE, related_name='examples') # Какая модель
-#   source = models.CharField(max_length=32, default='manual') # Для истории - ИИ сделал, юзер прочекал или юзер сделал
-
-#   # request | material  | check
-#   # ----------------------------
-#   # Бетон   | Бетон(FK) | True
-#   # Бетон   | Гранит(FK)| False
-#   request_text = models.TextField() # user_request
-#   materials = models.ForeignKey(
-#       Material, on_delete=models.CASCADE, 
-#       related_name='brend_list'
-#     ) # FK на Materials
-  
-#   check = models.BinaryField(null=True, blank=True) # Bool
-
-#   embedding = models.BinaryField(null=True, blank=True) # вектор для ML
-
-#   is_active = models.BooleanField(default=True)
-
-#   class Meta:
-#     db_table = 'ai_example'
-
 class AiQueryLog(AuditedModel):
   # task = models.ForeignKey(AiTask, on_delete=models.CASCADE, related_name='logs')
   task_version = models.ForeignKey(AiTaskVersion, null=True, on_delete=models.SET_NULL, related_name='logs')
@@ -65,6 +41,7 @@ class AiQueryLog(AuditedModel):
   # resolution = models.CharField(max_length=32)
   latency_ms = models.PositiveIntegerField(null=True)
   token_count = models.PositiveIntegerField(null=True)
+  prompt_tokens = models.PositiveIntegerField(null=True)
 
   # rating = models.CharField(max_length=25)
   # comment = models.TextField(blank=True)
@@ -74,3 +51,25 @@ class AiQueryLog(AuditedModel):
     db_table = 'ai_query_log'
 
   
+class AiExample(AuditedModel):
+  request = models.ForeignKey(AiQueryLog, on_delete=models.SET_NULL, related_name='example_log', null=True) # Какая модель
+  source = models.CharField(max_length=32, default='manual') # Для истории - ИИ сделал, юзер прочекал или юзер сделал
+
+  # request | material  | check
+  # ----------------------------
+  # Бетон   | Бетон(FK) | True
+  # Бетон   | Гранит(FK)| False
+  request_text = models.TextField() # user_request
+  materials = models.ForeignKey(
+      Material, on_delete=models.CASCADE, 
+      related_name='output_example'
+    ) # FK на Materials
+  
+  example_check = models.BooleanField(null=True, blank=True) # Bool
+
+  # embedding = models.BinaryField(null=True, blank=True) # вектор для ML
+
+  is_active = models.BooleanField(default=True)
+
+  class Meta:
+    db_table = 'ai_example'

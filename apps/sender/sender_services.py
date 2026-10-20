@@ -417,7 +417,11 @@ def parse_qwen_response(raw: str) -> dict:
       return {"status": "error", "selected_materials": [], "error": str(e)}
 
 def find_contact(input_data):
-  total_materials = MaterialService.get_materials()
+  if input_data['section'] == '-1':
+   total_materials = MaterialService.get_materials()
+  else:
+    total_materials = MaterialService.get_branch(input_data['section'])
+
   task = AiTask.objects.filter(name='material_match').first()
   task_config = AiTaskVersion.objects.filter(task=task, is_active=True).first()
 
@@ -434,7 +438,7 @@ def find_contact(input_data):
     )
 
   request_list = input_data['user_request'].split(';')
-  print(request_list)
+  request_list = [item.strip() for item in request_list]
 
   payload = {
     'material_request': request_list,
@@ -445,10 +449,10 @@ def find_contact(input_data):
 
   system_query = task_config.system_prompt
 
-  response = AiExecutionService.execute_ai_query(user_query=user_query, system_query=system_query, temperature=task_config.temperature, model=task_config)
+  response, latency, token_count, prompt_tokens = AiExecutionService.execute_ai_query(user_query=user_query, system_query=system_query, temperature=task_config.temperature, model=task_config)
   
   parsed_response = parse_qwen_response(response)['results']
-  AiService.save_query_log(request=input_data['user_request'], response=parsed_response, latency=0, task_version=task_config, token_count=0)
+  log_id = AiService.save_query_log(request=input_data['user_request'], response=parsed_response, latency=latency, task_version=task_config, token_count=token_count, prompt_tokens=prompt_tokens)
 
 
 
@@ -501,7 +505,8 @@ def find_contact(input_data):
     current_ids = item['selected_ids']
     if len(current_ids) == 0:
       continue
-    print(f'cur: {current_ids}')
+    for current_id in current_ids:
+      AiService.save_ai_example(source='ai', request_text=item['user_request'], material_id=current_id, request_id=log_id)
     
     for brend in company_materials:
       if any(id in brend['materials'] for id in current_ids):
