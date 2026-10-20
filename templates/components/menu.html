@@ -40,12 +40,10 @@
       <button onclick="openModal('create_object_modal_frame', 'createObject')">Добавить объект</button>
   </div>
 
-  {% if user.is_superuser %}
     <button id="page-sender" name="sender-btn" onclick="setPage('page', 'sender')">SENDER indev</button>
     <div name="sender-menu-btns" class="sub-menu-btns hidden">
         <button onclick="openModal('categories_active_learning_modal_frame', 'activeLearningCaterories')">AL categories</button>
     </div>
-  {% endif %}
 
   {% if user.is_superuser %}
     <button id="page-aiConfig" name="aiConfig-btn" onclick="setPage('page', 'aiConfig')">AI Config</button>
