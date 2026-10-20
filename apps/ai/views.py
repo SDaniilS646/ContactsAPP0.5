@@ -32,3 +32,11 @@ class AiOperations:
     return JsonResponse({
       'success': True
     })
+
+  def label_material(request):
+    input_data = json.loads(request.body)
+    AiService.save_material_label(input_data.get('labeledData'))
+    # AiService.prepare_dpo_dataset()
+    return JsonResponse({
+      'success': True
+    })

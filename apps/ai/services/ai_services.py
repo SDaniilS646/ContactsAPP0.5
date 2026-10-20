@@ -1,4 +1,5 @@
-from apps.ai.models.models import AiTask, AiTaskVersion, AiQueryLog
+from apps.ai.models.models import AiTask, AiTaskVersion, AiQueryLog, AiExample
+from apps.crm.services.model_services.material_service import MaterialService
 
 from openai import OpenAI
 import json
@@ -34,7 +35,8 @@ class AiExecutionService:
       'model':model.model_name,
       'messages':messages,
       'temperature':temperature,
-      'stream':True
+      'stream':True,
+      'stream_options': {"include_usage": True}
     }
 
     if response_format:
@@ -43,52 +45,31 @@ class AiExecutionService:
     print('Qwen в работе: ', end='', flush=True)
     t_start = time.perf_counter()
     t_first = None
-    token_count = 0
+    token_count = None
     full_response = []
 
 
     stream = cls._get_client().chat.completions.create(**kwargs)
     print(time.perf_counter()- t_start)
 
-    print('CHUNKS')
-
     for chunk in stream:
       if not chunk.choices:
+        if hasattr(chunk, 'usage') and chunk.usage:
+          prompt_tokens = chunk.usage.prompt_tokens or 0
+          print(f'prompt tokens - {prompt_tokens}')
+          token_count = chunk.usage.completion_tokens or 0
         continue
 
-      # reasoning = getattr(delta, 'reasoning_content', None)
-
-      # if reasoning:
-      #   if t_first is None:
-      #     t_first = time.perf_counter()
-      #     print(f'[TTFT: {t_first - t_start:2f}c] ', end='', flush=True)
-      #   print(f'\033[90m{reasoning}\033[0m', end='', flush=True)
-
       text = chunk.choices[0].delta.content
-      # if text:
-      #   if t_first is None:
-      #     t_first = time.perf_counter()
-      #     print(f'[TTFT: {t_first - t_start:.2f}c] ', end='', flush=True)
-      #   token_count += 1
       if text:
         full_response.append(text)
         print('.', end='', flush=True)
 
-    elapsed = time.perf_counter()- t_start
-    rate = token_count / elapsed if elapsed > 0 else 0
+    latency = time.perf_counter()- t_start
 
-    print(f'\n[Готово: {token_count} ток. за {elapsed:.2f}c, {rate:.1f} ток/c]', flush=True)
-    print()
-    print(full_response)
-    print(type(full_response))
-    print(''.join(full_response))
-    print(type(''.join(full_response)))
-    print()
-    
-
-
-    # AiService.save_query_log(request=user_query, response=''.join(full_response), latency=latency, task_version=model, token_count=token_count)
-    return ''.join(full_response)
+    if token_count is None:
+      token_count = 0
+    return ''.join(full_response), latency, token_count, prompt_tokens
 
   @classmethod
   def execute_ai_query_stream(cls, user_query=None, system_query=None, response_format=None, model=None, verbose=True):
@@ -96,20 +77,70 @@ class AiExecutionService:
 
 class AiService:
   @staticmethod
-  def save_query_log(request=None, response=None, latency=None, task_version=None, token_count=None):
-    print(f'request: {request}')
-    print(f'response: {response}')
-    print(f'token_count: {token_count}')
-    print(f'model:{task_version}')
-    print(f'latency: {latency}')
-    # AiQueryLog.objects.create(
-    #   request_text=request,
-    #   raw_response=response,
-    #   latency_ms=latency,
-    #   token_count=token_count,
-    #   task_version=task_version
-    # )
+  def prepare_dpo_dataset():
+    dataset = []
+    requests = AiExample.objects.filter(is_active=True).values
+    for req in requests:
+      print(f'{req.request_text} - {req.materials.name} - {req.example_check}')
+
+  @staticmethod
+  def save_material_label(labeled_data):
+    CHECKS = {
+      'true': True,
+      'false': False,
+      '': None
+    }
+    examples = AiExample.objects.all()
+    prev_data = []
+    new_data = []
+    for idx, example in enumerate(examples):
+      prev_data.append(
+        {
+          'id':examples[idx].id,
+          'check':examples[idx].example_check,
+          'is_active':examples[idx].is_active
+        }
+      )
+      new_data.append(
+        {
+          'id':labeled_data[idx]['id'],
+          'check':CHECKS.get(labeled_data[idx]['value']),
+          'is_active':labeled_data[idx]['is_active']
+        }
+      )
+
+    for item in new_data:
+      if item not in prev_data:
+        AiExample.objects.filter(id=item['id']).update(
+          example_check=item['check'],
+          is_active=item['is_active']
+        )
+
+  @staticmethod
+  def save_query_log(request=None, response=None, latency=None, task_version=None, token_count=None, prompt_tokens=None):
+    id = AiQueryLog.objects.create(
+      request_text=request,
+      raw_response=response,
+      latency_ms=latency,
+      token_count=token_count,
+      task_version=task_version,
+      prompt_tokens=prompt_tokens
+    ).id
+    return id
+
+  @staticmethod
+  def save_ai_example(source=None, request_text=None, material_id=None, request_id=None):
+    if len(AiExample.objects.filter(request_text=request_text, materials=MaterialService.get_material(material_id))) > 0:
+      return
+    AiExample.objects.create(
+      request=AiQueryLog.objects.filter(id=request_id).first(),
+      request_text=request_text,
+      materials=MaterialService.get_material(material_id),
+      example_check=None,
+      source=source
+    )
     return
+  
   @staticmethod
   def get_ai_models():
     tasks = AiTask.objects.all()

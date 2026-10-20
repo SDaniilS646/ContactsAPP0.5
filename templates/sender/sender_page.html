@@ -9,8 +9,15 @@
       <button type="button" id="upload-excel-btn" onclick="uploadVor()">UPLOAD</button>
     </div> {% endcomment %}
     <div>
+      <select name="senderSectionSelect" id="senderSectionSelect">
+        <option value="-1">---</option>
+        {% for section in sections %}
+          <option value="{{section.id}}">{{section.name}}</option>
+        {% endfor %}
+      </select>
       <input type="text" id="work-name-input">
       <button type="button" id="get-work-category" onclick="executeAi('work-name-input', 'sender-main-frame')">Categorize</button>
+
     </div>
     <div id="sender-main-frame" style="display:flex;flex-direction:column;gap:5px;">
       

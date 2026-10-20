@@ -13,6 +13,7 @@ from apps.crm.services.model_services.connection_service import ConnectionServic
 from apps.sender.sender_services import get_version
 
 from apps.sender.models import TrainingExample
+from apps.ai.models.models import AiExample
 
 from apps.ai.services.ai_services import AiService
 
@@ -22,7 +23,8 @@ class PageService:
   @staticmethod
   def sender_page():
     model_version = f'work_classifier {get_version("work_classifier")}'
-    return 'sender/sender_page.html', {'model_version': model_version}
+    sections = MaterialService.get_materials_section()
+    return 'sender/sender_page.html', {'model_version': model_version, 'sections':sections}
 
   @staticmethod
   def ai_config_page():
@@ -505,13 +507,26 @@ class ModalService:
   @staticmethod
   def alCategories(id):
     
-    pending = TrainingExample.objects.filter(status='pending').annotate(
-      percentage=F("uncertainity_score") * 100
-    )
+    examples = AiExample.objects.all()
+    categories = []
 
-    categories = TrainingExample.objects.filter(label__isnull=False, status__in=['labeled', 'reviewed'])
-    unique_categories = list(set([cat.label for cat in categories]))
+    al_list = []
+    pending_count = 0
+    for example in examples:
+      category = MaterialService.get_section(example.materials)
+      temp =  {
+          'id': example.id,
+          'request':example.request_text,
+          'material':{'id':example.materials.id, 'name':example.materials.name, 'path':MaterialService.get_path(example.materials.id)},
+          'check':'' if example.example_check == None else str(example.example_check).lower(),
+          'category':category.name,
+          'is_active':example.is_active
+        }
+      categories.append(category.name)
+      if not example.example_check:
+        pending_count += 1
+      al_list.append(temp)
 
-    pending_count = len(pending)
+    categories = list(set(categories))
 
-    return ModalService.modal_template + '/ml/modal_categories_al.html', {'pending': pending, 'categories':unique_categories, 'pending_count': pending_count}
+    return ModalService.modal_template + '/ai/modal_categories_al.html', {'al_list':al_list,'pending_count':pending_count, 'categories':categories}
