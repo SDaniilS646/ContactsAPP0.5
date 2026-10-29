@@ -1,3 +1,5 @@
+// const { createElement } = require("react")
+
 async function getCategory() {
   const container = document.getElementById("excel-upload-block")
   const input = document.getElementById("work-name-input")
@@ -17,7 +19,9 @@ async function testInnerHtml(event, element) {
   let inpValue
   
   element.parentElement.querySelectorAll('input').forEach(inp => inpValue =inp.value)
-  cont.innerHTML += `<button>${inpValue}</button>`
+  const button = createElement('button')
+  button.textContent = inpValue
+  cont.appendChild(button)
 }
 
 // ШАГ 1. ЗАГРЗУКА ФАЙЛА ВОР

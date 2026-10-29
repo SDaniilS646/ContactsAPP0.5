@@ -1,6 +1,7 @@
 from .services.commands_service import Commands
 
 from django.http import JsonResponse, HttpResponseBase
+from django.contrib.auth.decorators import login_required
 import shlex
 import json
 
@@ -13,13 +14,12 @@ COMMANDS = {
   'load_csv': Commands.getalldata,
   'check_con': Commands.checkConnections,
   'models': Commands.getModels,
-  'sql': Commands.sqlQuery,
   'import_pending_json': Commands.import_training_model,
   'train_model': Commands.train_model,
   'test_model': Commands.test_model,
   'model_list': Commands.model_list,
   'model_activate': Commands.model_activate,
-  'ai': Commands.ai_cmd,
+  # 'ai': Commands.ai_cmd,
   'create_ai_task': Commands.create_ai_task,
   'create_ai_version': Commands.set_ai_task_version,
   'get_ai_models':Commands.get_ai_models,
@@ -27,6 +27,7 @@ COMMANDS = {
 }
 
 class CommandOperations:
+  @login_required
   def executeCMD(request):
     if not Commands.checkrole(request.user):
       return JsonResponse({

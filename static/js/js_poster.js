@@ -572,175 +572,175 @@ async function post_MaterialsList(comp_id) {
   }
 }
 
-async function start_parsing() {
-  const container = document.getElementById('company-parsing')
+// async function start_parsing() {
+//   const container = document.getElementById('company-parsing')
 
-  const requestText = container.querySelector('[name="request_txt"]').value.trim()
-  if (requestText === '') {
-    return
-  }
+//   const requestText = container.querySelector('[name="request_txt"]').value.trim()
+//   if (requestText === '') {
+//     return
+//   }
 
-  const resultsDiv = document.querySelector('[name=companies]')
-  resultsDiv.innerHTML = ''
+//   const resultsDiv = document.querySelector('[name=companies]')
+//   resultsDiv.innerHTML = ''
 
-  const saveButton = container.querySelector('[name="save-parsed-companies"]')
-  const parseButton = container.querySelector('[name="start-parsing-btn"]')
-  lockButtons([saveButton, parseButton])
-  lockMenu()
+//   const saveButton = container.querySelector('[name="save-parsed-companies"]')
+//   const parseButton = container.querySelector('[name="start-parsing-btn"]')
+//   lockButtons([saveButton, parseButton])
+//   lockMenu()
 
-  try {
-    const data = await postJson('/crm/parse_company/', {
-      request_txt: requestText
-    })
+//   try {
+//     const data = await postJson('/crm/parse_company/', {
+//       request_txt: requestText
+//     })
 
-    if  (data.success) {
-      renderParsingResults(resultsDiv, data.results)
-    } else {
-      renderParsingError(resultsDiv, data.err_txt)
-    }
-  } catch(error) {
-    console.log('Parsing request failed:', error)
-    renderParsingError(resultsDiv, 'Произошла ошибка при выполнении запроса')
-  } finally {
-    unlockButtons([saveButton, parseButton])
-    unlockMenu()
-  }
-}
+//     if  (data.success) {
+//       renderParsingResults(resultsDiv, data.results)
+//     } else {
+//       renderParsingError(resultsDiv, data.err_txt)
+//     }
+//   } catch(error) {
+//     console.log('Parsing request failed:', error)
+//     renderParsingError(resultsDiv, 'Произошла ошибка при выполнении запроса')
+//   } finally {
+//     unlockButtons([saveButton, parseButton])
+//     unlockMenu()
+//   }
+// }
 
-function renderParsingResults(container, results) {
-  results.forEach((urlResult, urlIdx) => {
-    container.appendChild(createCompanyResultBlock(urlResult, urlIdx))
-  })
-}
+// function renderParsingResults(container, results) {
+//   results.forEach((urlResult, urlIdx) => {
+//     container.appendChild(createCompanyResultBlock(urlResult, urlIdx))
+//   })
+// }
 
-function createCompanyResultBlock(urlResult, urlIdx) {
-  const urlContainer = document.createElement('div')
+// function createCompanyResultBlock(urlResult, urlIdx) {
+//   const urlContainer = document.createElement('div')
 
-  const urlSpan = document.createElement('span');
-  urlSpan.textContent = urlResult.url;
-  urlContainer.appendChild(urlSpan);
+//   const urlSpan = document.createElement('span');
+//   urlSpan.textContent = urlResult.url;
+//   urlContainer.appendChild(urlSpan);
 
-  urlResult.mail.forEach((mailValue, mailIdx) => {
-    urlContainer.appendChild(createMailCheckBoxRow(urlResult.url, mailValue, urlIdx, mailIdx))
-  })
+//   urlResult.mail.forEach((mailValue, mailIdx) => {
+//     urlContainer.appendChild(createMailCheckBoxRow(urlResult.url, mailValue, urlIdx, mailIdx))
+//   })
 
-  return urlContainer
-}
+//   return urlContainer
+// }
 
-function renderParsingError(container, errText) {
-  const noResultsSpan = document.createElement('span');
-  noResultsSpan.textContent = 'Ничего не найдено (возможно лимит)';
-  container.appendChild(noResultsSpan)
-  container.appendChild(document.createElement('hr'))
+// function renderParsingError(container, errText) {
+//   const noResultsSpan = document.createElement('span');
+//   noResultsSpan.textContent = 'Ничего не найдено (возможно лимит)';
+//   container.appendChild(noResultsSpan)
+//   container.appendChild(document.createElement('hr'))
 
-  if (errText) {
-    const errSpan = document.createElement('span');
-    errSpan.textContent = errText;
-    container.appendChild(errSpan);
-  }
-}
+//   if (errText) {
+//     const errSpan = document.createElement('span');
+//     errSpan.textContent = errText;
+//     container.appendChild(errSpan);
+//   }
+// }
 
-function createMailCheckBoxRow(url, mailValue, urlIdx, mailIdx) {
-  const formContainer = document.createElement('div')
-  formContainer.setAttribute('class', 'form_container')
+// function createMailCheckBoxRow(url, mailValue, urlIdx, mailIdx) {
+//   const formContainer = document.createElement('div')
+//   formContainer.setAttribute('class', 'form_container')
 
-  // const inputId = `parsed-mail-${urlIdx}-${mailIdx}`
-  const inputId = `${urlIdx}-${mailIdx}`
+//   // const inputId = `parsed-mail-${urlIdx}-${mailIdx}`
+//   const inputId = `${urlIdx}-${mailIdx}`
 
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.id = inputId
-  checkbox.value = mailValue; 
-  checkbox.name = inputId;
-  checkbox.dataset.url = url
+//   const checkbox = document.createElement('input');
+//   checkbox.type = 'checkbox';
+//   checkbox.id = inputId
+//   checkbox.value = mailValue; 
+//   checkbox.name = inputId;
+//   checkbox.dataset.url = url
         
-  const label = document.createElement('label');
-  label.textContent = mailValue;
-  label.setAttribute('for', inputId)
-  label.prepend(checkbox)
+//   const label = document.createElement('label');
+//   label.textContent = mailValue;
+//   label.setAttribute('for', inputId)
+//   label.prepend(checkbox)
 
-  formContainer.appendChild(label)
-  return formContainer
-}
+//   formContainer.appendChild(label)
+//   return formContainer
+// }
 
-async function post_create_parse_company() {
+// async function post_create_parse_company() {
 
-  const container = document.getElementById('company-parsing')
+//   const container = document.getElementById('company-parsing')
 
-  let checkboxes = null
-  checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
+//   let checkboxes = null
+//   checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
 
-  if (checkboxes.length === 0) {
-    return
-  }
+//   if (checkboxes.length === 0) {
+//     return
+//   }
 
-  const saveButton = container.querySelector('[name="save-parsed-companies"]')
-  const parseButton = container.querySelector('[name="start-parsing-btn"]')
-  lockButtons([saveButton, parseButton])
-  lockMenu()
+//   const saveButton = container.querySelector('[name="save-parsed-companies"]')
+//   const parseButton = container.querySelector('[name="start-parsing-btn"]')
+//   lockButtons([saveButton, parseButton])
+//   lockMenu()
 
   
-  const resultsDiv = container.querySelector('[name=companies]')
-  let addedCompanies = 0
-  const newCompanies = []
+//   const resultsDiv = container.querySelector('[name=companies]')
+//   let addedCompanies = 0
+//   const newCompanies = []
 
-  try {
-    for (const checkbox of checkboxes) {
-      try {
-        const data = await postJson('/crm/add/', buildCompanyPayload(checkbox))
-      if (data.success) {
-          addedCompanies++
+//   try {
+//     for (const checkbox of checkboxes) {
+//       try {
+//         const data = await postJson('/crm/add/', buildCompanyPayload(checkbox))
+//       if (data.success) {
+//           addedCompanies++
           
-          newCompanies.push({'comp_name':checkbox.dataset.url, 'comp_id':data.new_id})
-        }
-      } catch (error) {
-        console.error('Failed to create comapany for checkbox:', checkbox.value, error)
-      }
-    }
-  } finally {
-    renderCreationSummary(resultsDiv, addedCompanies, newCompanies)
-    unlockButtons([saveButton, parseButton])
-    unlockMenu()
-  }
-}
+//           newCompanies.push({'comp_name':checkbox.dataset.url, 'comp_id':data.new_id})
+//         }
+//       } catch (error) {
+//         console.error('Failed to create comapany for checkbox:', checkbox.value, error)
+//       }
+//     }
+//   } finally {
+//     renderCreationSummary(resultsDiv, addedCompanies, newCompanies)
+//     unlockButtons([saveButton, parseButton])
+//     unlockMenu()
+//   }
+// }
 
-function buildCompanyPayload(checkbox) {
-  const url = checkbox.dataset.url
-  return {
-    table: 'companies',
-    company_name: url,
-    inn: '',
-    site: url,
-    rating: 0,
-    mail: checkbox.value,
-    phone: '',
-    comment: '',
-    company_contacts: [],
-    company_materials: []
-  }
-}
+// function buildCompanyPayload(checkbox) {
+//   const url = checkbox.dataset.url
+//   return {
+//     table: 'companies',
+//     company_name: url,
+//     inn: '',
+//     site: url,
+//     rating: 0,
+//     mail: checkbox.value,
+//     phone: '',
+//     comment: '',
+//     company_contacts: [],
+//     company_materials: []
+//   }
+// }
 
-function renderCreationSummary(container, addedCount, newCompanies) {
-  container.innerHTML = ''
-  const summarySpan = document.createElement('span');
+// function renderCreationSummary(container, addedCount, newCompanies) {
+//   container.innerHTML = ''
+//   const summarySpan = document.createElement('span');
 
-  if (addedCount > 0) {
-    summarySpan.textContent = `Компаний добавлено: ${addedCount} шт`;
-    container.appendChild(summarySpan);
+//   if (addedCount > 0) {
+//     summarySpan.textContent = `Компаний добавлено: ${addedCount} шт`;
+//     container.appendChild(summarySpan);
 
-    newCompanies.forEach(company => {
-      const link = document.createElement('a');
-      link.textContent = company['comp_name'];
-      link.setAttribute('onclick', 
-        `removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', ${company['comp_id']})`
-      );
-      container.appendChild(link);
-    })
-  } else {
-    summarySpan.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
-    container.appendChild(summarySpan);
-  }
-}
+//     newCompanies.forEach(company => {
+//       const link = document.createElement('a');
+//       link.textContent = company['comp_name'];
+//       link.setAttribute('onclick', 
+//         `removeAllModals(); openModal('companies-details-modal-frame', 'detailsCompany', ${company['comp_id']})`
+//       );
+//       container.appendChild(link);
+//     })
+//   } else {
+//     summarySpan.textContent = 'Компании не добавлены, скорее всего они уже есть в базе';
+//     container.appendChild(summarySpan);
+//   }
+// }
 
 async function postCreateExcelOutput() {
   const companiesContainer = document.getElementById('companies-cards-list')

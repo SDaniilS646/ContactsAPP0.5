@@ -11,7 +11,7 @@ ContactsApp
 -   Django
 -   Django ORM
 -   HTML/CSS/JavaScript
--   SQLite
+-   PostgreSQL
 
 Возможности
 
@@ -25,6 +25,29 @@ ContactsApp
 Структура
 
 apps/ services/ templates/ static/ config/
+
+Настройка переменных окружения
+
+Перед запуском проекта необходимо создать файл .env в корневой директории проекта (рядом с manage.py) и указать необходимые настройки.
+
+Настройка для production
+
+Перед развёртыванием на сервере необходимо:
+
+Установить DEBUG=False.
+Задать ALLOWED_HOSTS, указав домен или IP-адрес сервера.
+Установить уникальный надёжный SECRET_KEY.
+Убедиться, что файл .env не попадает в систему контроля версий.
+
+Пример файла .env
+
+SECRET_KEY=replace-with-a-secure-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+SECRET_KEY - Секретный ключ Django. Должен быть уникальным и конфиденциальным. Пример: replace-with-a-secure-secret-key
+DEBUG - Режим отладки. Включён для локальной разработки, должен быть отключён в production. Пример: True
+ALLOWED_HOSTS - Список доменов и IP-адресов, с которых Django принимает запросы. Значения указываются через запятую. Пример: localhost,127.0.0.1
 
 Запуск
 

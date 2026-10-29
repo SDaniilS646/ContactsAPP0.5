@@ -21,25 +21,39 @@ async function executeAi(inputId=null, outputId=null, context=null) {
 
   const data = await postJson('/sender/ai_request/', {user_request: userRequest, context: context, section:section})
   if (data.success) {
-    output.innerHTML += `<span>Запрос: ${data.output['user_request']}</span>`
-    output.innerHTML += `<span>Промпт: ${data.output['promt_template']}</span>`
+    const spanUserRequest = document.createElement('span')
+    spanUserRequest.textContent = `Запрос: ${data.output['user_request']}`
+    output.appendChild(spanUserRequest)
+    const spanPrompt = document.createElement('span')
+    spanPrompt.textContent = `Модель: ${data.output['promt_template']}`
+    output.appendChild(spanPrompt)
     const outputList = data.output['output']
-    console.log(outputList)
     for (const req of outputList) {
       const brends = req['brends']
-      output.innerHTML += `<span>${req['user_request']}</span>`
-      console.log(brends.length)
+      const span = document.createElement('span')
+      span.textContent = `${req['user_request']}`
+      output.appendChild(span)
       if (brends.length == 0) {output.innerHTML += `<span>Не найдено</span>`; continue}
       brends.forEach(item => {
-        output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
+        const spanCompany = document.createElement('span')
+        spanCompany.className = 'title';
+        spanCompany.title = String(item['name'] ?? '')
+
+        const link = document.createElement('a')
+        link.textContent = String(item['name'] ?? '')
+
+        link.addEventListener('click', () => {
+          openModal(
+            'companies-details-modal-frame',
+            'detailsCompany',
+            item['id']
+          )
+        })
+        spanCompany.appendChild(link)
+        output.appendChild(spanCompany)
+        // output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
       })
     }
-    // if (output && outputList.length > 0) {
-    //   output.innerHTML += `<span>${outputList}</span>`
-    //   outputList.forEach(item => 
-    //     output.innerHTML += `<span class="title" title="${item['name']}"><a onclick="openModal('companies-details-modal-frame', 'detailsCompany', ${item['id']})">${item['name']}</a></span>`
-    //   )
-    // }
   }
 }
 
@@ -110,6 +124,9 @@ async function fetchModalHtml(modalName, id) {
     throw new Error(`Server responsed with ${response.status}`)
   }
   const data = await response.json()
+  if (!data.success) {
+    return null
+  }
   return data.html
 }
 
@@ -138,6 +155,10 @@ async function openModal(modal_frame_id, modal_name=null, id=null) {
 
   try {
     const html = await fetchModalHtml(modal_name, id)
+    if (!html) {
+      console.error('no modal frame')
+      return
+    }
     const modalContainer = document.getElementById('modals-content')
 
     if (!modalContainer) {

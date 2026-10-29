@@ -1,4 +1,6 @@
 from django.db import models
+from django.conf import settings
+
 
 from .mixins import AuditedModel, PersonNameModel, ContactsModel
 
@@ -81,36 +83,47 @@ class Company(AuditedModel, ContactsModel):
       return self.name or f'Компания #{self.pk}'
 
 class Meeting(AuditedModel):
-  subject = models.CharField(max_length=255, blank=True)
-  comment = models.TextField(blank=True)
-  record_link = models.CharField(max_length=255, blank=True)
-  
-  meeting_date = models.DateTimeField(blank=True, null=True)
+    subject = models.CharField(max_length=255, blank=True)
+    comment = models.TextField(blank=True)
+    record_link = models.CharField(max_length=255, blank=True)
+
+    meeting_date = models.DateTimeField(blank=True, null=True)
 
 
-  contacts = models.ManyToManyField(
-      Contact,
-      through='MeetingContact',
-      related_name='meetings'
-  )
+    contacts = models.ManyToManyField(
+        Contact,
+        through='MeetingContact',
+        related_name='meetings'
+    )
 
-  employees = models.ManyToManyField(
-      Employee,
-      through='MeetingEmployee',
-      related_name='meetings'
-  )
+    employees = models.ManyToManyField(
+        Employee,
+        through='MeetingEmployee',
+        related_name='meetings'
+    )
 
-  companies = models.ManyToManyField(
-      Company,
-      through='MeetingCompany',
-      related_name='meetings'
-  )
+    companies = models.ManyToManyField(
+        Company,
+        through='MeetingCompany',
+        related_name='meetings'
+    )
 
-  class Meta:
-      db_table = 'meetings'
+    class Meta:
+        db_table = 'meetings'
 
-  def __str__(self):
-      return self.subject or f'Встреча #{self.pk}'
+    def __str__(self):
+        return self.subject or f'Встреча #{self.pk}'
+
+class ExportLog(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        related_name='+', on_delete=models.SET_NULL
+    )
+    file_name = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'export_log'
 
 # class Brend(AuditedModel):
 #     name = models.CharField(max_length=255, blank=True)

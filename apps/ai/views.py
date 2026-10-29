@@ -13,26 +13,36 @@ class AiOperations:
       'success': True
     })
 
+  @login_required
   def get_information(request):
+    if not request.user.is_superuser:
+      return JsonResponse({'success':False})
     input_data = json.loads(request.body)
     output = AiService.get_version_info(input_data['id'])
     return JsonResponse({
       'success': True,
       'output': output
     })
-  
+
+  @login_required
   def create_version(request):
+    if not request.user.is_superuser:
+      return JsonResponse({'success':False})
     input_data = json.loads(request.body)
     AiService.create_version(input_data)
     return JsonResponse({'success':True})
-  
+
+  @login_required
   def activate_version(request):
+    if not request.user.is_superuser:
+      return JsonResponse({'success':False})
     input_data = json.loads(request.body)
     AiService.activate(input_data['id'])
     return JsonResponse({
       'success': True
     })
 
+  @login_required
   def label_material(request):
     input_data = json.loads(request.body)
     AiService.save_material_label(input_data.get('labeledData'))

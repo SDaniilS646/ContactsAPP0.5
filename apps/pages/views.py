@@ -13,7 +13,7 @@ PAGES = {
   'meetings': PageService.meetings_page,
   'employees': PageService.employees_page,
   'cmd': PageService.cmd_page,
-  'parser': PageService.parser_page,
+  # 'parser': PageService.parser_page,
   'sender': PageService.sender_page, 
   'objects': PageService.objects_page,
   'aiConfig': PageService.ai_config_page
@@ -52,14 +52,26 @@ MODALS = {
   'activeLearningCaterories': ModalService.alCategories
 }
 
+ADMIN_REQUIRED = [
+  'aiConfig',
+  'cmd',
+  'detailsModel',
+  'createModel'
+]
+
 
 
 @login_required
 def clearPage(request):
   return render(request, 'base.html')
 
+@login_required
 def setPage(request):
   page_data = json.loads(request.body)
+
+  if page_data['table'] in ADMIN_REQUIRED and not request.user.is_superuser:
+    return JsonResponse({'success': False})
+
   if page_data['type'] == 'page':
     html, vars = PAGES[page_data['table']]()
   elif page_data['type'] == 'add':
@@ -74,12 +86,17 @@ def setPage(request):
       html, vars, request=request)
   })
 
+@login_required
 def loadModal(request):
   page_data = json.loads(request.body)
+
+  if page_data['modal_name'] in ADMIN_REQUIRED and not request.user.is_superuser:
+    return JsonResponse({'success': False})
 
   html, vars = MODALS[page_data['modal_name']](page_data['id'])
 
 
   return JsonResponse({
+    'success': True,
     'html': render_to_string(html, vars, request=request)
   })

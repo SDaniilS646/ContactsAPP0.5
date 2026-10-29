@@ -1,5 +1,8 @@
 from apps.crm.services.model_services.company_service import CompanyService
 from apps.crm.services.model_services.connection_service import ConnectionService
+from apps.crm.models.models import ExportLog
+
+from django.utils import timezone
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, PatternFill, Border, Side, Font
@@ -18,6 +21,15 @@ def format_cell(cell, val=None, font=None, fill=None, border=None, align=None):
     cell.value = val
 
 class ExportService:
+  @staticmethod
+  def log_export(user, file_name=None):
+    ExportLog.objects.create(
+      user=user,
+      file_name=file_name,
+      created_at=timezone.now()
+    )
+    return
+  
   @staticmethod
   def get_object_brend_list(object_id):
     brend_list = ConnectionService.get_brend_list(object_id)
@@ -70,7 +82,6 @@ class ExportService:
         item.material.name
       )
       brends_output.setdefault(key, []).append(item.company.name)
-      
     current_row = 2
 
     for section in sections:

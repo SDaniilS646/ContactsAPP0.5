@@ -51,6 +51,6 @@ def material_node_tag(style, material, parent=None):
     id=mat_id,
     cls=css_class,
     onclick=mark_safe(cfg['onclick'].format(id=mat_id)),
-    name=mark_safe(material['material_name']),
-    measure=mark_safe(measure)
+    name=material['material_name'],
+    measure=measure
   )

@@ -255,26 +255,6 @@ class Commands:
     return res
 
   @staticmethod
-  def sqlQuery(args):
-    if args[0].lower() != 'select':
-      return 'only SELECT!!!'
-    
-    query = ' '.join(args)
-    result = ''
-
-    try:
-      with connection.cursor() as cursor:
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        temp_row = [' - '.join(map(str, row)) for row in rows]
-        result = '\n'.join(temp_row) 
-    except Exception as e:
-      result = f'Error - {e}'  
-
-
-    return query + '\n\n' +  result
-
-  @staticmethod
   def checkConnections(args):
     model_name = args[0]
     fields = args[1:]
@@ -302,8 +282,8 @@ class Commands:
       'load_csv - download archive with db data',
       'models - get models structure',
       'check_con - check error connections',
-      'sql <select ...> - raw sql query (only select)',
-      'clear - clear output area'
+      'clear - clear output area',
+      'create_ai_task <model_name> <model_description> - create new ai_task model, use _ for spaces in description'
     ]
     return 'Commands List\n' + '\n'.join(cmds_list)
   

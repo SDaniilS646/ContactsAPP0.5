@@ -20,6 +20,7 @@ from apps.crm.services.model_services.connection_service import ConnectionServic
 
 
 class CommonOperations:
+  @login_required
   def delete(request):
     input_data = json.loads(request.body)
     table_name = input_data.get('table')
@@ -28,8 +29,8 @@ class CommonOperations:
     if not table_name or not id:
       return JsonResponse({
         'success': False,
-        'errorType': 'type(e).__name__',
-        'errorDescription': str(e),
+        'errorType': 'ValidationError',
+        'errorDescription': 'Не найдены таблица или ID записи',
         'error': f'no id ({id}) or table name ({table_name})'
       })
 
@@ -38,14 +39,15 @@ class CommonOperations:
     except Exception as e:
       return JsonResponse({
         'success': False,
-        'errorType': type(e).__name__,
-        'errorDescription': str(e)
+        'errorType': 'InternalError',
+        'errorDescription': 'Не удалось удалить запись'
       })
 
     return JsonResponse({
       'success': True
     })
 
+  @login_required
   def edit(request):
     input_data = json.loads(request.body)
     table_name = input_data.get('table')
@@ -56,6 +58,8 @@ class CommonOperations:
     if not table_name or not id:
       return JsonResponse({
         'success': False,
+        'errorType': 'ValidationError',
+        'errorDescription': 'Не найдена таблица или запись с таким ID',
         'error': f'no id ({id}) or table name ({table_name})'
       })
     try:
@@ -63,14 +67,15 @@ class CommonOperations:
     except Exception as e:
       return JsonResponse({
         'success': False,
-        'errorType': type(e).__name__,
-        'errorDescription': str(e)
+        'errorType': 'InternalError',
+        'errorDescription': 'Не удалось отредактиировать запись'
       })
     
     return JsonResponse({
       'success': True
     })
-
+  
+  @login_required
   def create(request):
     input_data = json.loads(request.body)
     table_name = input_data.get('table')
@@ -82,15 +87,16 @@ class CommonOperations:
       print(e)
       return JsonResponse({
         'success': False,
-        'errorType': type(e).__name__,
-        'errorDescription': str(e)
+        'errorType': 'InternalError',
+        'errorDescription': 'Не удалось создать запись'
       })
     
     return JsonResponse({
       'success': True,
       'new_id':new_id
     })
-
+  
+  @login_required
   def delete_connections(request):
     input_data = json.loads(request.body)
     print(input_data)
@@ -101,14 +107,15 @@ class CommonOperations:
     except Exception as e:
       return JsonResponse({
         'success': False,
-        'errorType': type(e).__name__,
-        'errorDescription': str(e)
+        'errorType': 'InternalError',
+        'errorDescription': 'Не удалось удалить связь'
       })
     
     return JsonResponse({
       'success': True
     })
 
+  @login_required
   def edit_connections(request):
     input_data = json.loads(request.body)
     user = request.user
@@ -128,6 +135,7 @@ class CommonOperations:
       'success': True
     })
 
+  @login_required
   def create_brend_list(request):
     input_data = json.loads(request.body)
     ConnectionService.create_brend_list(input_data, request.user)
@@ -135,6 +143,7 @@ class CommonOperations:
       'success': True
     })
 
+  @login_required
   def delete_from_brend_list(request):
     input_data = json.loads(request.body)
     ConnectionService.delete_from_brend_list(input_data)
@@ -143,7 +152,15 @@ class CommonOperations:
     }) 
 
 class SpecialOperations:
+  @login_required
   def export_brendlist_excel(request):
+    if not request.user.is_superuser:
+      return HttpResponseBadRequest(
+        json.dumps({'success': False, 'error':  'нет доступа'}), 
+        content_type='application/json'
+      )
+
+    ExportService.log_export(request.user, file_name='brend_list.xlsx')
     payload = json.loads(request.body)
     output = ExportService.get_object_brend_list(payload['object_id'])
 
@@ -156,7 +173,15 @@ class SpecialOperations:
     )
     return response
 
+  @login_required
   def create_Excel_Output(request):
+    if not request.user.is_superuser:
+      return HttpResponseBadRequest(
+        json.dumps({'success': False, 'error':  'нет доступа'}), 
+        content_type='application/json'
+      )
+
+    
     try:
       payload = json.loads(request.body)
       companies_ids = payload['company_ids']
@@ -176,6 +201,7 @@ class SpecialOperations:
       )
 
     filename = f"sendfile_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsm"
+    ExportService.log_export(request.user, file_name=filename)
     response = HttpResponse(
       buffer.getvalue(),
       content_type='application/vnd.ms-excel.sheet.macroEnabled.12'
@@ -184,21 +210,22 @@ class SpecialOperations:
       
     return response
 
-  def parse_comp(request):
-    parse_input = json.loads(request.body)['request_txt']
-    results = []
-    err = None
-    try:
-      results = WebParser.web_parser(parse_input) #[f'url: {item['url']} - mail: {item['mail']}' for item in web_parser(parse_input)]
-    except Exception as e:
-      err = f"Ошибка: {e}"
-      return JsonResponse({
-        'success': False,
-        'err_txt':err
-      })
+  # @login_required
+  # def parse_comp(request):
+  #   parse_input = json.loads(request.body)['request_txt']
+  #   results = []
+  #   err = None
+  #   try:
+  #     results = WebParser.web_parser(parse_input) #[f'url: {item['url']} - mail: {item['mail']}' for item in web_parser(parse_input)]
+  #   except Exception as e:
+  #     err = f"Ошибка: {e}"
+  #     return JsonResponse({
+  #       'success': False,
+  #       'err_txt':err
+  #     })
 
-    return JsonResponse({
-      'success': True,
-      'results':results
-    })
+  #   return JsonResponse({
+  #     'success': True,
+  #     'results':results
+  #   })
 

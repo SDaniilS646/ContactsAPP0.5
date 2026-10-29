@@ -180,22 +180,17 @@ class AiService:
     for field in fields:
       if field.name in ['created_at', 'updated_at', 'created_by', 'updated_by', 'task', 'id']:
         continue
-      if field.name in ['system_prompt', 'notes']:
-        if field.name == 'notes' and task_version.values(field.name)[0][field.name] == '':
-          continue
-        fields_data.append({
-          'field_name': field.name,
-          'field_value': task_version.values(field.name)[0][field.name],
-          'html_start': '<textarea disabled>',
-          'html_end': '</textarea>'
-        })
+      if field.name == 'notes' and task_version.values(field.name)[0][field.name] == '':
         continue
+
       fields_data.append({
         'field_name': field.name,
         'field_value': task_version.values(field.name)[0][field.name],
-        'html_start': '<span>',
-        'html_end': '</span>'
       })
+      
+    
+    for item in fields_data:
+      print(item)
 
     return fields_data
 

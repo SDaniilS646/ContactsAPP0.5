@@ -1,3 +1,5 @@
+// const { createElement } = require("react")
+
 async function activateModel(comboboxId) {
   const combobox = document.getElementById(comboboxId)
   if (!combobox) {return}
@@ -101,8 +103,33 @@ document.addEventListener('change', async function(event) {
   const output = data.output
   html = ''
   output.forEach(element => {
-      html += `<div class="model-version-item"><span>${element['field_name']}:</span>${element['html_start']}${element['field_value']}${element['html_end']}</div>`
+      console.log(element)
+      createOutputDiv(
+        container=infoContainer, 
+        fieldName=element['field_name'], 
+        htmlType=element['field_name']=='system_prompt' ? 'textarea' : 'span',
+        disabled=element['field_name']=='system_prompt' ? true : false,
+        fieldValue=element['field_value']
+      )
+      // html += `<div class="model-version-item"><span>${element['field_name']}:</span>${element['html_start']}${element['field_value']}${element['html_end']}</div>`
   });
 
-  infoContainer.innerHTML = html
+  // infoContainer.innerHTML = html
 })
+
+function createOutputDiv(container=null, fieldName=null, htmlType=null, disabled=false, fieldValue=null) {
+  const div = document.createElement('div')
+  div.classList.add('model-version-item')
+
+  const span = document.createElement('span')
+  span.textContent = `${fieldName}:`
+  // const html = `${htmlStart}${fieldValue}${htmlEnd}`
+  const item = document.createElement(htmlType)
+  item.disabled = disabled
+  item.textContent = fieldValue
+  div.appendChild(span)
+  div.appendChild(item)
+  div.innerHTML += html
+
+  container.appendChild(div)
+}

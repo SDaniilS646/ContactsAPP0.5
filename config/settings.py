@@ -19,6 +19,12 @@ from django.core.files.storage import FileSystemStorage
 
 load_dotenv()
 
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv('ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 ML_MODELS_DIR = BASE_DIR / 'ml_models'
@@ -31,11 +37,11 @@ ML_MODELS_DIR = BASE_DIR / 'ml_models'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+  raise ValueError('SKRET_KY is not set in environment variables')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
-
-ALLOWED_HOSTS = []
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 
 # Application definition
@@ -144,5 +150,3 @@ STATICFILES_DIRS = [
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
-
-ALLOWED_HOSTS = ['*']

@@ -1,8 +1,23 @@
 venv/
 __pycache__/
 *.pyc
+*.py[cod]
 
 .env
+
+.venv
+venv/
+
+*.sqlite3
+db.sqlite3
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+*.log
+
+ml_models/
 
 .idea/
 .vscode/
