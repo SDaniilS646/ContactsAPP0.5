@@ -14,15 +14,15 @@ async function getCategory() {
   }
 } 
 
-async function testInnerHtml(event, element) {
-  const cont = document.getElementById('sender-main-frame')
-  let inpValue
+// async function testInnerHtml(event, element) {
+//   const cont = document.getElementById('sender-main-frame')
+//   let inpValue
   
-  element.parentElement.querySelectorAll('input').forEach(inp => inpValue =inp.value)
-  const button = createElement('button')
-  button.textContent = inpValue
-  cont.appendChild(button)
-}
+//   element.parentElement.querySelectorAll('input').forEach(inp => inpValue =inp.value)
+//   const button = createElement('button')
+//   button.textContent = inpValue
+//   cont.appendChild(button)
+// }
 
 // ШАГ 1. ЗАГРЗУКА ФАЙЛА ВОР
 async function uploadVor() {

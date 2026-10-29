@@ -41,19 +41,23 @@ apps/ services/ templates/ static/ config/
 
 Пример файла .env
 
+```env
 SECRET_KEY=replace-with-a-secure-secret-key
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+```
 
 SECRET_KEY - Секретный ключ Django. Должен быть уникальным и конфиденциальным. Пример: replace-with-a-secure-secret-key
 DEBUG - Режим отладки. Включён для локальной разработки, должен быть отключён в production. Пример: True
 ALLOWED_HOSTS - Список доменов и IP-адресов, с которых Django принимает запросы. Значения указываются через запятую. Пример: localhost,127.0.0.1
 
+```env
 DB_NAME=contacts_db
 DB_USER=contacts_user
 DB_PASSWORD=your_database_password
 DB_HOST=localhost
 DB_PORT=5432
+```
 
 DB_NAME - Название базы данных PostgreSQL
 DB_USER - Имя пользователя PostgreSQL, от имени которого приложение подключается к базе данных.
