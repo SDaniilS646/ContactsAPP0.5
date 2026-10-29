@@ -76,7 +76,7 @@ class CommandOperations:
       print(e)
       return JsonResponse({
         'success': False,
-        'res': f'Ошибка выполнения команнды: {e}'
+        'res': f'Ошибка выполнения команнды.'
       }, status=500)
 
 

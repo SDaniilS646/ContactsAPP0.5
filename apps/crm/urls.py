@@ -15,5 +15,5 @@ urlpatterns = [
 
 
   path('create_Excel_Output/', SpecialOperations.create_Excel_Output),
-  path('parse_company/', SpecialOperations.parse_comp),
+  # path('parse_company/', SpecialOperations.parse_comp),
 ]

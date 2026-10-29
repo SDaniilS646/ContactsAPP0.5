@@ -103,7 +103,6 @@ document.addEventListener('change', async function(event) {
   const output = data.output
   html = ''
   output.forEach(element => {
-      console.log(element)
       createOutputDiv(
         container=infoContainer, 
         fieldName=element['field_name'], 
@@ -111,10 +110,8 @@ document.addEventListener('change', async function(event) {
         disabled=element['field_name']=='system_prompt' ? true : false,
         fieldValue=element['field_value']
       )
-      // html += `<div class="model-version-item"><span>${element['field_name']}:</span>${element['html_start']}${element['field_value']}${element['html_end']}</div>`
   });
 
-  // infoContainer.innerHTML = html
 })
 
 function createOutputDiv(container=null, fieldName=null, htmlType=null, disabled=false, fieldValue=null) {
@@ -129,7 +126,6 @@ function createOutputDiv(container=null, fieldName=null, htmlType=null, disabled
   item.textContent = fieldValue
   div.appendChild(span)
   div.appendChild(item)
-  div.innerHTML += html
 
   container.appendChild(div)
 }
