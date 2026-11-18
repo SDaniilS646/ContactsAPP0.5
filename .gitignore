@@ -23,3 +23,6 @@ ml_models/
 .vscode/
 
 media/
+
+requirements.backup.txt
+
